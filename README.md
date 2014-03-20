@@ -18,3 +18,7 @@ Game Content Moderator
 
 * [IntelliJ IDEA](http://www.jetbrains.com/idea/)
 * [SourceTree](http://www.sourcetreeapp.com/)
+
+### 동영상
+
+* [RxJava: Reactive Extensions in Scala](http://www.youtube.com/watch?v=tOMK_FYJREw)
