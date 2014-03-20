@@ -12,6 +12,7 @@ Game Content Moderator
 ### 프로젝트 정보
 
 * [프로젝트 홈페이지](http://meslab.snu.ac.kr/courses/2014s/project/)
+* http://gcm.slack.com
 
 ### 다운로드
 
