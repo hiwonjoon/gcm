@@ -13,3 +13,7 @@ Game Content Moderator
 
 * [프로젝트 홈페이지](http://meslab.snu.ac.kr/courses/2014s/project/)
 
+### 다운로드
+
+* [IntelliJ IDEA](http://www.jetbrains.com/idea/)
+* [SourceTree](http://www.sourcetreeapp.com/)
