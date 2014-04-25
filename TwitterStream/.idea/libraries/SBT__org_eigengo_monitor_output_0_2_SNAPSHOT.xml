@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="SBT: org.eigengo.monitor:output:0.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.eigengo.monitor/output/jars/output-0.2-SNAPSHOT.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.eigengo.monitor/output/docs/output-0.2-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ivy2/cache/org.eigengo.monitor/output/srcs/output-0.2-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

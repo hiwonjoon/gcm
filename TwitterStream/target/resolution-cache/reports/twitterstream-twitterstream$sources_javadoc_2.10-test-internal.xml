@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="twitterstream"
+		module="twitterstream$sources_javadoc_2.10"
+		revision="1.0"
+		conf="test-internal"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool"
+		date="20140410142405"/>
+	<dependencies>
+		<module organisation="io.spray" name="spray-testkit">
+			<revision name="1.2.0" status="release" pubdate="20131214003010" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="28">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3836" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-testkit/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-testkit/1.2.0/spray-testkit-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-testkit" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="470840" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-testkit/docs/spray-testkit-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-testkit/1.2.0/spray-testkit-1.2.0-javadoc.jar"/>
+					</artifact>
+					<artifact name="spray-testkit" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="9189" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-testkit/srcs/spray-testkit-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-testkit/1.2.0/spray-testkit-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-testkit" type="jar" ext="jar" status="no" details="" size="75632" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-testkit/jars/spray-testkit-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-testkit/1.2.0/spray-testkit-1.2.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.specs2" name="specs2_2.10">
+			<revision name="2.2.2" status="release" pubdate="20130918221611" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://specs2.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="24">
+				<license name="MIT-style" url="http://www.opensource.org/licenses/mit-license.php"/>
+				<metadata-artifact status="no" details="" size="3949" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.specs2/specs2_2.10/ivy-2.2.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/specs2/specs2_2.10/2.2.2/specs2_2.10-2.2.2.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.2.2" rev-constraint-default="2.2.2" rev-constraint-dynamic="2.2.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="specs2_2.10" type="jar" ext="jar" status="no" details="" size="8012077" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.specs2/specs2_2.10/jars/specs2_2.10-2.2.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/specs2/specs2_2.10/2.2.2/specs2_2.10-2.2.2.jar"/>
+					</artifact>
+					<artifact name="specs2_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="5571494" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.specs2/specs2_2.10/docs/specs2_2.10-2.2.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/specs2/specs2_2.10/2.2.2/specs2_2.10-2.2.2-javadoc.jar"/>
+					</artifact>
+					<artifact name="specs2_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="581622" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.specs2/specs2_2.10/srcs/specs2_2.10-2.2.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/specs2/specs2_2.10/2.2.2/specs2_2.10-2.2.2-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalaz" name="scalaz-concurrent_2.10">
+			<revision name="7.0.2" status="release" pubdate="20130707213200" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://scalaz.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="26">
+				<license name="BSD-style" url="http://www.opensource.org/licenses/bsd-license.php"/>
+				<metadata-artifact status="no" details="" size="2812" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-concurrent_2.10/ivy-7.0.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="7.0.2" rev-constraint-default="7.0.2" rev-constraint-dynamic="7.0.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="scalaz-concurrent_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="517350" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-concurrent_2.10/docs/scalaz-concurrent_2.10-7.0.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar"/>
+					</artifact>
+					<artifact name="scalaz-concurrent_2.10" type="jar" ext="jar" status="no" details="" size="286811" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-concurrent_2.10/jars/scalaz-concurrent_2.10-7.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar"/>
+					</artifact>
+					<artifact name="scalaz-concurrent_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="15977" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-concurrent_2.10/srcs/scalaz-concurrent_2.10-7.0.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalaz" name="scalaz-effect_2.10">
+			<revision name="7.0.2" status="release" pubdate="20130707213131" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://scalaz.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="27">
+				<license name="BSD-style" url="http://www.opensource.org/licenses/bsd-license.php"/>
+				<metadata-artifact status="no" details="" size="2659" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-effect_2.10/ivy-7.0.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="7.0.2" rev-constraint-default="7.0.2" rev-constraint-dynamic="7.0.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="scalaz-effect_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="816504" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-effect_2.10/docs/scalaz-effect_2.10-7.0.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar"/>
+					</artifact>
+					<artifact name="scalaz-effect_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="21797" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-effect_2.10/srcs/scalaz-effect_2.10-7.0.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar"/>
+					</artifact>
+					<artifact name="scalaz-effect_2.10" type="jar" ext="jar" status="no" details="" size="429615" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-effect_2.10/jars/scalaz-effect_2.10-7.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scalaz" name="scalaz-core_2.10">
+			<revision name="7.0.2" status="release" pubdate="20130707213202" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://scalaz.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="25">
+				<license name="BSD-style" url="http://www.opensource.org/licenses/bsd-license.php"/>
+				<metadata-artifact status="no" details="" size="2514" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-core_2.10/ivy-7.0.2.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="7.0.2" rev-constraint-default="7.0.2" rev-constraint-dynamic="7.0.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="scalaz-core_2.10" type="jar" ext="jar" status="no" details="" size="8596592" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-core_2.10/jars/scalaz-core_2.10-7.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar"/>
+					</artifact>
+					<artifact name="scalaz-core_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="258345" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-core_2.10/srcs/scalaz-core_2.10-7.0.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar"/>
+					</artifact>
+					<artifact name="scalaz-core_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="4804347" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scalaz/scalaz-core_2.10/docs/scalaz-core_2.10-7.0.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eigengo.monitor" name="output-statsd">
+			<revision name="0.2-SNAPSHOT" status="integration" pubdate="20131203231621" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/eigengo/monitor" downloaded="false" searched="true" default="false" conf="default(compile), default, compile, runtime, master" position="22">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3116" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output-statsd/ivy-0.2-SNAPSHOT.xml" searched="true" origin-is-local="false" origin-location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output-statsd/0.2-SNAPSHOT/output-statsd-0.2-SNAPSHOT.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="0.2-SNAPSHOT" rev-constraint-default="0.2-SNAPSHOT" rev-constraint-dynamic="0.2-SNAPSHOT" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="output-statsd" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="76076" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output-statsd/docs/output-statsd-0.2-SNAPSHOT-javadoc.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output-statsd/0.2-SNAPSHOT/output-statsd-0.2-SNAPSHOT-javadoc.jar"/>
+					</artifact>
+					<artifact name="output-statsd" type="jar" ext="jar" status="no" details="" size="43341" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output-statsd/jars/output-statsd-0.2-SNAPSHOT.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output-statsd/0.2-SNAPSHOT/output-statsd-0.2-SNAPSHOT.jar"/>
+					</artifact>
+					<artifact name="output-statsd" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="6818" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output-statsd/srcs/output-statsd-0.2-SNAPSHOT-sources.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output-statsd/0.2-SNAPSHOT/output-statsd-0.2-SNAPSHOT-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.indeed" name="java-dogstatsd-client">
+			<revision name="2.0.7" status="release" pubdate="20130212043534" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/indeedeng/java-dogstatsd-client" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="23">
+				<license name="The MIT License (MIT)" url="http://opensource.org/licenses/MIT"/>
+				<metadata-artifact status="no" details="" size="3382" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.indeed/java-dogstatsd-client/ivy-2.0.7.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/indeed/java-dogstatsd-client/2.0.7/java-dogstatsd-client-2.0.7.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.0.7" rev-constraint-default="2.0.7" rev-constraint-dynamic="2.0.7" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="java-dogstatsd-client" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="6098" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.indeed/java-dogstatsd-client/srcs/java-dogstatsd-client-2.0.7-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/indeed/java-dogstatsd-client/2.0.7/java-dogstatsd-client-2.0.7-sources.jar"/>
+					</artifact>
+					<artifact name="java-dogstatsd-client" type="jar" ext="jar" status="no" details="" size="9739" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.indeed/java-dogstatsd-client/jars/java-dogstatsd-client-2.0.7.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/indeed/java-dogstatsd-client/2.0.7/java-dogstatsd-client-2.0.7.jar"/>
+					</artifact>
+					<artifact name="java-dogstatsd-client" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="48445" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.indeed/java-dogstatsd-client/docs/java-dogstatsd-client-2.0.7-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/indeed/java-dogstatsd-client/2.0.7/java-dogstatsd-client-2.0.7-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eigengo.monitor" name="agent-akka">
+			<revision name="0.2-SNAPSHOT" status="integration" pubdate="20131203231616" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/eigengo/monitor" downloaded="false" searched="true" default="false" conf="default(compile), default, compile, runtime, master" position="17">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3386" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent-akka/ivy-0.2-SNAPSHOT.xml" searched="true" origin-is-local="false" origin-location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent-akka/0.2-SNAPSHOT/agent-akka-0.2-SNAPSHOT.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="0.2-SNAPSHOT" rev-constraint-default="0.2-SNAPSHOT" rev-constraint-dynamic="0.2-SNAPSHOT" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="agent-akka" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="8505" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent-akka/srcs/agent-akka-0.2-SNAPSHOT-sources.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent-akka/0.2-SNAPSHOT/agent-akka-0.2-SNAPSHOT-sources.jar"/>
+					</artifact>
+					<artifact name="agent-akka" type="jar" ext="jar" status="no" details="" size="82280" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent-akka/jars/agent-akka-0.2-SNAPSHOT.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent-akka/0.2-SNAPSHOT/agent-akka-0.2-SNAPSHOT.jar"/>
+					</artifact>
+					<artifact name="agent-akka" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="119283" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent-akka/docs/agent-akka-0.2-SNAPSHOT-javadoc.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent-akka/0.2-SNAPSHOT/agent-akka-0.2-SNAPSHOT-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.aspectj" name="aspectjrt">
+			<revision name="1.7.3" status="release" pubdate="20130621201556" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.aspectj.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="21">
+				<license name="Eclipse Public License - v 1.0" url="http://www.eclipse.org/legal/epl-v10.html"/>
+				<metadata-artifact status="no" details="" size="2372" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjrt/ivy-1.7.3.xml" searched="false" origin-is-local="false" origin-location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.aspectj/aspectjrt/1.7.3/ivys/ivy.xml"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.7.3" rev-constraint-default="1.7.3" rev-constraint-dynamic="1.7.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="aspectjrt" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="327802" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjrt/docs/aspectjrt-1.7.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.7.3/aspectjrt-1.7.3-javadoc.jar"/>
+					</artifact>
+					<artifact name="aspectjrt" type="jar" ext="jar" status="no" details="" size="117083" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjrt/jars/aspectjrt-1.7.3.jar">
+						<origin-location is-local="false" location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.aspectj/aspectjrt/1.7.3/jars/aspectjrt.jar"/>
+					</artifact>
+					<artifact name="aspectjrt" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="107433" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjrt/srcs/aspectjrt-1.7.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/aspectj/aspectjrt/1.7.3/aspectjrt-1.7.3-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.aspectj" name="aspectjweaver">
+			<revision name="1.7.3" status="release" pubdate="20130621201636" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.aspectj.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="20">
+				<license name="Eclipse Public License - v 1.0" url="http://www.eclipse.org/legal/epl-v10.html"/>
+				<metadata-artifact status="no" details="" size="2380" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjweaver/ivy-1.7.3.xml" searched="false" origin-is-local="false" origin-location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.aspectj/aspectjweaver/1.7.3/ivys/ivy.xml"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.7.3" rev-constraint-default="1.7.3" rev-constraint-dynamic="1.7.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="aspectjweaver" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1411877" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjweaver/srcs/aspectjweaver-1.7.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/aspectj/aspectjweaver/1.7.3/aspectjweaver-1.7.3-sources.jar"/>
+					</artifact>
+					<artifact name="aspectjweaver" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="2941004" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjweaver/docs/aspectjweaver-1.7.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/aspectj/aspectjweaver/1.7.3/aspectjweaver-1.7.3-javadoc.jar"/>
+					</artifact>
+					<artifact name="aspectjweaver" type="jar" ext="jar" status="no" details="" size="1829108" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjweaver/jars/aspectjweaver-1.7.3.jar">
+						<origin-location is-local="false" location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.aspectj/aspectjweaver/1.7.3/jars/aspectjweaver.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eigengo.monitor" name="output">
+			<revision name="0.2-SNAPSHOT" status="integration" pubdate="20131203231626" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/eigengo/monitor" downloaded="false" searched="true" default="false" conf="default(compile), default, compile, runtime, master" position="19">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2792" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output/ivy-0.2-SNAPSHOT.xml" searched="true" origin-is-local="false" origin-location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output/0.2-SNAPSHOT/output-0.2-SNAPSHOT.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="0.2-SNAPSHOT" rev-constraint-default="0.2-SNAPSHOT" rev-constraint-dynamic="0.2-SNAPSHOT" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="output" type="jar" ext="jar" status="no" details="" size="9479" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output/jars/output-0.2-SNAPSHOT.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output/0.2-SNAPSHOT/output-0.2-SNAPSHOT.jar"/>
+					</artifact>
+					<artifact name="output" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="4222" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output/srcs/output-0.2-SNAPSHOT-sources.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output/0.2-SNAPSHOT/output-0.2-SNAPSHOT-sources.jar"/>
+					</artifact>
+					<artifact name="output" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="47670" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output/docs/output-0.2-SNAPSHOT-javadoc.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/output/0.2-SNAPSHOT/output-0.2-SNAPSHOT-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.eigengo.monitor" name="agent">
+			<revision name="0.2-SNAPSHOT" status="integration" pubdate="20131203231623" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/eigengo/monitor" downloaded="false" searched="true" default="false" conf="default(compile), default, compile, runtime, master" position="18">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2678" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent/ivy-0.2-SNAPSHOT.xml" searched="true" origin-is-local="false" origin-location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent/0.2-SNAPSHOT/agent-0.2-SNAPSHOT.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="0.2-SNAPSHOT" rev-constraint-default="0.2-SNAPSHOT" rev-constraint-dynamic="0.2-SNAPSHOT" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="agent" type="jar" ext="jar" status="no" details="" size="12193" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent/jars/agent-0.2-SNAPSHOT.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent/0.2-SNAPSHOT/agent-0.2-SNAPSHOT.jar"/>
+					</artifact>
+					<artifact name="agent" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="2553" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent/srcs/agent-0.2-SNAPSHOT-sources.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent/0.2-SNAPSHOT/agent-0.2-SNAPSHOT-sources.jar"/>
+					</artifact>
+					<artifact name="agent" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="46937" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent/docs/agent-0.2-SNAPSHOT-javadoc.jar">
+						<origin-location is-local="false" location="http://oss.sonatype.org/content/repositories/snapshots/org/eigengo/monitor/agent/0.2-SNAPSHOT/agent-0.2-SNAPSHOT-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-routing">
+			<revision name="1.2.0" status="release" pubdate="20131214002939" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="14">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3541" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-routing/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-routing/1.2.0/spray-routing-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-routing" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="73955" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-routing/srcs/spray-routing-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-routing/1.2.0/spray-routing-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-routing" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="1211319" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-routing/docs/spray-routing-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-routing/1.2.0/spray-routing-1.2.0-javadoc.jar"/>
+					</artifact>
+					<artifact name="spray-routing" type="jar" ext="jar" status="no" details="" size="1027828" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-routing/jars/spray-routing-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-routing/1.2.0/spray-routing-1.2.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.chuusai" name="shapeless_2.10">
+			<revision name="1.2.4" status="release" pubdate="20130227045121" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/milessabin/shapeless" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="15">
+				<license name="Apache License" url="http://www.apache.org/licenses/"/>
+				<metadata-artifact status="no" details="" size="2634" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.chuusai/shapeless_2.10/ivy-1.2.4.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/chuusai/shapeless_2.10/1.2.4/shapeless_2.10-1.2.4.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.4" rev-constraint-default="1.2.4" rev-constraint-dynamic="1.2.4" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="shapeless_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="74241" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.chuusai/shapeless_2.10/srcs/shapeless_2.10-1.2.4-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/chuusai/shapeless_2.10/1.2.4/shapeless_2.10-1.2.4-sources.jar"/>
+					</artifact>
+					<artifact name="shapeless_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="1560847" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.chuusai/shapeless_2.10/docs/shapeless_2.10-1.2.4-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/chuusai/shapeless_2.10/1.2.4/shapeless_2.10-1.2.4-javadoc.jar"/>
+					</artifact>
+					<artifact name="shapeless_2.10" type="jar" ext="jar" status="no" details="" size="1280423" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.chuusai/shapeless_2.10/jars/shapeless_2.10-1.2.4.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/chuusai/shapeless_2.10/1.2.4/shapeless_2.10-1.2.4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-client">
+			<revision name="1.2.0" status="release" pubdate="20131214003153" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="11">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3494" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-client/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-client/1.2.0/spray-client-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-client" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="3908" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-client/srcs/spray-client-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-client/1.2.0/spray-client-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-client" type="jar" ext="jar" status="no" details="" size="44966" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-client/jars/spray-client-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-client/1.2.0/spray-client-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-client" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="383100" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-client/docs/spray-client-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-client/1.2.0/spray-client-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-httpx">
+			<revision name="1.2.0" status="release" pubdate="20131214003101" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="12">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="4105" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-httpx/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-httpx/1.2.0/spray-httpx-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-httpx" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="43983" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-httpx/srcs/spray-httpx-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-httpx/1.2.0/spray-httpx-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-httpx" type="jar" ext="jar" status="no" details="" size="456464" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-httpx/jars/spray-httpx-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-httpx/1.2.0/spray-httpx-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-httpx" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="707649" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-httpx/docs/spray-httpx-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-httpx/1.2.0/spray-httpx-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-json_2.10">
+			<revision name="1.2.5" status="release" pubdate="20131217173437" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/spray/spray-json" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="16">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2826" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-json_2.10/ivy-1.2.5.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-json_2.10/1.2.5/spray-json_2.10-1.2.5.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.5" rev-constraint-default="1.2.5" rev-constraint-dynamic="1.2.5" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-json_2.10" type="jar" ext="jar" status="no" details="" size="321503" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-json_2.10/jars/spray-json_2.10-1.2.5.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-json_2.10/1.2.5/spray-json_2.10-1.2.5.jar"/>
+					</artifact>
+					<artifact name="spray-json_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="604075" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-json_2.10/docs/spray-json_2.10-1.2.5-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-json_2.10/1.2.5/spray-json_2.10-1.2.5-javadoc.jar"/>
+					</artifact>
+					<artifact name="spray-json_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="19766" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-json_2.10/srcs/spray-json_2.10-1.2.5-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-json_2.10/1.2.5/spray-json_2.10-1.2.5-sources.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.jvnet.mimepull" name="mimepull">
+			<revision name="1.9.3" status="release" pubdate="20130419184423" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://mimepull.java.net" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="13">
+				<license name="CDDL 1.1" url="https://glassfish.java.net/public/CDDL+GPL_1_1.html"/>
+				<license name="GPL2 w/ CPE" url="https://glassfish.java.net/public/CDDL+GPL_1_1.html"/>
+				<metadata-artifact status="no" details="" size="3786" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.jvnet.mimepull/mimepull/ivy-1.9.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/jvnet/mimepull/mimepull/1.9.3/mimepull-1.9.3.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.9.3" rev-constraint-default="1.9.3" rev-constraint-dynamic="1.9.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="mimepull" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="67530" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.jvnet.mimepull/mimepull/srcs/mimepull-1.9.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/jvnet/mimepull/mimepull/1.9.3/mimepull-1.9.3-sources.jar"/>
+					</artifact>
+					<artifact name="mimepull" type="jar" ext="jar" status="no" details="" size="62135" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.jvnet.mimepull/mimepull/jars/mimepull-1.9.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/jvnet/mimepull/mimepull/1.9.3/mimepull-1.9.3.jar"/>
+					</artifact>
+					<artifact name="mimepull" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="53506" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.jvnet.mimepull/mimepull/docs/mimepull-1.9.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/jvnet/mimepull/mimepull/1.9.3/mimepull-1.9.3-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-can">
+			<revision name="1.2.0" status="release" pubdate="20131214002854" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="4">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3355" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-can/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-can/1.2.0/spray-can-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-can" type="jar" ext="jar" status="no" details="" size="711450" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-can/jars/spray-can-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-can/1.2.0/spray-can-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-can" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="83321" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-can/srcs/spray-can-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-can/1.2.0/spray-can-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-can" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="510219" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-can/docs/spray-can-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-can/1.2.0/spray-can-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-io">
+			<revision name="1.2.0" status="release" pubdate="20131214003217" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="5">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3134" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-io/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-io/1.2.0/spray-io-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-io" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="20315" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-io/srcs/spray-io-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-io/1.2.0/spray-io-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-io" type="jar" ext="jar" status="no" details="" size="193565" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-io/jars/spray-io-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-io/1.2.0/spray-io-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-io" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="486779" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-io/docs/spray-io-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-io/1.2.0/spray-io-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-http">
+			<revision name="1.2.0" status="release" pubdate="20131214003038" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="8">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3119" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-http/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-http/1.2.0/spray-http-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-http" type="jar" ext="jar" status="no" details="" size="1282343" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-http/jars/spray-http-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-http/1.2.0/spray-http-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-http" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="89255" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-http/srcs/spray-http-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-http/1.2.0/spray-http-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-http" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="1432624" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-http/docs/spray-http-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-http/1.2.0/spray-http-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.parboiled" name="parboiled-scala_2.10">
+			<revision name="1.1.6" status="release" pubdate="20130826195413" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://parboiled.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="9">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2946" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-scala_2.10/ivy-1.1.6.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/parboiled/parboiled-scala_2.10/1.1.6/parboiled-scala_2.10-1.1.6.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.1.6" rev-constraint-default="1.1.6" rev-constraint-dynamic="1.1.6" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="parboiled-scala_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="28671" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-scala_2.10/srcs/parboiled-scala_2.10-1.1.6-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-scala_2.10/1.1.6/parboiled-scala_2.10-1.1.6-sources.jar"/>
+					</artifact>
+					<artifact name="parboiled-scala_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="591551" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-scala_2.10/docs/parboiled-scala_2.10-1.1.6-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-scala_2.10/1.1.6/parboiled-scala_2.10-1.1.6-javadoc.jar"/>
+					</artifact>
+					<artifact name="parboiled-scala_2.10" type="jar" ext="jar" status="no" details="" size="237780" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-scala_2.10/jars/parboiled-scala_2.10-1.1.6.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-scala_2.10/1.1.6/parboiled-scala_2.10-1.1.6.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.parboiled" name="parboiled-core">
+			<revision name="1.1.6" status="release" pubdate="20130823003221" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://parboiled.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="10">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2654" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-core/ivy-1.1.6.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/parboiled/parboiled-core/1.1.6/parboiled-core-1.1.6.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.1.6" rev-constraint-default="1.1.6" rev-constraint-dynamic="1.1.6" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="parboiled-core" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="166648" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-core/srcs/parboiled-core-1.1.6-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-core/1.1.6/parboiled-core-1.1.6-sources.jar"/>
+					</artifact>
+					<artifact name="parboiled-core" type="jar" ext="jar" status="no" details="" size="187091" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-core/jars/parboiled-core-1.1.6.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-core/1.1.6/parboiled-core-1.1.6.jar"/>
+					</artifact>
+					<artifact name="parboiled-core" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="457802" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-core/docs/parboiled-core-1.1.6-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/parboiled/parboiled-core/1.1.6/parboiled-core-1.1.6-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-util">
+			<revision name="1.2.0" status="release" pubdate="20131214002915" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://spray.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="6">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3111" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-util/ivy-1.2.0.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/io/spray/spray-util/1.2.0/spray-util-1.2.0.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.2.0" rev-constraint-default="1.2.0" rev-constraint-dynamic="1.2.0" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="spray-util" type="jar" ext="jar" status="no" details="" size="128707" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-util/jars/spray-util-1.2.0.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-util/1.2.0/spray-util-1.2.0.jar"/>
+					</artifact>
+					<artifact name="spray-util" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="29878" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-util/srcs/spray-util-1.2.0-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-util/1.2.0/spray-util-1.2.0-sources.jar"/>
+					</artifact>
+					<artifact name="spray-util" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="478948" time="0" location="/Users/wonjoon-g/.ivy2/cache/io.spray/spray-util/docs/spray-util-1.2.0-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/io/spray/spray-util/1.2.0/spray-util-1.2.0-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.10.3" status="release" pubdate="20130927184454" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="7">
+				<license name="BSD-like" url="http://www.scala-lang.org/downloads/license.html          "/>
+				<metadata-artifact status="no" details="" size="2487" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scala-lang/scala-library/ivy-2.10.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.10.3" rev-constraint-default="2.10.3" rev-constraint-dynamic="2.10.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="scala-library" type="jar" ext="jar" status="no" details="" size="7126003" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.10.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3.jar"/>
+					</artifact>
+					<artifact name="scala-library" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="1062304" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scala-lang/scala-library/srcs/scala-library-2.10.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3-sources.jar"/>
+					</artifact>
+					<artifact name="scala-library" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="33911475" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.scala-lang/scala-library/docs/scala-library-2.10.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.3/scala-library-2.10.3-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-slf4j_2.10">
+			<revision name="2.2.3" status="release" pubdate="20131023173726" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://akka.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="2">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="3029" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/ivy-2.2.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.10/2.2.3/akka-slf4j_2.10-2.2.3.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.2.3" rev-constraint-default="2.2.3" rev-constraint-dynamic="2.2.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="akka-slf4j_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="2335" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/srcs/akka-slf4j_2.10-2.2.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.10/2.2.3/akka-slf4j_2.10-2.2.3-sources.jar"/>
+					</artifact>
+					<artifact name="akka-slf4j_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="29614" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/docs/akka-slf4j_2.10-2.2.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.10/2.2.3/akka-slf4j_2.10-2.2.3-javadoc.jar"/>
+					</artifact>
+					<artifact name="akka-slf4j_2.10" type="jar" ext="jar" status="no" details="" size="14495" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/jars/akka-slf4j_2.10-2.2.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.10/2.2.3/akka-slf4j_2.10-2.2.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.slf4j" name="slf4j-api">
+			<revision name="1.7.2" status="release" pubdate="20121011145524" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="3">
+				<metadata-artifact status="no" details="" size="4459" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.slf4j/slf4j-api/ivy-1.7.2.xml" searched="false" origin-is-local="false" origin-location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.slf4j/slf4j-api/1.7.2/ivys/ivy.xml"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.7.2" rev-constraint-default="1.7.2" rev-constraint-dynamic="1.7.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="slf4j-api" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="47186" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.slf4j/slf4j-api/srcs/slf4j-api-1.7.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2-sources.jar"/>
+					</artifact>
+					<artifact name="slf4j-api" type="jar" ext="jar" status="no" details="" size="26083" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.2.jar">
+						<origin-location is-local="false" location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/org.slf4j/slf4j-api/1.7.2/jars/slf4j-api.jar"/>
+					</artifact>
+					<artifact name="slf4j-api" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="183169" time="0" location="/Users/wonjoon-g/.ivy2/cache/org.slf4j/slf4j-api/docs/slf4j-api-1.7.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.2/slf4j-api-1.7.2-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-testkit_2.10">
+			<revision name="2.2.3" status="release" pubdate="20131023173705" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://akka.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="29">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2877" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-testkit_2.10/ivy-2.2.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-testkit_2.10/2.2.3/akka-testkit_2.10-2.2.3.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.2.3" rev-constraint-default="2.2.3" rev-constraint-dynamic="2.2.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="akka-testkit_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="30869" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-testkit_2.10/srcs/akka-testkit_2.10-2.2.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-testkit_2.10/2.2.3/akka-testkit_2.10-2.2.3-sources.jar"/>
+					</artifact>
+					<artifact name="akka-testkit_2.10" type="jar" ext="jar" status="no" details="" size="238520" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-testkit_2.10/jars/akka-testkit_2.10-2.2.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-testkit_2.10/2.2.3/akka-testkit_2.10-2.2.3.jar"/>
+					</artifact>
+					<artifact name="akka-testkit_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="230731" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-testkit_2.10/docs/akka-testkit_2.10-2.2.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-testkit_2.10/2.2.3/akka-testkit_2.10-2.2.3-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-actor_2.10">
+			<revision name="2.2.3" status="release" pubdate="20131023173548" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://akka.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="0">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2638" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/ivy-2.2.3.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.10/2.2.3/akka-actor_2.10-2.2.3.pom"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="2.2.3" rev-constraint-default="2.2.3" rev-constraint-dynamic="2.2.3" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="akka-actor_2.10" type="jar" ext="jar" status="no" details="" size="2669443" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/jars/akka-actor_2.10-2.2.3.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.10/2.2.3/akka-actor_2.10-2.2.3.jar"/>
+					</artifact>
+					<artifact name="akka-actor_2.10" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="321821" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/srcs/akka-actor_2.10-2.2.3-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.10/2.2.3/akka-actor_2.10-2.2.3-sources.jar"/>
+					</artifact>
+					<artifact name="akka-actor_2.10" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="2229531" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/docs/akka-actor_2.10-2.2.3-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.10/2.2.3/akka-actor_2.10-2.2.3-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe" name="config">
+			<revision name="1.0.2" status="release" pubdate="20130703090814" resolver="sbt-chain" artresolver="sbt-chain" homepage="https://github.com/typesafehub/config" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="1">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2712" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe/config/ivy-1.0.2.xml" searched="false" origin-is-local="false" origin-location="file:/Users/wonjoon-g/Downloads/activator-1.0.13/repository/com.typesafe/config/1.0.2/ivys/ivy.xml"/>
+				<caller organisation="twitterstream" name="twitterstream$sources_javadoc_2.10" conf="test-internal, test, optional, compile, provided, runtime" rev="1.0.2" rev-constraint-default="1.0.2" rev-constraint-dynamic="1.0.2" callerrev="1.0"/>
+				<artifacts>
+					<artifact name="config" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="126063" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe/config/srcs/config-1.0.2-sources.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/config/1.0.2/config-1.0.2-sources.jar"/>
+					</artifact>
+					<artifact name="config" type="jar" ext="jar" status="no" details="" size="187497" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe/config/jars/config-1.0.2.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/config/1.0.2/config-1.0.2.jar"/>
+					</artifact>
+					<artifact name="config" type="doc" ext="jar" extra-classifier="javadoc" status="no" details="" size="160436" time="0" location="/Users/wonjoon-g/.ivy2/cache/com.typesafe/config/docs/config-1.0.2-javadoc.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/com/typesafe/config/1.0.2/config-1.0.2-javadoc.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>

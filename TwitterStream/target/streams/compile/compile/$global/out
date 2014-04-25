@@ -1,0 +1,33 @@
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mInitial source changes: [0m
+[0m[[0mdebug[0m] [0m	removed:Set()[0m
+[0m[[0mdebug[0m] [0m	added: Set()[0m
+[0m[[0mdebug[0m] [0m	modified: Set(/Users/wonjoon-g/Dev/Scala/TwitterStream/src/main/scala/main.scala)[0m
+[0m[[0mdebug[0m] [0mRemoved products: Set()[0m
+[0m[[0mdebug[0m] [0mModified external sources: Set()[0m
+[0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set(/Users/wonjoon-g/Dev/Scala/TwitterStream/src/main/scala/main.scala)[0m
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
+[0m[[0mdebug[0m] [0m	product: Set()[0m
+[0m[[0mdebug[0m] [0m	binary dep: Set()[0m
+[0m[[0mdebug[0m] [0m	external source: Set()[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set(/Users/wonjoon-g/Dev/Scala/TwitterStream/src/main/scala/main.scala)[0m
+[0m[[0minfo[0m] [0mCompiling 1 Scala source to /Users/wonjoon-g/Dev/Scala/TwitterStream/target/scala-2.10/classes...[0m
+[0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.10.3[0m
+[0m[[0mdebug[0m] [0mGetting compiler-interface from component compiler for Scala 2.10.3[0m
+[0m[[0mdebug[0m] [0mRunning cached compiler 28bdcdc2, interfacing (CompilerInterface) with Scala compiler version 2.10.3[0m
+[0m[[0mdebug[0m] [0mCalling Scala compiler with arguments  (CompilerInterface):[0m
+[0m[[0mdebug[0m] [0m	-bootclasspath[0m
+[0m[[0mdebug[0m] [0m	/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.7.0_51.jdk/Contents/Home/jre/classes:/Users/wonjoon-g/.sbt/boot/scala-2.10.3/lib/scala-library.jar[0m
+[0m[[0mdebug[0m] [0m	-classpath[0m
+[0m[[0mdebug[0m] [0m	/Users/wonjoon-g/Dev/Scala/TwitterStream/target/scala-2.10/classes:/Users/wonjoon-g/Dev/Scala/TwitterStream/lib/sbt-launch.jar:/Users/wonjoon-g/Dev/Scala/TwitterStream/lib/twitterstreamer-1.0.1.jar:/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-actor_2.10/jars/akka-actor_2.10-2.2.3.jar:/Users/wonjoon-g/.ivy2/cache/com.typesafe/config/bundles/config-1.0.2.jar:/Users/wonjoon-g/.ivy2/cache/com.typesafe.akka/akka-slf4j_2.10/bundles/akka-slf4j_2.10-2.2.3.jar:/Users/wonjoon-g/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.7.2.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-can/bundles/spray-can-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-io/bundles/spray-io-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-util/bundles/spray-util-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-http/bundles/spray-http-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-scala_2.10/bundles/parboiled-scala_2.10-1.1.6.jar:/Users/wonjoon-g/.ivy2/cache/org.parboiled/parboiled-core/bundles/parboiled-core-1.1.6.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-client/bundles/spray-client-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-httpx/bundles/spray-httpx-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/org.jvnet.mimepull/mimepull/jars/mimepull-1.9.3.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-routing/bundles/spray-routing-1.2.0.jar:/Users/wonjoon-g/.ivy2/cache/com.chuusai/shapeless_2.10/jars/shapeless_2.10-1.2.4.jar:/Users/wonjoon-g/.ivy2/cache/io.spray/spray-json_2.10/jars/spray-json_2.10-1.2.5.jar:/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent-akka/jars/agent-akka-0.2-SNAPSHOT.jar:/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/agent/jars/agent-0.2-SNAPSHOT.jar:/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output/jars/output-0.2-SNAPSHOT.jar:/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjweaver/jars/aspectjweaver-1.7.3.jar:/Users/wonjoon-g/.ivy2/cache/org.aspectj/aspectjrt/jars/aspectjrt-1.7.3.jar:/Users/wonjoon-g/.ivy2/cache/org.eigengo.monitor/output-statsd/jars/output-statsd-0.2-SNAPSHOT.jar:/Users/wonjoon-g/.ivy2/cache/com.indeed/java-dogstatsd-client/jars/java-dogstatsd-client-2.0.7.jar[0m
+[0m[[33mwarn[0m] [0mthere were 1 feature warning(s); re-run with -feature for details[0m
+[0m[[33mwarn[0m] [0mone warning found[0m
+[0m[[0mdebug[0m] [0mScala compilation took 9.136393 s[0m
+[0m[[0mdebug[0m] [0mInvalidated by transitive public inheritance: Set()[0m
+[0m[[0mdebug[0m] [0mInvalidated by direct dependency: Set()[0m
+[0m[[0mdebug[0m] [0mNew invalidations:[0m
+[0m[[0mdebug[0m] [0m	Set()[0m
+[0m[[0mdebug[0m] [0mPreviously invalidated, but (transitively) depend on new invalidations:[0m
+[0m[[0mdebug[0m] [0m	Set()[0m
