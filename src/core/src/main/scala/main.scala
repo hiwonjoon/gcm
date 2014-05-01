@@ -13,7 +13,6 @@ object Main extends App {
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
 
   esper_subscriber ! "RequestChatDetection"
-  esper_subscriber ! "StartProcessing"
 
   //case str => subsccriber ! Chat("overload", str)
 

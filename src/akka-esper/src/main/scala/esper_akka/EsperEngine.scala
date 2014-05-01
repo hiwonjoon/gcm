@@ -8,6 +8,7 @@ import common.EsperEvent
 trait EsperEngine {
 
   val esperConfig = new Configuration()
+  esperConfig.addPlugInSingleRowFunction("Filtering", "esper_akka.EsperUtil", "Filtering")
 
   // these are lazy so esperConfig can be configured before using it
   lazy val epService = EPServiceProviderManager.getDefaultProvider(esperConfig)

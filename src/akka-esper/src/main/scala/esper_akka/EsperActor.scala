@@ -35,12 +35,12 @@ class EsperActor extends Actor with EsperEngine with EsperModule {
         packet.eventTypes.foreach {
           case (key, value) => self ! RegisterEventType(key, value)
         }
-
-        self ! DeployStatement(packet.statement, Some(sender))
       }
-    }
 
-    case "StartProcessing" => {
+      packet.statement.foreach {
+        str : String => self ! DeployStatement(str, Some(sender))
+      }
+
       self ! StartProcessing
     }
 
