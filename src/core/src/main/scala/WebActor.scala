@@ -15,5 +15,8 @@ class WebActor extends Actor{
     case "Bye" => {
       log.info("Web subscriber leaving...ㅠㅠ")
     }
+    case str:String => {
+      log.info(str);
+    }
   }
 }

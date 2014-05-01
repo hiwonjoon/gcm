@@ -6,7 +6,7 @@ package controllers
 
 import akka.actor.Actor
 import play.api._
-
+import models._
 class CoreSubscriber extends Actor {
   var remote = context.actorSelection("akka.tcp://core@127.0.0.1:5151/user/WebActor")
 
@@ -21,6 +21,9 @@ class CoreSubscriber extends Actor {
     case "End" => {
       Logger.info("Core Subscriber Ended. Send Hello to remote!")
       remote ! "Bye"
+    }
+    case Talk(name,text) => {
+      remote ! text
     }
   }
 }

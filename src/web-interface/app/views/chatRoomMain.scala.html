@@ -1,22 +1,13 @@
 @(connected: Option[String])(content: Html)
 
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>Websocket Chat-Room</title>
+@main("Welcome to Play")("twitter"){
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/chatRoomMain.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    </head>
-    <body>
-        
-        <div class="topbar">
+<div class="topbar">
             <div class="fill">
                 <div class="container">
-                    <a class="brand" href="@routes.ChatRoomController.index()">Websocket Chat-Room</a>
-
                     @connected.map { username =>
                         <p class="pull-right">
                             Logged in as @username —
@@ -28,7 +19,7 @@
                             <button class="btn" type="submit">Sign in</button>
                         </form>
                     }
-                    
+
                 </div>
             </div>
         </div>
@@ -43,6 +34,7 @@
             </footer>
 
         </div>
-        
+
     </body>
 </html>
+}

@@ -15,30 +15,33 @@ import akka.pattern.ask
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
 
+import controllers.CoreSubscriber
+
+
 object Robot {
   
   def apply(chatRoom: ActorRef) {
     
     // Create an Iteratee that logs all messages to the console.
-    val loggerIteratee = Iteratee.foreach[JsValue](event => Logger("운영자").info(event.toString))
+    val loggerIteratee = Iteratee.foreach[JsValue](event => Logger("robot").info(event.toString))
     
     implicit val timeout = Timeout(1 second)
     // Make the robot join the room
 
-    chatRoom ? (Join("운영자")) map {
+    chatRoom ? (Join("robot")) map {
       case Connected(robotChannel) => 
         // Apply this Enumerator on the logger.
         robotChannel |>> loggerIteratee
     }
-    Talk("운영자", "바르고 고운말 사용합시다. 도배 시 채팅이 금지 될 것입니다.")
-    /*
+    Talk("robot", "hello world")
+
     // Make the robot talk every 30 seconds
     Akka.system.scheduler.schedule(
       30 seconds,
       30 seconds,
       chatRoom,
       Talk("robot", "hello world")
-    ) */
+    )
   }
   
 }
@@ -46,7 +49,8 @@ object Robot {
 object ChatRoom {
   
   implicit val timeout = Timeout(1 second)
-  
+  val core_subscriber = Akka.system.actorOf(Props(classOf[CoreSubscriber]));
+
   lazy val default = {
     val roomActor = Akka.system.actorOf(Props[ChatRoom])
     
@@ -111,6 +115,7 @@ class ChatRoom extends Actor {
     }
     
     case Talk(username, text) => {
+      ChatRoom.core_subscriber ! text
       notifyAll("talk", username, text)
     }
     

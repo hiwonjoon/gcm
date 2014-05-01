@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>트위터 태그 클라우드</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/jqcloud.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/jqcloud-1.0.4.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/noisegen-0.1.4.min.js")" type="text/javascript"></script>
-        <script type="text/javascript" src="@routes.GetTwitterWords.javascriptRoutes"></script>
-        <script type="text/javascript" src='@routes.Assets.at("javascripts/twitter.js")'></script>
-    </head>
-    <body>
-	<div id="twitter_favorite_words" style="width: 550px; height: 350px; border: 1px solid #ccc;"></div>
-	</body>
-</html>
+@main("hello")("twitter"){
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/jqcloud.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+            <script src="@routes.Assets.at("javascripts/jqcloud-1.0.4.min.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.at("javascripts/noisegen-0.1.4.min.js")" type="text/javascript"></script>
+            <script type="text/javascript" src="@routes.GetTwitterWords.javascriptRoutes"></script>
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/twitter.js")'></script>
+    <div id="twitter_favorite_words" style="width: 550px; height: 350px; border: 1px solid #ccc;"></div>
+}
