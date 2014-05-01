@@ -2,6 +2,7 @@ package core
 
 import akka.actor.{Actor,ActorRef}
 import akka.event.Logging
+import common._
 /**
  * Created by wonjoon-g on 2014. 5. 1..
  */
@@ -15,8 +16,8 @@ class WebActor extends Actor{
     case "Bye" => {
       log.info("Web subscriber leaving...ㅠㅠ")
     }
-    case str:String => {
-      log.info(str);
+    case Chat(name, text) => {
+      log.info(name + " : " + text)
     }
   }
 }

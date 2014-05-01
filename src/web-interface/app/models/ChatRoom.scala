@@ -115,7 +115,7 @@ class ChatRoom extends Actor {
     }
     
     case Talk(username, text) => {
-      ChatRoom.core_subscriber ! text
+      ChatRoom.core_subscriber ! Talk(username, text)
       notifyAll("talk", username, text)
     }
     
