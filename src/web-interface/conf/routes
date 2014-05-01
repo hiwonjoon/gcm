@@ -4,6 +4,15 @@
 
 # Home page
 GET     /                           controllers.Application.index
+#Twitter
+GET     /gettwitterwords            controllers.GetTwitterWords.getMessage()
+GET     /assets/javascripts/routes  controllers.GetTwitterWords.javascriptRoutes()
+GET     /twitter                    controllers.TwitterKeyword.index
+#Chat Room
+GET     /startChat                       controllers.ChatRoomController.index
+GET     /room                            controllers.ChatRoomController.chatRoom(username: Option[String])
+GET     /room/chat                       controllers.ChatRoomController.chat(username)
+GET     /assets/javascripts/chatroom.js  controllers.ChatRoomController.chatRoomJs(username: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
