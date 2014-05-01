@@ -28,7 +28,7 @@ object Main extends App {
         val stream = system.actorOf(Props(new TweetStreamActor(TweetStreamerActor.twitterUri,raw_processor) with OAuthTwitterAuthorization),"streamgenerator")
         stream ! "start"
       case str:String =>
-        esper_subscriber ! common.Chat("overload",str)
+        esper_subscriber ! common.ChatWithAddress("overload",str, null)
     }
     commandLoop()
   }

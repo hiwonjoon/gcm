@@ -126,6 +126,10 @@ class ChatRoom extends Actor {
     case Chat(username,text) => {
       notifyAll("talk",username,text)
     }
+
+    case ChatLog(username, text) => {
+      notifyAll("talk","관리자", s"($username)$text")
+    }
   }
   
   def notifyAll(kind: String, user: String, text: String) {

@@ -15,8 +15,10 @@ class RegisterPacket extends Serializable {
 case class EsperEvent(eventType: String, underlying: AnyRef)
 
 case class Chat(@BeanProperty id: String, @BeanProperty message: String)
-case class ChatAbusing(@BeanProperty id: String)
-case class ChatSlang(@BeanProperty id: String)
+case class ChatWithAddress(@BeanProperty id: String, @BeanProperty message: String, @BeanProperty origin:AnyRef)
+case class ChatAbusing(@BeanProperty id: String, @BeanProperty origin:AnyRef)
+case class ChatSlang(@BeanProperty id: String, @BeanProperty messsage: String, @BeanProperty origin:AnyRef)
+case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
 
 case class TweetListRequest()
 case class TweetListResponsePacket(packet:TweetList)
