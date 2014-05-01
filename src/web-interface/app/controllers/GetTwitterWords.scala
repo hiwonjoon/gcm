@@ -9,6 +9,10 @@ case class TwitterWords(text: String, weight: Int)
 object GetTwitterWords extends Controller {
 
   implicit val fooWrites = Json.writes[TwitterWords]
+  val tweet_list = new String();
+  val last_refreshed = 0;
+
+  Global.core_subscriber ! SendToCore(common.TweetListRequest())
 
   def getMessage = Action {
 

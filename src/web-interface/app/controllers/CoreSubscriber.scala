@@ -9,10 +9,19 @@ import play.api._
 import models._
 import common._
 
+case class SendToCore(arg:AnyRef)
+
 class CoreSubscriber extends Actor {
   var remote = context.actorSelection("akka.tcp://core@127.0.0.1:5151/user/WebActor")
 
   def receive = {
+    case SendToCore(arg) => {
+      remote ! arg
+    }
+    case common.TweetListResponsePacket(packet) => {
+      Logger.info("Tweet List Response Packet");
+      Logger.info(packet.Tweets.toString())
+    }
     case "Hello" => {
       Logger.info("Hello from Core!");
     }
@@ -24,6 +33,8 @@ class CoreSubscriber extends Actor {
       Logger.info("Core Subscriber Ended. Send Hello to remote!")
       remote ! "Bye"
     }
-
+    case _ => {
+      Logger.info("Core Subscriber _!!!")
+    }
   }
 }

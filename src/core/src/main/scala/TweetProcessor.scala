@@ -1,6 +1,8 @@
 package core
 
 import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.actor.{ActorSystem,Props}
 import akka.event.Logging
 
 
@@ -10,6 +12,22 @@ import scala.collection.JavaConversions._
 /**
  * Created by wonjoon-g on 2014. 4. 10..
  */
+class TweetGatherer(wannabe : ActorRef) extends Actor
+{
+  val log = Logging(context.system,this);
+
+  def receive: Receive = {
+    case data : collection.mutable.Map[String,Int] => {
+      log.info("data got with TweetGatherer")
+      val tweet_list = new common.TweetList(data.toSeq.sortBy(_._2));
+      wannabe ! common.TweetListResponsePacket(tweet_list);
+    }
+    case _ => {
+      log.info("case _ with TweetGatherer")
+    }
+  }
+}
+
 class TweetProcessor extends Actor {
   val analyzer = new MorphologyAnalyzer("./lib/datas/")
   val word_count = new scala.collection.mutable.HashMap[String,scala.collection.mutable.HashMap[String,Int]];
@@ -39,13 +57,17 @@ class TweetProcessor extends Actor {
 
       tweets_count += 1;
       //Logging(context.system,this).info(flatten.toString())
-      //val text = tweet.text.toLowerCase
-      //val log = Logging(context.system, this)
-      //log.info( s"$text: tweet received. in TweetProcessor")
+//      val text = tweet.text.toLowerCase
+//      val log = Logging(context.system, this)
+//      log.info( s"$text: tweet received. in TweetProcessor")
     case "stat" =>
       Logging(context.system,this).info("current tweets : %d" format tweets_count)
     case "finish" =>
       Logging(context.system,this).info("%s" format word_count("NNP").toSeq.sortBy(_._2).toString() )
+    case ("List",receiver:ActorRef) => {
+      val gatherer = context.system.actorOf(Props(new TweetGatherer(receiver)));
+      gatherer ! word_count("NNP")
+    }
     case _ =>
       val log = Logging(context.system, this)
       log.info(" case with _ in TweetProcessor")

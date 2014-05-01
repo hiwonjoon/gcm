@@ -9,6 +9,10 @@ import common._
 class WebActor extends Actor{
   val log = Logging(context.system,this)
   override def receive = {
+    case common.TweetListRequest() => {
+      log.info("Request Tweet from Web...")
+      Main.tweet_processor ! ("List",sender)
+    }
     case "Hello" => {
       log.info("Hello from Web!")
       sender ! "Hello"
