@@ -33,14 +33,14 @@ object Robot {
         // Apply this Enumerator on the logger.
         robotChannel |>> loggerIteratee
     }
-    TalkFilter("운영자", "곱고 마른 말을 씁시다!")
+    Talk("운영자", "곱고 마른 말을 씁시다!")
 
     // Make the robot talk every 30 seconds
     Akka.system.scheduler.schedule(
       30 seconds,
       30 seconds,
       chatRoom,
-      TalkFilter("운영자", "곱고 마른 말을 씁시다!")
+      Talk("운영자", "곱고 마른 말을 씁시다!")
     )
   }
   
@@ -147,7 +147,6 @@ class ChatRoom extends Actor {
 case class Join(username: String)
 case class Quit(username: String)
 case class Talk(username: String, text: String)
-case class TalkFilter(username: String, text: String)
 case class NotifyJoin(username: String)
 
 case class Connected(enumerator:Enumerator[JsValue])

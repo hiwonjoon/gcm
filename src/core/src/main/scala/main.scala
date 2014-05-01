@@ -7,9 +7,10 @@ import scala.annotation.tailrec
 
 
 object Main extends App {
-  val system = ActorSystem("akka")
+  val system = ActorSystem("core")
   val tweet_processor = system.actorOf(Props(new TweetProcessor),"tweetprocessor")
   val raw_processor = system.actorOf(Props(new RawViewProcessor),"rawprocessor")
+  val web_processor = system.actorOf(Props(new WebActor),"WebActor")
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
 
   esper_subscriber ! "RequestChatDetection"
