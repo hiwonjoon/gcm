@@ -24,8 +24,6 @@ class CoreSubscriber extends Actor {
       Logger.info("Core Subscriber Ended. Send Hello to remote!")
       remote ! "Bye"
     }
-    case Talk(name,text) => {
-      remote ! Chat(name,text)
-    }
+
   }
 }

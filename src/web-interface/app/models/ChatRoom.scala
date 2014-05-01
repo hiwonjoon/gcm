@@ -15,7 +15,7 @@ import akka.pattern.ask
 import play.api.Play.current
 import play.api.libs.concurrent.Execution.Implicits._
 
-import controllers.CoreSubscriber
+import common._
 
 
 object Robot {
@@ -23,33 +23,32 @@ object Robot {
   def apply(chatRoom: ActorRef) {
     
     // Create an Iteratee that logs all messages to the console.
-    val loggerIteratee = Iteratee.foreach[JsValue](event => Logger("robot").info(event.toString))
+    val loggerIteratee = Iteratee.foreach[JsValue](event => Logger("운영자").info(event.toString))
     
     implicit val timeout = Timeout(1 second)
     // Make the robot join the room
 
-    chatRoom ? (Join("robot")) map {
+    chatRoom ? (Join("운영자")) map {
       case Connected(robotChannel) => 
         // Apply this Enumerator on the logger.
         robotChannel |>> loggerIteratee
     }
-    Talk("robot", "hello world")
+    TalkFilter("운영자", "곱고 마른 말을 씁시다!")
 
     // Make the robot talk every 30 seconds
     Akka.system.scheduler.schedule(
       30 seconds,
       30 seconds,
       chatRoom,
-      Talk("robot", "hello world")
+      TalkFilter("운영자", "곱고 마른 말을 씁시다!")
     )
   }
   
 }
 
 object ChatRoom {
-  
+
   implicit val timeout = Timeout(1 second)
-  val core_subscriber = Akka.system.actorOf(Props(classOf[CoreSubscriber]));
 
   lazy val default = {
     val roomActor = Akka.system.actorOf(Props[ChatRoom])
@@ -94,7 +93,7 @@ object ChatRoom {
 }
 
 class ChatRoom extends Actor {
-  
+  var remote = context.actorSelection("akka.tcp://core@127.0.0.1:5151/user/WebActor")
   var members = Set.empty[String]
   val (chatEnumerator, chatChannel) = Concurrent.broadcast[JsValue]
 
@@ -115,15 +114,18 @@ class ChatRoom extends Actor {
     }
     
     case Talk(username, text) => {
-      ChatRoom.core_subscriber ! Talk(username, text)
-      notifyAll("talk", username, text)
+      remote ! Chat(username,text)
+      //notifyAll("talk", username, text)
     }
     
     case Quit(username) => {
       members = members - username
       notifyAll("quit", username, "has left the room")
     }
-    
+
+    case Chat(username,text) => {
+      notifyAll("talk",username,text)
+    }
   }
   
   def notifyAll(kind: String, user: String, text: String) {
@@ -145,6 +147,7 @@ class ChatRoom extends Actor {
 case class Join(username: String)
 case class Quit(username: String)
 case class Talk(username: String, text: String)
+case class TalkFilter(username: String, text: String)
 case class NotifyJoin(username: String)
 
 case class Connected(enumerator:Enumerator[JsValue])

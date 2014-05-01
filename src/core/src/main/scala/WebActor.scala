@@ -18,6 +18,7 @@ class WebActor extends Actor{
     }
     case Chat(name, text) => {
       log.info(name + " : " + text)
+      sender ! Chat(name,text)
     }
   }
 }

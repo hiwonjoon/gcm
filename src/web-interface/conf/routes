@@ -4,6 +4,8 @@
 
 # Home page
 GET     /                           controllers.Application.index
+# menu
+GET     /assets/javascripts/menu.js  controllers.Application.menuJs(menu: String)
 #Twitter
 GET     /gettwitterwords            controllers.GetTwitterWords.getMessage()
 GET     /assets/javascripts/routes  controllers.GetTwitterWords.javascriptRoutes()
