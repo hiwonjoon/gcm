@@ -8,7 +8,6 @@ case class Request(packet:RegisterPacket)
 class RegisterPacket extends Serializable {
   var packetType = ""
   var statement = ArrayBuffer[String] ()
-  var statement = ""
   var eventTypes = Map[String, Class[_ <: Any]]()
 }
 
