@@ -29,5 +29,8 @@ class WebActor extends Actor{
       esper ! ChatWithAddress(name, text, sender)
       sender ! Chat(name,text)
     }
+    case x@EsperError(_) => {
+      Main.esper_subscriber ! x
+    }
   }
 }

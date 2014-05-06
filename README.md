@@ -22,3 +22,9 @@ Game Content Moderator
 ### 동영상
 
 * [RxJava: Reactive Extensions in Scala](http://www.youtube.com/watch?v=tOMK_FYJREw)
+
+*TODO LIST
+1. AKKA Cluster 적용하기.
+2. Scale-out solution & 평가자 구현하기
+3. remote actor 끊어졌을 때 처리
+4. 기냥 구현하기.

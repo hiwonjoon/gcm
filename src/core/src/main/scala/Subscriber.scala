@@ -43,16 +43,16 @@ class Subscriber extends Actor {
       esper ! Request(packet)
     }
 
-    case "RegisterSuccess" => {
-      esper ! "StartProcessing"
-    }
-
     case ChatLog(id, msg) => {
       println(s"($id)$msg")
     }
 
     case ChatWithAddress(id,msg,origin) => {
       esper ! ChatWithAddress(id,msg,self)
+    }
+
+    case EsperError(_) => {
+      self ! "RequestChatDetection";
     }
   }
 }

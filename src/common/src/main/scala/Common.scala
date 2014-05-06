@@ -13,6 +13,7 @@ class RegisterPacket extends Serializable {
 
 case class EsperEvent(eventType: String, underlying: AnyRef)
 
+case class EsperError(error : String)
 case class Chat(@BeanProperty id: String, @BeanProperty message: String)
 case class ChatWithAddress(@BeanProperty id: String, @BeanProperty message: String, @BeanProperty origin:AnyRef)
 case class ChatAbusing(@BeanProperty id: String, @BeanProperty origin:AnyRef)
