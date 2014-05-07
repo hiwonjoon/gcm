@@ -11,7 +11,13 @@ var res = {
     Test17_png : "res/17sprite.png",
     Test18_png : "res/18sprite.png",
     Test_tmx : "res/test.tmx",
-    Test_tmx_include : "res/JapaneseVillage.png"
+    Test_tmx_include : "res/JapaneseVillage.png",
+    B1_png: "res/b1.png",
+    B2_png: "res/b2.png",
+    R1_png: "res/r1.png",
+    R2_png: "res/r2.png",
+    F1_png: "res/f1.png",
+    F2_png: "res/f2.png"
 };
 
 var g_resources = [
@@ -27,6 +33,12 @@ var g_resources = [
     res.Test16_png,
     res.Test17_png,
     res.Test18_png,
+    res.B1_png,
+    res.B2_png,
+    res.R1_png,
+    res.R2_png,
+    res.F1_png,
+    res.F2_png,
 
     //plist
 

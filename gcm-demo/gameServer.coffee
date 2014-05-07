@@ -16,16 +16,17 @@ module.exports = (server) ->
 
   io = require('socket.io').listen server
   io.on 'connection', (socket) ->
-    i = Math.floor Math.random() * maleNames.length
-    j = Math.floor Math.random() * sprites.length
-    myName = maleNames[i]
-    mySprite = sprites[j]
-    playerTable[socket.id] = new Player myName, mySprite
-    maleNames.splice i, 1
+    console.log socket.id
 
-    socket.emit 'sConnection', { name: myName, sprite: mySprite }
-    for k, v of playerTable
-      socket.emit 'sMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y } if v.name != myName
+    ###
+        i = Math.floor Math.random() * maleNames.length
+        j = Math.floor Math.random() * sprites.length
+        myName = maleNames[i]
+        mySprite = sprites[j]
+        playerTable[socket.id] = new Player myName, mySprite
+        maleNames.splice i, 1
+        socket.emit 'sConnection', { name: myName, sprite: mySprite }
+    ###
 
     socket.on 'cMove', (data) ->
       player = playerTable[socket.id]
@@ -35,8 +36,11 @@ module.exports = (server) ->
 
     socket.on 'cAttack', (content) ->
 
-    socket.on 'cSelectCharacter', (data) ->
+    socket.on 'cLogin', (data) ->
       playerTable[socket.id] = new Player data.name, data.sprite
+      socket.emit 'sLogin', { name: data.name, sprite: data.sprite }
+      for k, v of playerTable
+        socket.emit 'sMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y } if v.name != data.name
 
     socket.on 'cChat', (content) ->
       player = playerTable[socket.id]
@@ -45,7 +49,7 @@ module.exports = (server) ->
 
     socket.on 'disconnect', () ->
       player = playerTable[socket.id]
-      maleNames.push player.name
+      #maleNames.push player.name
       socket.broadcast.emit 'sQuit', player.name
 
       delete playerTable[socket.id]

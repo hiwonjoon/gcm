@@ -7,8 +7,9 @@ root.g =
     37: false
     38: false
     40: false
-  name: 'Nobody'
-  sprite: '12sprite'
+  logged: false
+  name: null
+  sprite: null
   moves: []
   quits: []
 
@@ -25,7 +26,7 @@ addMessage = (message) ->
 socket = io.connect window.location.origin
 root.socket = socket
 
-socket.on 'sConnection', (data) ->
+socket.on 'sLogin', (data) ->
   root.g.sprite = data.sprite
   root.g.name = data.name
 

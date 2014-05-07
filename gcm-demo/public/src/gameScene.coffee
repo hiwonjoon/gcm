@@ -1,6 +1,6 @@
 root = exports ? this
 
-Player = cc.Sprite.extend
+root.Player = cc.Sprite.extend
   ctor: (name, sprite) ->
     # animation 세팅
     texture = cc.textureCache.addImage "res/#{sprite}.png"
@@ -66,14 +66,6 @@ root.GameLayer = cc.Layer.extend
     # tilemap의 aritifact 없애기 위해서
     cc.director.setProjection cc.Director.PROJECTION_2D
 
-    @avatar = new Player g.name, g.sprite
-    @avatar.x = size.width / 2
-    @avatar.y = size.height / 2
-    @avatar.mX = @avatar.x
-    @avatar.mY = @avatar.y
-
-    @addChild @avatar, 1
-
     # keyboard 핸들러 등록
     if 'keyboard' of cc.sys.capabilities
       param =
@@ -93,7 +85,15 @@ root.GameLayer = cc.Layer.extend
   map2screen: (x, y) ->
 
   update: (dt) ->
-
+    size = cc.director.getWinSize()
+    if g.logged == false and g.name and g.sprite
+      @avatar = new Player g.name, g.sprite
+      @avatar.x = size.width / 2
+      @avatar.y = size.height / 2
+      @avatar.mX = @avatar.x
+      @avatar.mY = @avatar.y
+      @addChild @avatar, 1
+      g.logged = true
 
     moves = g.moves
     g.moves = []
@@ -127,8 +127,8 @@ root.GameLayer = cc.Layer.extend
         delete @others[quit]
 
     unless cc.sys.isNative
+      return unless @avatar
 
-      size = cc.director.getWinSize()
       mapSize = @tileMap.getContentSize()
       [mX, mY] = [@avatar.mX, @avatar.mY]
       [dX, dY] = [0, 0]
@@ -137,7 +137,6 @@ root.GameLayer = cc.Layer.extend
       dX -= 3 if g.keys[cc.KEY.left] and mX > 0
       dY += 3 if g.keys[cc.KEY.up] and mY < mapSize.height
       dY -= 3 if g.keys[cc.KEY.down] and mY > 0
-
 
       @avatar.setMapPos mX+dX, mY+dY
 
