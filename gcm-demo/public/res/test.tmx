@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="40" height="30" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="JapaneseVillage" tilewidth="32" tileheight="32">
+  <image source="JapaneseVillage.png" trans="ff00ff" width="256" height="1312"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="40" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3DQQ0AAAwDoat/07OxBySsmqqqqqo+fSGSD83AEgAA
+  </data>
+ </layer>
+ <layer name="Tile Layer 2" width="40" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3SsRHAIAxDUTMCZfZfNAtACJxkKzkVv/azzy0i2gfri5Rt1c4dX8UeDB/SyfShnPZp/6N99v3Fx3AyfCgn07ayZs52zmG6BlWbnmwqvplNwbxryzSe2jK8SBvayLChb6hsQznfzrgB5lKXMMASAAA=
+  </data>
+ </layer>
+ <layer name="Tile Layer 3" width="40" height="30">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAC+3QOwqAMBCE4XQ+mngNS9toJdh4/wPFhQ3EgLGwmJXMBwMptviJc0RE/zPqOnRIIXUNOo/Nucm7rLWJ1OedvTb67tBZsl8L+g61QwBpO9ERFZbbiFrQowNeTOgAkFmX2xAhDxadkK41m5XOsqucFVb+qzURAfvcDsASAAA=
+  </data>
+ </layer>
+</map>
