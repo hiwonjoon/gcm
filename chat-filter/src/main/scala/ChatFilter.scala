@@ -55,31 +55,44 @@ class PacketHandler extends Actor {
         "msg" -> JsString(filtered)
       )
     )
-    sender ! Write(ByteString(json.prettyPrint))
+
+    val body = ByteString(json.prettyPrint)
+    val header = ByteString(s"${body.length}\r\n\r\n")
+    sender ! Write(header ++ body)
   }
 
-  val header = "^(\\d+)\\r?\\n\\r?\\n".r
-  def processPacket(buf: ByteString, handler: (JsObject) => Unit): ByteString = {
-    var index = 0
-
-    while (true)
-    {
-      val str = buf.drop(index).utf8String
+  def parseJson(buf: ByteString, index: Int): Option[(JsObject, Int)] = {
+    try {
+      val nowBuf = buf.drop(index)
+      val str = nowBuf.utf8String
       val (jsonSize, jsonStart) = header findFirstMatchIn str match {
         case Some(m) => (m.group(1).toString.toInt, m.end)
         case None => (0, 0)
       }
 
-      if (jsonStart > 0 && str.length >= jsonStart + jsonSize) {
-        val jsonStr = str.substring(jsonStart, jsonStart + jsonSize)
-
+      if (jsonStart > 0 && nowBuf.length >= jsonStart + jsonSize) {
+        val jsonStr = nowBuf.drop(jsonStart).take(jsonSize).utf8String
         val json = JsonParser(jsonStr).asJsObject
-        handler(json)
-
-        index += jsonStart + jsonSize
+        return Some(json, index + jsonStart + jsonSize)
       } else {
-        return buf.drop(index)
+        return None
       }
+    } catch {
+      case _ => return None
+    }
+  }
+
+  val header = "^(\\d+)\\r?\\n\\r?\\n".r
+  def processPacket(buf: ByteString, handler: (JsObject) => Unit): ByteString = {
+    var index = 0
+    while (true)
+    {
+      val res = parseJson(buf, index)
+      if (!res.isDefined)
+        return buf.drop(index)
+
+      handler(res.get._1)
+      index = res.get._2
     }
 
     buf.drop(index)
