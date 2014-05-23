@@ -1,56 +1,300 @@
+
+fs = require 'fs'
+path = require 'path'
+net = require 'net'
+
 class Player
-  constructor: (@name, @sprite) ->
+  constructor: (@world, @socket, @name, @sprite) ->
   x: 0
   y: 0
+  move: (x, y) ->
+  attack: (x, y) ->
+  tick: ->
 
 class Npc
+  constructor: (@world, @name, @sprite) ->
   x: 0
   y: 0
+  testTick: 0
+  move: (x, y) ->
+  attack: (x, y) ->
+  tick: ->
+    @testTick++
+    if @testTick % 10 == 0
+      x = @x - 2 + Math.floor( Math.random() * 5 )
+      y = @y - 2 + Math.floor( Math.random() * 5 )
+      @world.processNpcMove @, x, y
 
-maleNames = ['Major', 'Gael', 'Jase', 'Messiah', 'Brantley', 'Iker', 'King', 'Rory', 'Ari', 'Maverick', 'Armani', 'Knox', 'Gianni', 'Zayden', 'August', 'Barrett', 'Remington', 'Kasen', 'Zaiden', 'Orion', 'Atticus', 'Leon', 'Abram', 'Ryker', 'Gunnar', 'Waylon', 'Lincoln', 'Bruce', 'Abel', 'Kendrick', 'Karter', 'Everett', 'Archer', 'Graham', 'Damian', 'Cyrus', 'Cason', 'Gunner', 'Bennett', 'Beau', 'Romeo', 'Noel', 'Luca', 'Ahmed', 'Royce', 'Arjun', 'Jaxson', 'Emmett', 'Weston', 'Theodore', 'Sullivan', 'Mateo', 'Leo', 'Declan', 'Paxton', 'Kason', 'Malcolm', 'Chris', 'Milo', 'Elliot', 'Gustavo', 'Zachariah', 'Phillip', 'Elliott', 'Braxton', 'Warren', 'Kolton', 'Greyson', 'Sawyer', 'Elias', 'Jayce', 'Dean', 'Prince', 'Jamari', 'Emerson', 'Silas', 'Dexter', 'Orlando', 'Porter', 'Louis', 'Jaxon', 'Jace', 'Gideon', 'Khalil', 'Hudson', 'Ezra', 'Davis', 'Landyn', 'Kingston', 'Johan', 'Calvin', 'Ali', 'Lukas', 'Jasper', 'Harrison', 'Zander', 'River', 'Maxwell', 'Leonel', 'Jonas', 'Desmond', 'Cruz', 'Beckett', 'Myles', 'Jeremy', 'Ivan', 'Alexis', 'Muhammad', 'Judah', 'Jax', 'Henry', 'Eli', 'Avery', 'Anderson', 'Jonah', 'Jay', 'Steven', 'Grayson', 'Tucker', 'Rhys', 'Marco', 'Levi', 'Kamden', 'Julius', 'Finn', 'Zion', 'Hunter', 'Bradley', 'Santiago', 'Liam', 'Keegan', 'Damon', 'Colton', 'Ryder', 'Preston', 'Jeffrey', 'Wyatt', 'Victor', 'Rowan', 'Phoenix', 'Kellen', 'Keith', 'Kaiden', 'Kai', 'Griffin', 'Emilio', 'Dominick', 'Ramon', 'Owen', 'Nehemiah', 'Maximus', 'Kayden', 'Easton', 'Dominic', 'Walker', 'Titus', 'Reid', 'Oliver', 'Isaac', 'Carter', 'Asher', 'Tanner', 'Solomon', 'Sebastian', 'Nolan', 'Miles', 'Lorenzo', 'Ethan', 'Dallas', 'Camden', 'Bryson', 'Alijah', 'Timothy', 'Richard', 'Karson', 'Joaquin', 'Jameson', 'James', 'Hugo', 'Holden', 'Drew', 'Charlie', 'Benjamin', 'Amir', 'Maddox', 'Luke', 'Lucas', 'Joseph', 'Dylan', 'Blake', 'Austin', 'Andy', 'Wesley', 'Tate', 'Stephen', 'Samuel', 'Ronan', 'Robert', 'Patrick', 'Noah', 'Marvin', 'Lawrence', 'Josiah', 'Johnny', 'Jackson', 'Isaiah', 'Dawson', 'Cohen', 'Ayden', 'Thomas', 'Simon', 'Nathaniel', 'Micah', 'Matthew', 'Mason', 'Landon', 'Kevin', 'Jacob', 'Gabriel', 'Elijah', 'Caleb', 'Bentley', 'Antonio', 'Adriel', 'Walter', 'Ryan', 'Parker', 'Nathan', 'Logan', 'Leonardo', 'John', 'Jeremiah', 'Jack', 'George', 'Derek', 'David', 'Daniel', 'Cooper', 'Colt', 'Charles', 'Cameron', 'Brady', 'Alexander', 'Aiden', 'Adam', 'Zane', 'William', 'Tristan', 'Skyler', 'Roman', 'Michael', 'Luis', 'Jordan', 'Jamison', 'Giovanni', 'Clayton', 'Christopher', 'Carson', 'Brayden', 'Andrew', 'Abraham', 'Aaron', 'Vincent', 'Martin', 'Julian', 'Juan', 'Joshua', 'Jorge', 'Jayden', 'Ezekiel', 'Eric', 'Colin', 'Christian', 'Bryce', 'Amari', 'Alex', 'Zachary', 'Xavier', 'Philip', 'Miguel', 'Marcus', 'Malachi', 'Jonathan', 'Gavin', 'Erick', 'Dustin', 'Curtis', 'Carlos', 'Anthony', 'Adrian', 'Sergio', 'Reed', 'Kenneth', 'Jason', 'Connor', 'Angel', 'Tristen', 'Trent', 'Ruben', 'Ricky', 'Pierce', 'Paul', 'Omar', 'Marcos', 'Kyle', 'Kameron', 'Ismael', 'Ian', 'Felix', 'Cash', 'Nicholas', 'Jude', 'Jose', 'Fabian', 'Evan', 'Alan', 'Spencer', 'Peter', 'Marshall', 'Jesus', 'Izaiah', 'Gregory', 'Dillon', 'Dane', 'Cole', 'Chase', 'Brody', 'Alfredo', 'Albert', 'Aidan', 'Taylor', 'Rodrigo', 'Mohamed', 'Max', 'Kaden', 'Esteban', 'Edward', 'Darren', 'Caiden', 'Braylen', 'Brandon', 'Pedro', 'Pablo', 'Kristopher', 'Kellan', 'Kaleb', 'Jesse', 'Frank', 'Drake', 'Dalton', 'Allen', 'Aden', 'Xander', 'Diego', 'Dante', 'Bryan', 'Brock', 'Tyson', 'Tyler', 'Ricardo', 'Rafael', 'Nicolas', 'Joel', 'Grant', 'Erik', 'Derrick', 'Angelo', 'Andre', 'Roberto', 'Nikolas', 'Jett', 'Gerardo', 'Finnegan', 'Corbin', 'Brooks', 'Andres', 'Raymond', 'Leland', 'Kyler', 'Dennis', 'Cody', 'Chandler', 'Cayden', 'Troy', 'Oscar', 'Manuel', 'Justin', 'Jaime', 'Francisco', 'Enzo', 'Enrique', 'Devin', 'Tony', 'Rocco', 'Mathew', 'Caden', 'Scott', 'Saul', 'Peyton', 'Mark', 'Lane', 'Javier', 'Issac', 'Brian', 'Arthur', 'Malik', 'Johnathan', 'Gage', 'Emmanuel', 'Alejandro', 'Sean', 'Moises', 'Hayden', 'Emiliano', 'Damien', 'Colten', 'Adan', 'Landen', 'Hector', 'Eduardo', 'Dakota', 'Brycen', 'Travis', 'Julio', 'Jaiden', 'Ibrahim', 'Donovan', 'Darius', 'Trenton', 'Riley', 'Mekhi', 'Jayson', 'Trevor', 'Russell', 'Kade', 'Garrett', 'Donald', 'Collin', 'Cade', 'Armando', 'Shawn', 'Seth', 'Josue', 'Jake', 'Chance', 'Ryland', 'Quinn', 'Edgar', 'Brennan', 'Conner', 'Axel', 'Alberto', 'Matteo', 'Braydon', 'Arturo', 'Alec', 'Mauricio', 'Larry', 'Cristian', 'Ty', 'Lance', 'Kobe', 'Jared', 'Grady', 'Colby', 'Maximiliano', 'Mario', 'Keaton', 'Nico', 'Maximilian', 'Ashton', 'Shane', 'Sam', 'Rylan', 'Israel', 'Quentin', 'Fernando', 'Danny', 'Uriel', 'Cesar', 'Bryant', 'Jacoby', 'Edwin', 'Brenden', 'Brendan', 'Ronald', 'Joe', 'Gary', 'Corey', 'Jaden', 'Jimmy', 'Raul', 'Maurice', 'Mitchell', 'Reece', 'Emanuel', 'Braden', 'Devon', 'Braylon', 'Ernesto', 'Jaylen', 'Jerry', 'Zackary', 'Eddie', 'Randy', 'Payton', 'Jakob', 'Casey', 'Trey', 'Jalen', 'Amare', 'Brayan', 'Cullen', 'Kieran', 'Yahir', 'Braeden']
-sprites = ['08sprite', '11sprite', '12sprite', '13sprite', '15sprite', '16sprite', '17sprite', '18sprite']
+class Projectile
+  constructor: (@world, @name, @sprite) ->
+  x: 0
+  y: 0
+  tick: ->
+
+class World
+  constructor: ->
+
+  playerIdTable: {}
+  playerNameTable: {}
+  npcTable: {}
+  projectileTable: {}
+  npcSpriteList: []
+  maxNpc: 30
+  mapWidth: 1200 # gara
+  mapHeight: 900
+  index: 0
+
+  processLogin: (socket) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+
+    playerSocket = player.socket
+    playerSocket.emit 'sLogin', { name: player.name, sprite: player.sprite }
+    for k, v of @playerNameTable
+      playerSocket.emit 'sPcMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y } if v.name != player.name
+
+    for k, v of @npcTable
+      playerSocket.emit 'sNpcMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y }
+
+  processLogout: (socket) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+
+    playerSocket = player.socket
+    playerSocket.broadcast.emit 'sQuit', player.name
+
+    delete @playerIdTable[playerSocket.id]
+    delete @playerNameTable[player.name]
+
+  processPcMove: (socket, x, y) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+
+    playerSocket = player.socket
+    player.x = x
+    player.y = y
+    playerSocket.broadcast.emit 'sPcMove', { name: player.name, sprite: player.sprite, x: player.x, y: player.y }
+
+  processNpcMove: (npc, x, y) ->
+    npc.x = x
+    npc.y = y
+    for k, v of @playerNameTable
+      v.socket.emit 'sNpcMove', { name: npc.name, sprite: npc.sprite, x: npc.x, y: npc.y }
+
+  processChat: (from, to, msg) ->
+    player = @playerNameTable[from]
+    return unless player
+
+    playerSocket = player.socket
+    playerSocket.emit 'sChat', 'You said: ' + msg
+    playerSocket.broadcast.emit 'sChat', player.name + ' said: ' + msg
+
+  spawnNpc: ->
+    rand = Math.floor(Math.random() * @npcSpriteList.length)
+    npc = new Npc @, "#{@index}_test", @npcSpriteList[rand]
+    npc.x = Math.floor(Math.random() * @mapWidth)
+    npc.y = Math.floor(Math.random() * @mapHeight)
+    @npcTable[npc.name] = npc
+    @index++
+
+    for k, v of @playerNameTable
+      v.socket.emit 'sNpcMove', { name: npc.name, sprite: npc.sprite, x: npc.x, y: npc.y }
+
+  tick: ->
+    for k, v of @projectileTable
+      v.tick()
+
+    for k, v of @npcTable
+      v.tick()
+
+    for k, v of @playerIdTable
+      v.tick()
+
+    nowNpc = (v for k, v of @npcTable)
+    if nowNpc.length < @maxNpc
+      @spawnNpc()
+
+  loadDatasheet: ->
+    dataDir = path.join __dirname, 'data'
+    skillTeplateCsv = path.join dataDir, 'skill.csv'
+    npcTemplateCsv = path.join dataDir, 'npc.csv'
+    spawnTemplateCsv = path.join dataDir, 'spawn.csv'
+
+    loadFromCsv = (csvPath, onLoadRecord) ->
+      text = fs.readFileSync csvPath, 'utf8'
+      lines = text.split '\n'
+      for line in lines when line.trim().length > 0
+        onLoadRecord line.split ','
+
+    skillTemplateTable = {}
+    loadFromCsv skillTeplateCsv, (record) ->
+      [id, name, atk, coolTime] = record
+      id = parseInt id
+      atk = parseInt atk
+      coolTime = parseInt coolTime
+      skillTemplateTable[id] = new SkillTemplate id, name, atk, coolTime
+
+    npcTemplateTable = {}
+    loadFromCsv npcTemplateCsv, (record) ->
+      [id, name, sprite, hp, skillListStr] = record
+      id = parseInt id
+      hp = parseInt hp
+      skillList = []
+      for skillTemplateId in skillListStr.split ';'
+        skill = skillTemplateTable[skillTemplateId]
+        skillList.push skill if skill
+
+      npcTemplateTable[id] = new NpcTemplate id, name, sprite, hp, skillList
+
+    spawnTemplateTable = {}
+    loadFromCsv spawnTemplateCsv, (record) ->
+      [id, npcTemplateId, x, y, respawnMsec] = record
+      id = parseInt id
+      npcTemplateId = parseInt npcTemplateId
+      x = parseInt x
+      y = parseInt y
+      respawnMsec = parseInt respawnMsec
+
+      npcTemplate = npcTemplateTable[npcTemplateId]
+      spawnTemplateTable[id] = new SpawnTemplate id, npcTemplate, x, y, respawnMsec if npcTemplate
+
+    fileList = fs.readdirSync path.join __dirname, 'public', 'res', 'npc'
+    @npcSpriteList = (file.substring(0, file.length - 4) for file in fileList when /\.png$/.test(file))
+
+
+  init: ->
+    @loadDatasheet()
+    setInterval =>
+      @tick()
+    , 100
+
+  createPlayer: (socket, name, sprite) ->
+    player = new Player @, socket, name, sprite
+    @playerIdTable[socket.id] = player
+    @playerNameTable[player.name] = player
+    @processLogin socket
+
+class GameServer
+  constructor: (@httpServer) ->
+
+  init: ->
+    @handleConnection()
+    @connectToGcm '127.0.0.1', 1338
+    @world = new World @
+    @world.init()
+
+  getPlayerBySocket: (socket) ->
+    @world.playerIdTable[socket.id]
+
+  handleConnection: ->
+    io = require('socket.io').listen @httpServer
+    io.on 'connection', (socket) =>
+      console.log socket.id
+
+      ###
+          i = Math.floor Math.random() * maleNames.length
+          j = Math.floor Math.random() * sprites.length
+          myName = maleNames[i]
+          mySprite = sprites[j]
+          playerTable[socket.id] = new Player myName, mySprite
+          maleNames.splice i, 1
+          socket.emit 'sConnection', { name: myName, sprite: mySprite }
+      ###
+
+      socket.on 'cMove', (data) =>
+        @world.processPcMove socket, data.x, data.y
+
+      socket.on 'cAttack', (data) =>
+        @world.processAttack socket, data.x, data.y
+
+      socket.on 'cLogin', (data) =>
+        @world.createPlayer socket, data.name, data.sprite
+
+      socket.on 'cChat', (data) =>
+        if @gcmClient
+          @sendToGcm
+            msgType: 'chat'
+            body:
+              from: data.from
+              to: data.to
+              msg: data.msg
+        else
+          @world.processChat data.from, data.to, data.msg
+
+      socket.on 'disconnect', () =>
+        @world.processLogout socket
+
+
+  makePacket = (jsonData) ->
+    body = new Buffer JSON.stringify(jsonData), 'utf8'
+    header = new Buffer "#{body.length}\r\n\r\n", 'utf8'
+    packet = new Buffer header.length + body.length
+    header.copy packet
+    body.copy packet, header.length
+    packet
+
+  sendToGcm: (jsonData) ->
+    @gcmClient.write makePacket jsonData
+
+  gcmClient: null
+
+  onGcm: (json) ->
+    switch json.msgType
+      when 'chat'
+        data = json.body
+        @world.processChat data.from, data.to, data.msg
+
+  connectToGcm: (ip, port) ->
+    client = net.createConnection ip, port
+    buf = new Buffer 0
+
+    client.on 'error', (err) =>
+      console.log 'Error!!! try to reconnect after 10 secs'
+      setTimeout =>
+        @connectToGcm ip, port
+      , 10000
+
+    client.on 'connect', =>
+      console.log 'Connected'
+      @gcmClient = client
+
+      #test
+      @sendToGcm
+        msgType: 'chat'
+        body:
+          from: 'John'
+          to: 'Jane'
+          msg: 'Hello, World wtf2 오호'
+
+    client.on 'data', (data) =>
+      newBuf = new Buffer (buf.length + data.length)
+      buf.copy newBuf
+      data.copy newBuf, buf.length
+      buf = newBuf
+
+      loop
+        str = buf.toString 'utf8'
+        match = /^(\d+)\r?\n\r?\n/.exec str
+        break unless match
+
+        matchSize = match[0].length
+        jsonSize = parseInt(match[1])
+        nextPos = match.index + matchSize + jsonSize
+        break if buf.length < nextPos
+
+        jsonBegin = match.index + matchSize
+        jsonEnd = jsonBegin + jsonSize
+        jsonStr = buf.toString 'utf8', jsonBegin, jsonEnd
+
+        json = JSON.parse jsonStr
+        @onGcm json
+
+        buf = buf.slice nextPos
+
+    client.on 'close', =>
+      console.log 'Connection closed'
 
 module.exports = (server) ->
-
-  playerTable = {}
-
-  io = require('socket.io').listen server
-  io.on 'connection', (socket) ->
-    console.log socket.id
-
-    ###
-        i = Math.floor Math.random() * maleNames.length
-        j = Math.floor Math.random() * sprites.length
-        myName = maleNames[i]
-        mySprite = sprites[j]
-        playerTable[socket.id] = new Player myName, mySprite
-        maleNames.splice i, 1
-        socket.emit 'sConnection', { name: myName, sprite: mySprite }
-    ###
-
-    socket.on 'cMove', (data) ->
-      player = playerTable[socket.id]
-      player.x = data.x
-      player.y = data.y
-      socket.broadcast.emit 'sMove', { name: player.name, sprite: player.sprite, x: data.x, y: data.y }
-
-    socket.on 'cAttack', (content) ->
-
-    socket.on 'cLogin', (data) ->
-      playerTable[socket.id] = new Player data.name, data.sprite
-      socket.emit 'sLogin', { name: data.name, sprite: data.sprite }
-      for k, v of playerTable
-        socket.emit 'sMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y } if v.name != data.name
-
-    socket.on 'cChat', (content) ->
-      player = playerTable[socket.id]
-      socket.emit 'sChat', 'You said: ' + content
-      socket.broadcast.emit 'sChat', player.name + ' said: ' + content
-
-    socket.on 'disconnect', () ->
-      player = playerTable[socket.id]
-      #maleNames.push player.name
-      socket.broadcast.emit 'sQuit', player.name
-
-      delete playerTable[socket.id]
+  gameServer = new GameServer server
+  gameServer.init()
 

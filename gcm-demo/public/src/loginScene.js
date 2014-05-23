@@ -49,9 +49,9 @@
       var backButton, forwardButton, i, menu, selectButton, size, _ref;
       this._super();
       size = cc.director.getWinSize();
-      backButton = cc.MenuItemImage.create(res.B1_png, res.B2_png, this.backCallback, this);
-      selectButton = cc.MenuItemImage.create(res.R1_png, res.R2_png, this.selectCallback, this);
-      forwardButton = cc.MenuItemImage.create(res.F1_png, res.F2_png, this.forwardCallback, this);
+      backButton = cc.MenuItemImage.create(res.b1_png, res.b2_png, this.backCallback, this);
+      selectButton = cc.MenuItemImage.create(res.r1_png, res.r2_png, this.selectCallback, this);
+      forwardButton = cc.MenuItemImage.create(res.f1_png, res.f2_png, this.forwardCallback, this);
       menu = cc.Menu.create(backButton, selectButton, forwardButton);
       _ref = [0, 0], menu.x = _ref[0], menu.y = _ref[1];
       backButton.x = size.width / 2 - 100;

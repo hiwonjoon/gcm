@@ -1,9 +1,9 @@
 root = exports ? this
 
-root.Player = cc.Sprite.extend
-  ctor: (name, sprite) ->
+root.Character = cc.Sprite.extend
+  ctor: (name, spriteImage) ->
     # animation 세팅
-    texture = cc.textureCache.addImage "res/#{sprite}.png"
+    texture = cc.textureCache.addImage spriteImage
     texSize = texture.getContentSize()
     width = texSize.width / 4
     height = texSize.height / 4
@@ -31,6 +31,23 @@ root.Player = cc.Sprite.extend
     @nowAction = @moveAction.down
     @runAction @nowAction
 
+    size = @getContentSize()
+
+    drawHp = cc.DrawNode.create()
+    drawHp.drawRect cc.p(0, size.height + 2), cc.p(size.width, size.height + 10), cc.color(255, 0, 0, 255)
+
+    drawShadow = cc.DrawNode.create()
+    drawShadow.drawDot cc.p(size.width / 2, size.height / 20), size.width / 3, cc.color(100, 100, 100, 255)
+    drawShadow.setScaleY 0.3
+
+    label = cc.LabelTTF.create name, 'Consolas', 15
+    label.color = cc.color 20, 20, 20
+    label.setPosition cc.p size.width / 2, size.height + 20
+
+    @addChild drawShadow, -1
+    @addChild label, 1
+    @addChild drawHp, 1
+
   setMapPos: (x, y) ->
     dX = x - @mX
     dY = y - @mY
@@ -50,6 +67,14 @@ root.Player = cc.Sprite.extend
     @mX = x
     @mY = y
 
+root.Npc = Character.extend
+  ctor: (name, sprite) ->
+    @_super name, "res/npc/#{sprite}.png"
+
+root.Player = Character.extend
+  ctor: (name, sprite) ->
+    @_super name, "res/pc/#{sprite}.png"
+
 root.GameLayer = cc.Layer.extend
   init: ->
     @_super()
@@ -57,7 +82,7 @@ root.GameLayer = cc.Layer.extend
 
     # map 로딩
     tileMapTag = 337
-    @tileMap = cc.TMXTiledMap.create res.Test_tmx
+    @tileMap = cc.TMXTiledMap.create res.test_tmx
 
     @addChild @tileMap, 0, tileMapTag
     @tileMap.anchorX = 0
@@ -78,7 +103,8 @@ root.GameLayer = cc.Layer.extend
 
     @scheduleUpdate()
 
-    @others = {}
+    @otherPcs = {}
+    @npcs = {}
 
     true
 
@@ -95,36 +121,60 @@ root.GameLayer = cc.Layer.extend
       @addChild @avatar, 1
       g.logged = true
 
-    moves = g.moves
-    g.moves = []
+    packets = g.packets
+    g.packets = []
 
-    for move in moves
-      name = move.name
-      sprite = move.sprite
-      x = move.x
-      y = move.y
+    for packet in packets
+      msgType = packet.msgType
+      data = packet.data
+      switch msgType
+        when 'sLogin'
+          g.sprite = data.sprite
+          g.name = data.name
 
-      if name of @others
-        player = @others[name]
-        player.setMapPos x, y
-        player.x = x
-        player.y = y
-      else
-        player = new Player name, sprite
-        player.setMapPos x, y
-        player.x = x
-        player.y = y
-        @tileMap.addChild player, 1
-        @others[name] = player
+        when 'sPcMove'
+          name = data.name
+          sprite = data.sprite
+          x = data.x
+          y = data.y
 
-    quits = g.quits
-    g.quits = []
+          if name of @otherPcs
+            player = @otherPcs[name]
+            player.setMapPos x, y
+            player.x = x
+            player.y = y
+          else
+            player = new Player name, sprite
+            player.setMapPos x, y
+            player.x = x
+            player.y = y
+            @tileMap.addChild player, 1
+            @otherPcs[name] = player
 
-    for quit in quits
-      if quit of @others
-        other = @others[quit]
-        @tileMap.removeChild other
-        delete @others[quit]
+        when 'sNpcMove'
+          name = data.name
+          sprite = data.sprite
+          x = data.x
+          y = data.y
+
+          if name of @npcs
+            npc = @npcs[name]
+            npc.setMapPos x, y
+            npc.x = x
+            npc.y = y
+          else
+            npc = new Npc name, sprite
+            npc.setMapPos x, y
+            npc.x = x
+            npc.y = y
+            @tileMap.addChild npc, 1
+            @npcs[name] = npc
+
+        when 'sQuit'
+          if quit of @otherPcs
+            other = @otherPcs[quit]
+            @tileMap.removeChild other
+            delete @otherPcs[quit]
 
     unless cc.sys.isNative
       return unless @avatar

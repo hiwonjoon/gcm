@@ -39,9 +39,9 @@ root.LoginLayer = cc.Layer.extend
   onEnter: ->
     @_super()
     size = cc.director.getWinSize()
-    backButton = cc.MenuItemImage.create res.B1_png, res.B2_png, @backCallback, this
-    selectButton = cc.MenuItemImage.create res.R1_png, res.R2_png, @selectCallback, this
-    forwardButton = cc.MenuItemImage.create res.F1_png, res.F2_png, @forwardCallback, this
+    backButton = cc.MenuItemImage.create res.b1_png, res.b2_png, @backCallback, this
+    selectButton = cc.MenuItemImage.create res.r1_png, res.r2_png, @selectCallback, this
+    forwardButton = cc.MenuItemImage.create res.f1_png, res.f2_png, @forwardCallback, this
     menu = cc.Menu.create backButton, selectButton, forwardButton
     [menu.x, menu.y] = [0, 0]
     backButton.x = size.width / 2 - 100

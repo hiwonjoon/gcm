@@ -10,8 +10,7 @@ root.g =
   logged: false
   name: null
   sprite: null
-  moves: []
-  quits: []
+  packets: []
 
 messageElement = document.getElementById 'messages'
 lastMessageElement = null
@@ -26,23 +25,29 @@ addMessage = (message) ->
 socket = io.connect window.location.origin
 root.socket = socket
 
-socket.on 'sLogin', (data) ->
-  root.g.sprite = data.sprite
-  root.g.name = data.name
+emitSuper = socket.emit
+socket.emit = ->
+  emitSuper.apply socket, arguments
+
+onSuper = socket.$emit
+socket.$emit = ->
+  if arguments[0] == 'sChat' # bypass only 'sChat'
+    onSuper.apply socket, arguments
+  else
+    root.g.packets.push
+      msgType: arguments[0]
+      data: arguments[1]
 
 socket.on 'sChat', (content) ->
   addMessage content
 
-socket.on 'sMove', (data) ->
-  root.g.moves.push data
-
-socket.on 'sQuit', (data) ->
-  root.g.quits.push data
-
 inputElement = document.getElementById 'input'
 inputElement.onkeydown = (keyboardEvent) ->
   if (keyboardEvent.keyCode == 13)
-    socket.emit 'cChat', inputElement.value
+    socket.emit 'cChat',
+      from: g.name
+      to: ''
+      msg: inputElement.value
     inputElement.value = ''
     false
   else
