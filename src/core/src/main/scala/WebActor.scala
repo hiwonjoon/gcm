@@ -24,10 +24,10 @@ class WebActor extends Actor{
       log.info("Web subscriber leaving...ㅠㅠ")
     }
 
-    case Chat(name, text) => {
+    case common.Chat(name, text) => {
       log.info(name + " : " + text)
-      esper ! ChatWithAddress(name, text, sender)
-      sender ! Chat(name,text)
+      esper ! common.ChatWithAddress(name, text, sender)
+      sender ! common.Chat(name,text)
     }
     case x@EsperError(_) => {
       Main.esper_subscriber ! x

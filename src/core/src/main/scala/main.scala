@@ -12,6 +12,7 @@ object Main extends App {
   val raw_processor = system.actorOf(Props(new RawViewProcessor),"rawprocessor")
   val web_processor = system.actorOf(Props(new WebActor),"WebActor")
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
+  val chat_processor = system.actorOf(Props(new ChatFilter(1338)),"ChatFilter")
 
   esper_subscriber ! "RequestChatDetection"
 

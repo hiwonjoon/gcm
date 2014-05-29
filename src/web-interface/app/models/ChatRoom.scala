@@ -33,14 +33,14 @@ object Robot {
         // Apply this Enumerator on the logger.
         robotChannel |>> loggerIteratee
     }
-    Talk("운영자", "곱고 마른 말을 씁시다!")
+    Talk("운영자", "곱고 바른 말을 씁시다!")
 
     // Make the robot talk every 30 seconds
     Akka.system.scheduler.schedule(
       30 seconds,
       30 seconds,
       chatRoom,
-      Talk("운영자", "곱고 마른 말을 씁시다!")
+      Talk("운영자", "곱고 바른 말을 씁시다!")
     )
   }
   
