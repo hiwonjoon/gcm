@@ -43,22 +43,57 @@ class EsperActor extends Actor with EsperEngine with EsperModule {
               self ! RegisterEventType(key, value)
             }
           }
+
           packet.statement.foreach {
-            str: String => self ! DeployStatement(str, Some(sender))
+            case (expression, subscriber) => {
+              if(subscriber == None)
+                self ! DeployStatement(expression, None)
+              else
+                self ! DeployStatement(expression, Some(subscriber.asInstanceOf[ActorRef]))
+            }
           }
         }
-
       }
-    case RegisterEventType(name, clz) => esperConfig.addEventType(name, clz.getName)
-    case DeployStatement(epl, listener) => createEPL(epl)(evt => listener map ( l => l ! evt))
+
+    case RegisterEventType(name, clz) => {
+      esperConfig.addEventType(name, clz.getName)
+      log.info(s"Register : $name ")
+    }
+
+    case DeployStatement(epl, listener) => {
+      createEPL(epl)(evt => listener map ( l => l ! evt))
+      log.info(s"Deploy : $epl ($listener)")
+    }
+
     case DeployModule(text, listeners) => installModule(text) { evt => listeners.get(evt.eventType) map (_ ! evt)}
+
     case evt@_ => {
+
+      var eventFlag = false
+      event_types_checker.foreach {
+        case f@_ => if(f(evt)) eventFlag = true
+      }
+
+      if(eventFlag == true)
+      {
+        epRuntime.sendEvent(evt)
+        log.info(s"send Event : $evt")
+      }
+      else {
+        sender ! EsperError("Not registered event")
+        log.info(s"receive error : $evt")
+      }
+
+/*
       val type_matched = event_types_checker.takeWhile( f => f(evt) )
+
       if( type_matched.size != 0 )
         epRuntime.sendEvent(evt)
       else {
         sender ! EsperError("Not registered event");
+        log.info(s"receive error")
       }
+*/
     }
   }
 }

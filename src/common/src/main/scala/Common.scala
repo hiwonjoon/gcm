@@ -7,7 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 case class Request(packet:RegisterPacket)
 class RegisterPacket extends Serializable {
   var packetType = ""
-  var statement = ArrayBuffer[String] ()
+  var statement = Map[String, AnyRef] ()
   var eventTypes = Map[String, Class[_ <: Any]]()
 }
 
@@ -19,6 +19,8 @@ case class ChatWithAddress(@BeanProperty id: String, @BeanProperty message: Stri
 case class ChatAbusing(@BeanProperty id: String, @BeanProperty origin:AnyRef)
 case class ChatSlang(@BeanProperty id: String, @BeanProperty messsage: String, @BeanProperty origin:AnyRef)
 case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
+case class Macro(@BeanProperty id: String, @BeanProperty cosine: Double)
+case class MacroDetection(@BeanProperty id: String)
 
 case class TweetListRequest()
 case class TweetListResponsePacket(packet:TweetList)

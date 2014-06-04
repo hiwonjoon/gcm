@@ -14,7 +14,7 @@ object Main extends App {
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
   val chat_processor = system.actorOf(Props(new ChatFilter(1338)),"ChatFilter")
 
-  esper_subscriber ! "RequestChatDetection"
+  esper_subscriber ! "RequestDetection"
 
   //case str => subsccriber ! Chat("overload", str)
 
@@ -29,7 +29,13 @@ object Main extends App {
         val stream = system.actorOf(Props(new TweetStreamActor(TweetStreamerActor.twitterUri,raw_processor) with OAuthTwitterAuthorization),"streamgenerator")
         stream ! "start"
       case str:String =>
-        esper_subscriber ! common.ChatWithAddress("overload",str, null)
+        if(str.contains("cos"))
+        {
+          val value:Double = str.replaceAll("cos", "").toDouble
+          esper_subscriber ! common.Macro("overload", value)
+        }
+        else
+          esper_subscriber ! common.ChatWithAddress("overload",str, null)
     }
     commandLoop()
   }
