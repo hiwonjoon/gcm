@@ -245,7 +245,7 @@ class GameServer
         @world.processChat data.from, data.to, data.msg
 
   connectToGcm: (ip, port) ->
-    client = net.createConnection ip, port
+    client = net.createConnection port, ip
     buf = new Buffer 0
 
     client.on 'error', (err) =>

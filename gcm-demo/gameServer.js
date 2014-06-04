@@ -432,7 +432,7 @@
     GameServer.prototype.connectToGcm = function(ip, port) {
       var buf, client,
         _this = this;
-      client = net.createConnection(ip, port);
+      client = net.createConnection(port, ip);
       buf = new Buffer(0);
       client.on('error', function(err) {
         console.log('Error!!! try to reconnect after 10 secs');
