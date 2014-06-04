@@ -4,6 +4,7 @@ package core
 import akka.actor.{Props, ActorSystem, ActorRef, Actor}
 import spray.httpx.unmarshalling.{MalformedContent, Unmarshaller, Deserialized}
 import scala.annotation.tailrec
+import java.net.InetSocketAddress
 
 
 object Main extends App {
@@ -11,8 +12,8 @@ object Main extends App {
   val tweet_processor = system.actorOf(Props(new TweetProcessor),"tweetprocessor")
   val raw_processor = system.actorOf(Props(new RawViewProcessor),"rawprocessor")
   val web_processor = system.actorOf(Props(new WebActor),"WebActor")
-  val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
-  val chat_processor = system.actorOf(Props(new ChatFilter(1338)),"ChatFilter")
+  val esper_subscriber = system.actorOf(Props(classOf[Subscriber]));
+  val core_frontend = system.actorOf(Props(new Listener(1338)))
   var forbiddenWords = scala.collection.mutable.LinkedHashSet[String]()
 
   esper_subscriber ! "RequestDetection"

@@ -363,6 +363,7 @@
       var io,
         _this = this;
       io = require('socket.io').listen(this.httpServer);
+			io.set('log level','1');
       return io.on('connection', function(socket) {
         console.log(socket.id);
         /*
@@ -385,13 +386,17 @@
           return _this.world.createPlayer(socket, data.name, data.sprite);
         });
         socket.on('cChat', function(data) {
+					player = _this.world.playerIdTable[socket.id];
+					if( !player )
+						return;
+
           if (_this.gcmClient) {
             return _this.sendToGcm({
               msgType: 'chat',
               body: {
-                from: data.from,
-                to: data.to,
-                msg: data.msg
+								user: data.from,
+                msg: data.msg,
+								time: (Date.now())
               }
             });
           } else {
@@ -421,18 +426,20 @@
     GameServer.prototype.gcmClient = null;
 
     GameServer.prototype.onGcm = function(json) {
+			console.log(json);
       var data;
       switch (json.msgType) {
         case 'chat':
           data = json.body;
-          return this.world.processChat(data.from, data.to, data.msg);
+          return this.world.processChat(data.user, '', data.msg);
       }
     };
 
     GameServer.prototype.connectToGcm = function(ip, port) {
       var buf, client,
         _this = this;
-      client = net.createConnection(port, ip);
+			console.log("Connect To " + ip + ":" + port);
+      client = net.createConnection(port,ip);
       buf = new Buffer(0);
       client.on('error', function(err) {
         console.log('Error!!! try to reconnect after 10 secs');
@@ -443,14 +450,6 @@
       client.on('connect', function() {
         console.log('Connected');
         _this.gcmClient = client;
-        return _this.sendToGcm({
-          msgType: 'chat',
-          body: {
-            from: 'John',
-            to: 'Jane',
-            msg: 'Hello, World wtf2 오호'
-          }
-        });
       });
       client.on('data', function(data) {
         var json, jsonBegin, jsonEnd, jsonSize, jsonStr, match, matchSize, newBuf, nextPos, str, _results;
