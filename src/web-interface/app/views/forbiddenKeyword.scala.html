@@ -1,0 +1,21 @@
+@(keywordList : Iterator[String])
+
+@main("forbiddenKeyword"){
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/forbiddenkeyword.js")'></script>
+
+<div>
+        <ul>
+            @keywordList.map{ list =>
+                <li id="keyword_@list" class="keyword_li">
+                    <div class="keyword_div">@list</div>
+                    <button class="delete">Delete</a>
+                </li>
+            }
+
+        </ul>
+    </div>
+    <div>
+        새로운 키워드 입력
+        <input id="addKeyword" type="text" /> <button id="addKeywordButton">추가</button>
+    </div>
+}

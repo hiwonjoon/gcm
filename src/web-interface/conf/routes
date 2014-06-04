@@ -15,6 +15,10 @@ GET     /startChat                       controllers.ChatRoomController.index
 GET     /room                            controllers.ChatRoomController.chatRoom(username: Option[String])
 GET     /room/chat                       controllers.ChatRoomController.chat(username)
 GET     /assets/javascripts/chatroom.js  controllers.ChatRoomController.chatRoomJs(username: String)
+#forbidden
+GET     /forbidden                       controllers.ForbiddenKeyword.readFile
+GET     /forbidden/add          controllers.ForbiddenKeyword.add(keyword: String)
+GET     /forbidden/del          controllers.ForbiddenKeyword.delete(keyword: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

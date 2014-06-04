@@ -23,7 +23,11 @@ class WebActor extends Actor{
     case "Bye" => {
       log.info("Web subscriber leaving...ㅠㅠ")
     }
+    case common.ForbiddenWords(arrayOfWords) => {
+      Main.forbiddenWords.clear();
+      arrayOfWords.foreach{word => Main.forbiddenWords.add(word); log.info(word)}
 
+    }
     case common.Chat(name, text) => {
       log.info(name + " : " + text)
       esper ! common.ChatWithAddress(name, text, sender)

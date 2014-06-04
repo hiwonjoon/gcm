@@ -29,6 +29,9 @@ class CoreSubscriber extends Actor {
       Logger.info("Core Subscriber Ended. Send Hello to remote!")
       remote ! "Bye"
     }
+    case common.ForbiddenWords(words) => {
+      remote ! common.ForbiddenWords(words)
+    }
     case _ => {
       Logger.info("Core Subscriber _!!!")
     }

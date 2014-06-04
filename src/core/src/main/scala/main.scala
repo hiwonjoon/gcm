@@ -13,6 +13,7 @@ object Main extends App {
   val web_processor = system.actorOf(Props(new WebActor),"WebActor")
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]))
   val chat_processor = system.actorOf(Props(new ChatFilter(1338)),"ChatFilter")
+  var forbiddenWords = scala.collection.mutable.LinkedHashSet[String]()
 
   esper_subscriber ! "RequestDetection"
 

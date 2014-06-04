@@ -30,3 +30,4 @@ class TweetList(tweets : Seq[(String,Int)]) extends Serializable {
 object C {
   val filterStr:Array[String] = Array("시발", "좆", "ㅅㅂ", "지랄", "새끼", "개새끼", "샹놈")
 }
+case class ForbiddenWords(arrayOfWords : Array[String])
