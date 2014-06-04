@@ -18,7 +18,11 @@ class Subscriber extends Actor {
         origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 비속어를 사용했습니다.")
     }
 
-    case "RequestChatDetection" => {
+    case EsperEvent(_, MacroDetection(id)) => {
+      println(s"Macro Detected : $id")
+    }
+
+    case "RequestDetection" => {
       var packet = new RegisterPacket
       packet.packetType = "Chat"
       packet.statement += s"""
@@ -27,18 +31,27 @@ class Subscriber extends Actor {
                           from ChatWithAddress.win:time(1 sec) as c
                           group by id
                           having count(*) > 3
-                         """
+                         """ -> self
 
       packet.statement += s"""
                           insert into ChatSlang
                           select c.id, c.message, c.origin
                           from ChatWithAddress as c
                           where Filtering(c.message)
-                          """
+                          """ -> self
+
+      packet.statement += s"""
+                          insert into MacroDetection
+                          select c.id
+                          from Macro.win:time(5 sec) as c
+                          having avg(cosine) > 0.4 and avg(cosine) < 0.6
+                          """ -> self
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
       packet.eventTypes += "ChatAbusing" -> classOf[ChatAbusing]
       packet.eventTypes += "ChatSlang" -> classOf[ChatSlang]
+      packet.eventTypes += "Macro" -> classOf[Macro]
+      packet.eventTypes += "MacroDetection" -> classOf[MacroDetection]
 
       esper ! Request(packet)
     }
@@ -51,8 +64,12 @@ class Subscriber extends Actor {
       esper ! ChatWithAddress(id,msg,self)
     }
 
+    case Macro(id, cosine) => {
+      esper ! Macro(id, cosine)
+    }
+
     case EsperError(_) => {
-      self ! "RequestChatDetection";
+      self ! "RequestDetection";
     }
   }
 }
