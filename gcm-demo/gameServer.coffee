@@ -7,6 +7,7 @@ class Player
   constructor: (@world, @socket, @name, @sprite) ->
   x: 0
   y: 0
+  occupied: false
   move: (x, y) ->
   attack: (x, y) ->
   tick: ->
@@ -15,6 +16,7 @@ class Npc
   constructor: (@world, @name, @sprite) ->
   x: 0
   y: 0
+  occupied: false
   testTick: 0
   move: (x, y) ->
   attack: (x, y) ->
@@ -74,6 +76,21 @@ class World
     player.x = x
     player.y = y
     playerSocket.broadcast.emit 'sPcMove', { name: player.name, sprite: player.sprite, x: player.x, y: player.y }
+
+  processBattle: (socket, x, y) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+
+    playerSocket = player.socket
+    player.x = x
+    player.y = y
+
+    for k, v of @npcTable
+      if ((Math.abs(x - v.x) < 5 and Math.abs(y - v.y) < 5) and v.occupied == false)
+        player.occupied = true
+        v.occupied = true
+        playerSocket.emit 'sStartBattle', { name: v.name, sprite: v.sprite }
+        break
 
   processNpcMove: (npc, x, y) ->
     npc.x = x
@@ -203,6 +220,9 @@ class GameServer
 
       socket.on 'cMove', (data) =>
         @world.processPcMove socket, data.x, data.y
+
+      socket.on 'cStartBattle', (data) =>
+        @world.processBattle socket, data.x, data.y
 
       socket.on 'cAttack', (data) =>
         @world.processAttack socket, data.x, data.y

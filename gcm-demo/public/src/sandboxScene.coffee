@@ -76,8 +76,26 @@ root.SandNpc = cc.Sprite.extend
     @mY = y
 
 
+root.UiLayer = cc
+
 root.SandboxLayer = cc.LayerRGBA.extend
   init: ->
+    uiLayout = ccs.uiReader.widgetFromJsonFile 'res/NewUI_1/NewUi_1.json'
+    console.log uiLayout
+    console.log uiLayout.getChildren()
+    console.log uiLayout.getChildByName 'ProgressBar_9'
+    button2 = uiLayout.getChildByName 'Button_2'
+    button2.setTitleText '테스트임당'
+    button2.addTouchEventListener (obj, evt) ->
+      console.log obj if evt is ccui.Widget.TOUCH_ENDED
+    , button2
+
+    @addChild uiLayout
+
+
+
+    return
+
     size = cc.director.getWinSize()
 
     for key of res

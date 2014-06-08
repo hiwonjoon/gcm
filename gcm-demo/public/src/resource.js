@@ -33,7 +33,16 @@ var res = {
     pirate_m3_png : "res/npc/pirate_m3.png",
     siren_png : "res/npc/siren.png",
 
-    fire_png : "res/particle/fire.png"
+    fire_png : "res/particle/fire.png",
+
+    battle_png: "res/pokemon_x_y_battle_scene_by_jenske05-d5ynr9c.png",
+
+    ui_json: "res/NewUI_1/NewUi_1.json",
+    ui_button: "res/NewUI_1/GUI/button.png",
+    ui_image: "res/NewUI_1/GUI/image.png",
+    ui_loadingbar: "res/NewUI_1/GUI/loadingbar.png",
+    ui_font_fnt: "res/NewUI_1/GUI/missing-font.fnt",
+    ui_font_png: "res/NewUI_1/GUI/missing-font.png"
 };
 
 var g_resources = [
@@ -72,7 +81,10 @@ var g_resources = [
     res.pirate_m2_png,
     res.pirate_m3_png,
     res.siren_png,
+
     res.fire_png,
+
+    res.battle_png,
 
     //plist
 
@@ -80,9 +92,17 @@ var g_resources = [
 
     //tmx
     res.test_tmx,
-    res.test_tmx_include
+    res.test_tmx_include,
 
     //bgm
 
     //effect
+
+    // ui
+    res.ui_json,
+    res.ui_button,
+    res.ui_image,
+    res.ui_font_fnt,
+    res.ui_font_png,
+    res.ui_loadingbar
 ];

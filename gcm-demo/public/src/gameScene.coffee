@@ -48,6 +48,16 @@ root.Character = cc.Sprite.extend
     @addChild label, 1
     @addChild drawHp, 1
 
+  moveUp: ->
+    @stopAction @nowAction if @nowAction
+    @nowAction = @moveAction.up
+    @runAction @nowAction
+
+  moveDown: ->
+    @stopAction @nowAction if @nowAction
+    @nowAction = @moveAction.down
+    @runAction @nowAction
+
   setMapPos: (x, y) ->
     dX = x - @mX
     dY = y - @mY
@@ -69,10 +79,14 @@ root.Character = cc.Sprite.extend
 
 root.Npc = Character.extend
   ctor: (name, sprite) ->
+    @name = name
+    @sprite = sprite
     @_super name, "res/npc/#{sprite}.png"
 
 root.Player = Character.extend
   ctor: (name, sprite) ->
+    @name = name
+    @sprite = sprite
     @_super name, "res/pc/#{sprite}.png"
 
 root.GameLayer = cc.Layer.extend
@@ -95,10 +109,12 @@ root.GameLayer = cc.Layer.extend
     if 'keyboard' of cc.sys.capabilities
       param =
         event: cc.EventListener.KEYBOARD
-        onKeyPressed: (key, event) ->
+        onKeyPressed: (key, event) =>
           g.keys[key] = true
-        onKeyReleased: (key, event) ->
+        onKeyReleased: (key, event) =>
           g.keys[key] = false
+          if key == 70 # F키를 누를 경우
+            socket.emit 'cStartBattle', { x: @avatar.mX, y: @avatar.mY }
       cc.eventManager.addListener param, this
 
     @scheduleUpdate()
@@ -169,6 +185,16 @@ root.GameLayer = cc.Layer.extend
             npc.y = y
             @tileMap.addChild npc, 1
             @npcs[name] = npc
+
+        when 'sStartBattle'
+          console.log 'sStartBattle'
+          if data.name of @npcs
+            npc = @npcs[data.name]
+            g.me = @avatar
+            g.enemy = npc
+            battleScene = new BattleScene
+            transition = cc.TransitionProgressRadialCW.create 0.5, battleScene
+            cc.director.runScene transition
 
         when 'sQuit'
           if quit of @otherPcs

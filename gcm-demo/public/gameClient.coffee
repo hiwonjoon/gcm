@@ -11,6 +11,8 @@ root.g =
   name: null
   sprite: null
   packets: []
+  me: null
+  enemy: null
 
 messageElement = document.getElementById 'messages'
 lastMessageElement = null
