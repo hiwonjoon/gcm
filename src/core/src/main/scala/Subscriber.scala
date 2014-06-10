@@ -1,11 +1,15 @@
 package core
 
 import akka.actor.{Actor, ActorRef}
+import scala.collection.mutable.ArrayBuffer
 import common._
 
 class Subscriber extends Actor {
 
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
+
+  var buffer:ArrayBuffer[Array[Double]] = new ArrayBuffer[Array[Double]]()
+  var cnt = 0
 
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
@@ -18,8 +22,8 @@ class Subscriber extends Actor {
         origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 비속어를 사용했습니다.")
     }
 
-    case EsperEvent(_, MacroDetection(id)) => {
-      println(s"Macro Detected : $id")
+    case EsperEvent(_, MacroDetection(id, avg, stddev)) => {
+      println(s"Macro Detected : $avg, $stddev")
     }
 
     case "RequestDetection" => {
@@ -42,9 +46,9 @@ class Subscriber extends Actor {
 
       packet.statement += s"""
                           insert into MacroDetection
-                          select c.id
+                          select c.id, avg(c.cosine), stddev(c.cosine)
                           from Macro.win:time(5 sec) as c
-                          having avg(cosine) > 0.4 and avg(cosine) < 0.6
+                          having avg(cosine) > 0.4 and avg(cosine) < 0.6 and stddev(cosine) < 0.2
                           """ -> self
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
@@ -70,6 +74,15 @@ class Subscriber extends Actor {
 
     case EsperError(_) => {
       self ! "RequestDetection";
+    }
+
+    case Dummy(data) => {
+      buffer += data
+      cnt += 1
+      println(cnt)
+
+      var newData:Array[Double] = new Array[Double] (10000)
+      self ! Dummy(newData)
     }
   }
 }

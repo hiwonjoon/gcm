@@ -4,8 +4,11 @@ package core
 import akka.actor.{Props, ActorSystem, ActorRef, Actor}
 import spray.httpx.unmarshalling.{MalformedContent, Unmarshaller, Deserialized}
 import scala.annotation.tailrec
+import scala.concurrent.duration._
+
 import java.net.InetSocketAddress
 
+case class Dummy(dummy:Array[Double])
 
 object Main extends App {
   val system = ActorSystem("core")
@@ -16,9 +19,9 @@ object Main extends App {
   val core_frontend = system.actorOf(Props(new Listener(1338)))
   var forbiddenWords = scala.collection.mutable.LinkedHashSet[String]()
 
-  esper_subscriber ! "RequestDetection"
+  var cosine_flag = false
 
-  //case str => subsccriber ! Chat("overload", str)
+  esper_subscriber ! "RequestDetection"
 
   @tailrec private def commandLoop() : Unit = {
     Console.readLine() match {
@@ -30,10 +33,15 @@ object Main extends App {
       case "raw" =>
         val stream = system.actorOf(Props(new TweetStreamActor(TweetStreamerActor.twitterUri,raw_processor) with OAuthTwitterAuthorization),"streamgenerator")
         stream ! "start"
+      case "memory_test" =>
+        var data:Array[Double] = new Array[Double] (10000)
+        esper_subscriber ! Dummy(data)
+      case "cosine_test" =>
+        cosine_flag = true
       case str:String =>
-        if(str.contains("cos"))
+        if(cosine_flag && str.length > 0)
         {
-          val value:Double = str.replaceAll("cos", "").toDouble
+          val value = str.toDouble
           esper_subscriber ! common.Macro("overload", value)
         }
         else

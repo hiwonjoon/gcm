@@ -20,7 +20,7 @@ case class ChatAbusing(@BeanProperty id: String, @BeanProperty origin:AnyRef)
 case class ChatSlang(@BeanProperty id: String, @BeanProperty messsage: String, @BeanProperty origin:AnyRef)
 case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
 case class Macro(@BeanProperty id: String, @BeanProperty cosine: Double)
-case class MacroDetection(@BeanProperty id: String)
+case class MacroDetection(@BeanProperty id: String, @BeanProperty avg: Double, @BeanProperty stddev: Double)
 
 case class TweetListRequest()
 case class TweetListResponsePacket(packet:TweetList)
