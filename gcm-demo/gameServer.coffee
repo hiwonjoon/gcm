@@ -205,6 +205,7 @@ class GameServer
 
   handleConnection: ->
     io = require('socket.io').listen @httpServer
+		io.set('log level','1')
     io.on 'connection', (socket) =>
       console.log socket.id
 
@@ -235,11 +236,11 @@ class GameServer
           @sendToGcm
             msgType: 'chat'
             body:
-              from: data.from
-              to: data.to
+              user: data.from
               msg: data.msg
+							time: Date.now()
         else
-          @world.processChat data.from, data.to, data.msg
+          @world.processChat data.user, null, data.msg
 
       socket.on 'disconnect', () =>
         @world.processLogout socket
@@ -282,9 +283,9 @@ class GameServer
       @sendToGcm
         msgType: 'chat'
         body:
-          from: 'John'
-          to: 'Jane'
+          user: 'John'
           msg: 'Hello, World wtf2 오호'
+					time: Date.now()
 
     client.on 'data', (data) =>
       newBuf = new Buffer (buf.length + data.length)

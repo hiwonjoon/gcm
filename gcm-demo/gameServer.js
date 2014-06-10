@@ -395,6 +395,7 @@
     GameServer.prototype.handleConnection = function() {
       var io;
       io = require('socket.io').listen(this.httpServer);
+			io.set('log level','1');
       return io.on('connection', (function(_this) {
         return function(socket) {
           console.log(socket.id);
@@ -425,9 +426,9 @@
               return _this.sendToGcm({
                 msgType: 'chat',
                 body: {
-                  from: data.from,
-                  to: data.to,
-                  msg: data.msg
+                  user: data.from,
+                  msg: data.msg,
+									time: Date.now()
                 }
               });
             } else {
@@ -462,7 +463,7 @@
       switch (json.msgType) {
         case 'chat':
           data = json.body;
-          return this.world.processChat(data.from, data.to, data.msg);
+          return this.world.processChat(data.user, null, data.msg);
       }
     };
 
@@ -482,14 +483,7 @@
         return function() {
           console.log('Connected');
           _this.gcmClient = client;
-          return _this.sendToGcm({
-            msgType: 'chat',
-            body: {
-              from: 'John',
-              to: 'Jane',
-              msg: 'Hello, World wtf2 오호'
-            }
-          });
+					return;
         };
       })(this));
       client.on('data', (function(_this) {
