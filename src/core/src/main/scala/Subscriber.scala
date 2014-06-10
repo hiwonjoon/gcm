@@ -2,15 +2,21 @@ package core
 
 import akka.actor.{Actor, ActorRef}
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.Map
+import scala.math
 import common._
 
 class Subscriber extends Actor {
-
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
   var logger_web = context.actorSelection("akka.tcp://web@127.0.0.1:8999/user/LogActor")
 
+  // heap memory test
   var buffer:ArrayBuffer[Array[Double]] = new ArrayBuffer[Array[Double]]()
   var cnt = 0
+
+  // macro detection
+  var prevVec:Map[String, ArrayBuffer[Int]] = Map[String, ArrayBuffer[Int]] ()
+  var curVec:Map[String, ArrayBuffer[Int]] = Map[String, ArrayBuffer[Int]] ()
 
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
@@ -25,7 +31,7 @@ class Subscriber extends Actor {
     }
 
     case EsperEvent(_, MacroDetection(id, avg, stddev)) => {
-      println(s"Macro Detected : $avg, $stddev")
+      println(s"Macro Detected($id) : $avg, $stddev")
     }
 
     case "RequestDetection" => {
@@ -49,9 +55,11 @@ class Subscriber extends Actor {
       packet.statement += s"""
                           insert into MacroDetection
                           select c.id, avg(c.cosine), stddev(c.cosine)
-                          from Macro.win:time(5 sec) as c
-                          having avg(cosine) > 0.4 and avg(cosine) < 0.6 and stddev(cosine) < 0.2
+                          from Macro.win:time(10 sec) as c
+                          group by id
                           """ -> self
+
+//                        having avg(cosine) > 0.4 and avg(cosine) < 0.6 and stddev(cosine) < 0.2
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
       packet.eventTypes += "ChatAbusing" -> classOf[ChatAbusing]
@@ -88,7 +96,33 @@ class Subscriber extends Actor {
 	}
 
     case Vectors(id, (move,battle)) => {
-      println(id + " : " + (move,battle).toString() )
+//      println(id + " : " + (move,battle).toString() )
+      Push(id, move, battle)
     }
   }
+
+  def Push(id:String, move:Int, battle:Int) = {
+    curVec(id) = ArrayBuffer(move, battle)
+
+    val isExist = prevVec.contains(id)
+    if(isExist)
+    {
+      val cosine = GetCosine(prevVec(id), curVec(id))
+      self ! Macro(id, cosine)
+    }
+
+    prevVec(id) = curVec(id)
+  }
+
+  def GetCosine(vec1:ArrayBuffer[Int], vec2:ArrayBuffer[Int]):Double = {
+    val size1:Double = Math.sqrt(vec1.map(i => i * i).foldLeft(0) (_ + _))
+    val size2:Double = Math.sqrt(vec2.map(i => i * i).foldLeft(0) (_ + _))
+
+    var multipleSum:Double = 0
+    for(i<- 0 until vec1.length)
+      multipleSum += vec1(i) * vec2(i)
+
+    multipleSum / (size1 * size2)
+  }
+
 }
