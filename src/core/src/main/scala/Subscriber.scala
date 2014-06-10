@@ -83,6 +83,10 @@ class Subscriber extends Actor {
 
       var newData:Array[Double] = new Array[Double] (10000)
       self ! Dummy(newData)
+	}
+
+    case Vectors(id, (move,battle)) => {
+      println(id + " : " + (move,battle).toString() )
     }
   }
 }

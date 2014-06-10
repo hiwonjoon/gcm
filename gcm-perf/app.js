@@ -299,9 +299,9 @@
       return this.sendToGcm({
         msgType: 'chat',
         body: {
-          from: from,
-          to: to,
-          msg: msg
+					user : from,
+					msg : msg,
+					time : (Date.now())
         }
       });
     };
@@ -330,7 +330,8 @@
           dest: {
             x: destX,
             y: destY
-          }
+          },
+					time : (Date.now())
         }
       });
     };
@@ -356,7 +357,8 @@
           reward: {
             exp: exp,
             gold: gold
-          }
+          },
+					time : (Date.now())
         }
       });
     };

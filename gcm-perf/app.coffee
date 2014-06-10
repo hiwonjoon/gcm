@@ -168,9 +168,9 @@ class World
     @sendToGcm
       msgType: 'chat'
       body:
-        from: from
-        to: to
+        user: from
         msg: msg
+        time: (Date.now())
 
   sendBbs: (id, name, title, txt) ->
     @sendToGcm
@@ -192,6 +192,7 @@ class World
         dest:
           x: destX
           y: destY
+				time: Date.now()
 
   sendBattleResult: (isDraw, duration, posX, posY, winner, loser, exp, gold) ->
     @sendToGcm
@@ -211,6 +212,7 @@ class World
         reward:
           exp: exp
           gold: gold
+				time: Date.now()
 
   sendToGcm: (jsonData) ->
     @gcmClient.write @makePacket jsonData if @gcmClient

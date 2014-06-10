@@ -4,22 +4,24 @@ package core
 import akka.actor.{Props, ActorSystem, ActorRef, Actor}
 import spray.httpx.unmarshalling.{MalformedContent, Unmarshaller, Deserialized}
 import scala.annotation.tailrec
+import com.typesafe.config.ConfigFactory
 import scala.concurrent.duration._
 
-import java.net.InetSocketAddress
-
 case class Dummy(dummy:Array[Double])
-
 object Main extends App {
-  val system = ActorSystem("core")
+  val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=5151")
+    .withFallback(ConfigFactory.load())
+
+  val system = ActorSystem("core", config)
   val tweet_processor = system.actorOf(Props(new TweetProcessor),"tweetprocessor")
   val raw_processor = system.actorOf(Props(new RawViewProcessor),"rawprocessor")
   val web_processor = system.actorOf(Props(new WebActor),"WebActor")
   val esper_subscriber = system.actorOf(Props(classOf[Subscriber]));
-  val core_frontend = system.actorOf(Props(new Listener(1338)))
   var forbiddenWords = scala.collection.mutable.LinkedHashSet[String]()
 
   var cosine_flag = false
+  CoreFrontend.main(Seq("1338","5152").toArray)
+  CoreBackend.main(Seq("5153").toArray)
 
   esper_subscriber ! "RequestDetection"
 
@@ -33,6 +35,8 @@ object Main extends App {
       case "raw" =>
         val stream = system.actorOf(Props(new TweetStreamActor(TweetStreamerActor.twitterUri,raw_processor) with OAuthTwitterAuthorization),"streamgenerator")
         stream ! "start"
+	  case "test" =>
+		tweet_processor ! "test"
       case "memory_test" =>
         var data:Array[Double] = new Array[Double] (10000)
         esper_subscriber ! Dummy(data)

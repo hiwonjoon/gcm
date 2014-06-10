@@ -1,12 +1,15 @@
 package core;
 
-import akka.actor.{Props, ActorSystem, ActorRef, Actor}
+import akka.actor._;
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import java.net.InetSocketAddress
-import spray.json.{DefaultJsonProtocol, RootJsonFormat, JsString, JsNumber, JsObject, JsonParser, JsValue, DeserializationException}
+import spray.json.{DefaultJsonProtocol, RootJsonFormat, JsBoolean, JsString, JsNumber, JsObject, JsonParser, JsValue, DeserializationException}
 import spray.json.pimpAny
-import spray.httpx.SprayJsonSupport._
+import scala.Some
+import scala.concurrent.duration._
+import akka.util.Timeout
+import com.typesafe.config.ConfigFactory
 
 /**
  * Created by wonjoon-g on 2014. 6. 4..
@@ -14,13 +17,35 @@ import spray.httpx.SprayJsonSupport._
 
 object JsonProtocol extends DefaultJsonProtocol{
   implicit val userchatFormat = jsonFormat3(UserChat);
+  implicit val inGameLocationFormat = jsonFormat2(InGameLocation);
+  implicit val inGameUserFormat = jsonFormat2(InGameUser);
+  implicit val inGameRewardFormat = jsonFormat2(InGameReward);
+
+  implicit object userMoveFormat extends RootJsonFormat[UserMove] {
+    def write(c: UserMove) = JsObject()
+    def read(value: JsValue) = {
+      value.asJsObject.getFields("id", "src", "dest", "time") match {
+        case Seq(JsString(id), from : JsValue, to : JsValue, JsNumber(time)) =>
+          new UserMove(id,from.convertTo[InGameLocation], to.convertTo[InGameLocation], time.longValue())
+        case _ => throw new DeserializationException("UserMove expected")
+      }
+    }
+  }
+  implicit object userBattleResultFormat extends RootJsonFormat[UserBattleResult] {
+    def write(c: UserBattleResult) = JsObject()
+    def read(value: JsValue) = {
+      value.asJsObject.getFields("isDraw", "duration", "pos", "winner", "loser", "reward", "time") match {
+        case Seq( JsBoolean(isDraw), JsNumber(duration), pos : JsValue, winner : JsValue, loser : JsValue, reward : JsValue, JsNumber(time)) =>
+          new UserBattleResult(isDraw,duration.longValue(),pos.convertTo[InGameLocation], winner.convertTo[InGameUser], loser.convertTo[InGameUser], reward.convertTo[InGameReward], time.longValue())
+        case _ => throw new DeserializationException("UserMove expected")
+      }
+    }
+  }
 }
 
-class PacketHandler extends Actor {
+class PacketHandler(frontend:ActorRef) extends Actor {
   import Tcp._
   import JsonProtocol._
-
-  val frontend = context.actorOf(Props[CoreFrontend])
 
   var buf = ByteString()
   def receive = {
@@ -33,6 +58,11 @@ class PacketHandler extends Actor {
             parsed match {
               case Some((JsString("chat"), body)) =>
                 frontend !(sender, body.convertTo[UserChat])
+              case Some((JsString("move"), body)) =>
+                frontend !(sender, body.convertTo[UserMove])
+              case Some((JsString("bbs"), body)) => ;
+              case Some((JsString("battleResult"),body)) =>
+                frontend !(sender, body.convertTo[UserBattleResult])
               case _ =>
                 println("? in CoreFrontend.scala")
             }
@@ -99,18 +129,18 @@ class PacketHandler extends Actor {
   }
 }
 
-class Listener(port: Int) extends Actor {
+class Listener(port: Int, frontend: ActorRef) extends Actor {
   import Tcp._
   import context.system
 
-  IO(Tcp) ! Bind(self, new InetSocketAddress("localhost",port))
+  IO(Tcp) ! Bind(self, new InetSocketAddress("0.0.0.0",port))
 
   def receive = {
     case Bound(localAddress) =>
       println("Bound : " + localAddress)
     case Connected(remote, _) =>
       println("Connected: " + remote)
-      val handler = context.actorOf(Props[PacketHandler])
+      val handler = context.actorOf(Props(new PacketHandler(frontend)))
       sender ! Register(handler)
     case CommandFailed(_: Bind) =>
       println("Bind Error")
@@ -119,24 +149,59 @@ class Listener(port: Int) extends Actor {
 }
 
 
-class CoreFrontend extends Actor {
+class CoreFrontend(port : Int) extends Actor {
+  import JsonProtocol._
 
   var backends = IndexedSeq.empty[ActorRef];
+  var jobCounter = 0;
+
+  val listener = context.system.actorOf(Props(new Listener(port,self)))
 
   def receive = {
-    case (handler:ActorRef,action:UserChat) =>
-      //TODO : 지금 그대로 게임 서버로 다시 보내주고 있음. 이 부분 필터링이랑, 도배 쪽 해가지고 쑥덕쑥덕 고치면 됨.
-      println("Message : " + action.msg )
-      import JsonProtocol._
-
-      val json = JsObject(
-        "msgType" -> JsString("chat"),
-        "body" -> action.toJson
-      )
-      val body = ByteString(json.prettyPrint)
-      val header = ByteString(s"${body.length}\r\n\r\n")
-      handler ! Tcp.Write(header ++ body)
+    case (handler:ActorRef,job:Job) if backends.isEmpty =>
+      sender ! JobFailed("Service unavailable, try again later",job)
+    case (handler:ActorRef,job:Job) =>
+      job match {
+        case chat:UserChat =>
+          val json = JsObject(
+            "msgType" -> JsString("chat"),
+            "body" -> chat.toJson
+          )
+          val body = ByteString(json.prettyPrint)
+          val header = ByteString(s"${body.length}\r\n\r\n")
+          handler ! Tcp.Write(header ++ body)
+        case _ =>
+          jobCounter += 1;
+          backends(jobCounter % backends.size) ! job
+      }
+    case a:GetVector => {
+      //클러스터에 잇는 모든 친구들에게 데이터를 요청 후 받아서 처리.
+      backends.foreach(backend => backend ! a)
+    }
+    case BackendRegistration if !backends.contains(sender) =>
+      context watch sender
+      backends = backends :+ sender
+    case Terminated(a) =>
+      backends = backends.filterNot(_ == a )
     case _ =>
       println("?? in Core Frontend")
+  }
+}
+
+object CoreFrontend {
+  def main(args: Array[String]) : Unit = {
+    val listener_port = if (args.isEmpty) "1338" else args(0);
+    val frontend_port = if (args.isEmpty || args.length < 1 ) "0" else args(1);
+
+    val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$frontend_port").
+      withFallback(ConfigFactory.parseString("akka.cluster.roles = [frontend]")).
+      withFallback(ConfigFactory.load())
+    val system = ActorSystem("core",config)
+    val frontend = system.actorOf(Props(new CoreFrontend(listener_port.toInt)), name="frontend")
+
+    import system.dispatcher
+    system.scheduler.schedule(10.seconds, 2.seconds) {
+      (frontend ! GetVector("",Main.esper_subscriber))
+    }
   }
 }
