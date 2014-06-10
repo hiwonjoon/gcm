@@ -7,6 +7,7 @@ import common._
 class Subscriber extends Actor {
 
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
+  var logger_web = context.actorSelection("akka.tcp://web@127.0.0.1:8999/user/LogActor")
 
   var buffer:ArrayBuffer[Array[Double]] = new ArrayBuffer[Array[Double]]()
   var cnt = 0
@@ -15,6 +16,7 @@ class Subscriber extends Actor {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
       if(origin != null)
         origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 도배를 하고 있습니다.")
+      logger_web ! ChatLog(id, " 님이 도배를 하고 있습니다.")
     }
 
     case EsperEvent(_, ChatSlang(id, message, origin)) => {

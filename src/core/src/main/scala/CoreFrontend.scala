@@ -154,6 +154,7 @@ class CoreFrontend(port : Int) extends Actor {
 
   var backends = IndexedSeq.empty[ActorRef];
   var jobCounter = 0;
+  var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
 
   val listener = context.system.actorOf(Props(new Listener(port,self)))
 
@@ -163,10 +164,21 @@ class CoreFrontend(port : Int) extends Actor {
     case (handler:ActorRef,job:Job) =>
       job match {
         case chat:UserChat =>
-          val json = JsObject(
-            "msgType" -> JsString("chat"),
-            "body" -> chat.toJson
-          )
+         
+		//필터링
+      	  var message = chat.msg
+          Main.forbiddenWords.foreach{ words => message = message.replaceAll(words, getQuestionString(words.length()))}
+          var newUserChat = UserChat(chat.user, message, chat.time)
+
+      	//에스퍼로 도배 감지
+	      esper ! common.ChatWithAddress(action.user, action.msg, sender)
+
+    	  import JsonProtocol._
+
+      	  val json = JsObject(
+          	"msgType" -> JsString("chat"),
+        	"body" -> newUserChat.toJson
+      	  )
           val body = ByteString(json.prettyPrint)
           val header = ByteString(s"${body.length}\r\n\r\n")
           handler ! Tcp.Write(header ++ body)
@@ -183,6 +195,7 @@ class CoreFrontend(port : Int) extends Actor {
       backends = backends :+ sender
     case Terminated(a) =>
       backends = backends.filterNot(_ == a )
+    
     case _ =>
       println("?? in Core Frontend")
   }
@@ -203,5 +216,14 @@ object CoreFrontend {
     system.scheduler.schedule(10.seconds, 2.seconds) {
       (frontend ! GetVector("",Main.esper_subscriber))
     }
+  }
+}
+
+  def getQuestionString(n : Int) = {
+    var questionMark = ""
+    var i = 1
+    for(i <- 1 to n)
+    { questionMark = questionMark + "?" }
+    questionMark
   }
 }

@@ -11,6 +11,7 @@ object Global extends GlobalSettings {
 
   val system = ActorSystem("web")
   val core_subscriber = system.actorOf(Props(classOf[CoreSubscriber]))
+  val log_processor = system.actorOf(Props(new LogSubscriber),"LogActor")
   var forbiddenwords = scala.collection.mutable.LinkedHashSet[String]()
 
   override def onStart(app: Application) {
@@ -27,7 +28,11 @@ object Global extends GlobalSettings {
       writer.close()
     }
     forbidden = Play.getFile("db/forbiddenWords.txt")
-    Source.fromFile(forbidden).getLines().foreach { list => forbiddenwords.add(list) ; Logger.info(list) }
+    Source.fromFile(forbidden).getLines().foreach { list => forbiddenwords.add(list) }
+
+    /* 금지 키워드 코어로 전송 */
+    core_subscriber ! common.ForbiddenWords(forbiddenwords.toArray)
+
   }
   override def onStop(app: Application) {
     Logger.info("Hello Ended!")
