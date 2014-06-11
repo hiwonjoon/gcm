@@ -15,12 +15,14 @@ case class Vectors(id:String,vec:Seq[Int])
 case class VectorList(backend:ActorRef, map : HashMap[String,Seq[Int]])
 
 class InformationTree(parent : ActorRef) extends Actor {
+  //TODO : 유저 벡터 멥에서 데이터 없는 애들은 스스로 삭제 되는 코드 넣어야지.
   var user_vector_map = new HashMap[String,ActorRef];
   def receive = {
     case GetVector(_,sendTo) => {
+      val oneTreeGatherer = context.system.actorOf(Props(new OneTreeGatherer(user_vector_map.size,parent,sendTo)));
       user_vector_map.foreach{
         case(id,ref) => {
-          ref ! GetVector(id,context.system.actorOf(Props(new OneTreeGatherer(user_vector_map.size,parent,sendTo))))
+          ref ! GetVector(id,oneTreeGatherer)
         }
       }
     }
@@ -47,9 +49,11 @@ class UserVector(id:String) extends Actor {
   var list : scala.collection.immutable.List[Job] = Nil;
   def receive = {
     case GetVector(_,sendTo) => {
-      if( last_vector_calculated >= last_inserted )
-      {}
-      else {
+//      if( last_vector_calculated >= last_inserted )
+//      {
+//        sendTo ! Vectors(id, Nil)
+//      }
+//      else {
         val moveList = list.filter(job => job.getTime() >= last_inserted - 10 * 1000 && job.isInstanceOf[UserMove])
 
         val moveEast = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 0)
@@ -64,7 +68,7 @@ class UserVector(id:String) extends Actor {
 
         last_vector_calculated = Platform.currentTime
       }
-    }
+//    }
     case a : Job => {
       last_inserted = Platform.currentTime;
       list = list.filterNot(job => job.getTime() < a.getTime() - maximum)

@@ -8,14 +8,12 @@ import scala.collection.immutable.Seq
 import scala.collection.mutable.HashMap
 
 class OneTreeGatherer(user_size:Int,backend:ActorRef,sendTo:ActorRef) extends Actor {
-  var user_remain = user_size
   val aggregation = new HashMap[String,Seq[Int]];
 
   def receive = {
     case Vectors(id,seq) => {
-      user_remain -= 1;
       aggregation += (id -> seq)
-      if( user_remain <= 0 )
+      if( aggregation.size >= user_size )
       {
         sendTo ! VectorList(backend,aggregation)
       }
