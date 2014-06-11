@@ -32,7 +32,7 @@ class Subscriber extends Actor {
     }
 
     case EsperEvent(_, MacroDetection(id, avg, stddev)) => {
-      println(s"Macro Detected($id) : $avg, $stddev")
+      println(s"Macro Detection($id) : avg = $avg, stddev = $stddev")
     }
 
     case "RequestDetection" => {
@@ -56,10 +56,9 @@ class Subscriber extends Actor {
       packet.statement += s"""
                           insert into MacroDetection
                           select c.id, avg(c.cosine), stddev(c.cosine)
-                          from Macro.win:length(100) as c
+                          from Macro as c
                           group by id
                           """ -> self
-
 //                        having avg(cosine) > 0.4 and avg(cosine) < 0.6 and stddev(cosine) < 0.2
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
@@ -97,7 +96,6 @@ class Subscriber extends Actor {
 	}
 
     case Vectors(id, vec) => {
-      println(id + " : " + vec.mkString(" "))
       Push(id, vec)
     }
   }
@@ -109,6 +107,7 @@ class Subscriber extends Actor {
     if(isExist)
     {
       val cosine = GetCosine(prevVec(id), curVec(id))
+      println(id + " : prev(" + prevVec(id).mkString(",") + "), cur(" + vec.mkString(",") + ") : cosine = " + cosine)
       self ! Macro(id, cosine)
     }
 

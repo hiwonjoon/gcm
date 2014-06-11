@@ -41,6 +41,11 @@
       size = this.world.size;
       this.x = Math.floor(Math.random() * size.width);
       this.y = Math.floor(Math.random() * size.height);
+      this.destX = -1;
+      this.destY = -1;
+      this.hasDestination = false;
+      this.destList = [[10,0], [0,10], [-10,0], [0,-10]]
+      this.destIndex = -1
       this.id = IdGenerator.generateId(prefix);
     }
 
@@ -146,16 +151,65 @@
       return this.world.sendBbs(Bbs.generateId(), this.id, 'Title', 'Contents');
     };
 
+	Pc.prototype.SetDestination = function() {
+		var index = this.destIndex + 1;
+		if(index > 3) index = 0;
+		this.destIndex = index;
+		
+		this.destX = this.x + this.destList[index][0];
+		this.destY = this.y + this.destList[index][1];
+	}
+
+	Pc.prototype.rotate = function() {
+      var newX = this.x;
+      var newY = this.y;
+	
+      if(this.hasDestination == false)
+      {
+      	do {
+      		this.SetDestination();      		
+      	} while(this.destX < 0 || 
+		      	this.destX > this.world.size.width ||
+      			this.destY < 0 ||
+      			this.destY > this.world.size.height);
+	 
+	  	this.hasDestination = true;	
+      }
+      
+      if(this.destX > this.x) newX += 1;
+      else if(this.destX < this.x) newX -= 1;
+      else if(this.destY > this.y) newY += 1;
+      else if(this.destY < this.y) newY -= 1;
+      else this.hasDestination = false
+      
+      this.world.sendMove(this.id, this.x, this.y, newX, newY);
+      this.x = newX;
+      return this.y = newY;		
+	}
+	
     Pc.prototype.wander = function() {
-      var newX, newY;
-      newX = this.x + Math.floor(Math.random() * 4) - 2;
-      newY = this.y + Math.floor(Math.random() * 4) - 2;
-      if (newX < 0 || newX > this.world.width) {
-        return;
+      var newX = this.x;
+      var newY = this.y;
+	
+      if(this.hasDestination == false)
+      {
+      	do {
+	  	this.destX = this.x+Math.floor(Math.random() * 21)-10;
+	  	this.destY = this.y+Math.floor(Math.random() * 21)-10;
+      	} while(this.destX < 0 || 
+		      	this.destX > this.world.size.width ||
+      			this.destY < 0 ||
+      			this.destY > this.world.size.height);
+	 
+	  	this.hasDestination = true;	
       }
-      if (newY < 0 || newY > this.world.height) {
-        return;
-      }
+      
+      if(this.destX > this.x) newX += 1;
+      else if(this.destX < this.x) newX -= 1;
+      else if(this.destY > this.y) newY += 1;
+      else if(this.destY < this.y) newY -= 1;
+      else this.hasDestination = false
+      
       this.world.sendMove(this.id, this.x, this.y, newX, newY);
       this.x = newX;
       return this.y = newY;
@@ -165,15 +219,19 @@
 
     Pc.prototype.tick = function(now) {
       var rand;
-      if ((now - this.lastActionTime) < 1000) {
+      if ((now - this.lastActionTime) < 500) {
         return;
       }
+      
       this.lastActionTime = now;
       this.isBound = false;
       if (this.opponent) {
         this.opponent.isBound = false;
         this.oponent = null;
       }
+
+      return this.wander();
+/*
       rand = Math.floor(Math.random() * 10);
       switch (rand) {
         case 0:
@@ -183,12 +241,13 @@
         case 2:
           return this.chat();
         case 3:
-          return this.whisper();
+	      return this.whisper();
         case 4:
           return this.write();
         case 5:
           return this.wander();
       }
+*/      
     };
 
     return Pc;

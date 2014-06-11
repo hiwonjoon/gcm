@@ -410,6 +410,13 @@
               socket.emit 'sConnection', { name: myName, sprite: mySprite }
            */
           socket.on('cMove', function(data) {
+          	
+          	var now = Date.now()
+          	if((now - _this.lastActionTime) < 500) {
+          		return;
+          	}
+          	_this.lastActionTime = now;
+          	
             var player;
             if (_this.gcmClient) {
               player = _this.getPlayerBySocket(socket);
@@ -476,7 +483,9 @@
     };
 
     GameServer.prototype.gcmClient = null;
-
+	
+	GameServer.prototype.lastActionTime = 0
+	
     GameServer.prototype.onGcm = function(json) {
       var data;
       switch (json.msgType) {
