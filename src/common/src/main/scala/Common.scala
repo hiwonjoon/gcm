@@ -23,6 +23,9 @@ case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
 case class Macro(@BeanProperty id: String, @BeanProperty cosine: Double)
 case class MacroDetection(@BeanProperty id: String, @BeanProperty avg: Double, @BeanProperty stddev: Double)
 
+case class Battle(@BeanProperty user1: String, @BeanProperty user2: String, @BeanProperty winner: String, @BeanProperty duration: Long)
+case class AbusingDetection(@BeanProperty user1: String, @BeanProperty user2: String, @BeanProperty count: Long)
+
 case class TweetListRequest()
 case class TweetListResponsePacket(packet:TweetList)
 class TweetList(tweets : Seq[(String,Int)]) extends Serializable {

@@ -35,6 +35,10 @@ class Subscriber extends Actor {
       println(s"Macro Detection($id) : avg = $avg, stddev = $stddev")
     }
 
+    case EsperEvent(_, AbusingDetection(user1, user2, count)) => {
+      println(s"Abusing Detection : $user1 , $user2 $count 개")
+    }
+
     case "RequestDetection" => {
       var packet = new RegisterPacket
       packet.packetType = "Chat"
@@ -59,13 +63,24 @@ class Subscriber extends Actor {
                           from Macro as c
                           group by id
                           """ -> self
-//                        having avg(cosine) > 0.4 and avg(cosine) < 0.6 and stddev(cosine) < 0.2
+
+      packet.statement += s"""
+                          insert into AbusingDetection
+                          select c.user1, c.user2, count(*)
+                          from Battle.std:groupwin(user1, user2).win:length(5) as c
+                          group by user1, user2
+                          having avg(duration) < 10 and stddev(duration) < 1
+                          """ -> self
+
+//      having avg(cosine) > 0.8 and stddev(cosine) < 0.2
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
       packet.eventTypes += "ChatAbusing" -> classOf[ChatAbusing]
       packet.eventTypes += "ChatSlang" -> classOf[ChatSlang]
       packet.eventTypes += "Macro" -> classOf[Macro]
       packet.eventTypes += "MacroDetection" -> classOf[MacroDetection]
+      packet.eventTypes += "Battle" -> classOf[Battle]
+      packet.eventTypes += "AbusingDetection" -> classOf[AbusingDetection]
 
       esper ! Request(packet)
     }
@@ -80,6 +95,10 @@ class Subscriber extends Actor {
 
     case Macro(id, cosine) => {
       esper ! Macro(id, cosine)
+    }
+
+    case Battle(user1, user2, winner, duration) => {
+      esper ! Battle(user1, user2, winner, duration)
     }
 
     case EsperError(_) => {

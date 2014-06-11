@@ -40,13 +40,17 @@ object Main extends App {
       case "raw" =>
         val stream = system.actorOf(Props(new TweetStreamActor(TweetStreamerActor.twitterUri,raw_processor) with OAuthTwitterAuthorization),"streamgenerator")
         stream ! "start"
-	  case "test" =>
-		tweet_processor ! "test"
+      case "test" =>
+        tweet_processor ! "test"
       case "memory_test" =>
         var data:Array[Double] = new Array[Double] (10000)
         esper_subscriber ! Dummy(data)
       case "cosine_test" =>
         cosine_flag = true
+      case "battle" =>
+        esper_subscriber ! common.Battle("a", "b", "a", 5)
+      case "battle2" =>
+        esper_subscriber ! common.Battle("b", "a", "a", 5)
       case str:String =>
         if(cosine_flag && str.length > 0)
         {
