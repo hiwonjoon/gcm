@@ -56,7 +56,7 @@ class Subscriber extends Actor {
       packet.statement += s"""
                           insert into MacroDetection
                           select c.id, avg(c.cosine), stddev(c.cosine)
-                          from Macro.win:time(10 sec) as c
+                          from Macro.win:length(100) as c
                           group by id
                           """ -> self
 
