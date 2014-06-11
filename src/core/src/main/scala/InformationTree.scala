@@ -8,7 +8,7 @@ import akka.event.Logging
 import scala.compat.Platform
 
 case class GetVector(id:String,sendTo:ActorRef)
-case class Vectors(id:String,vec:Tuple2[Int,Int])
+case class Vectors(id:String,vec:Array[Int])
 
 class InformationTree(parent : ActorRef) extends Actor {
   var user_vector_map = new HashMap[String,ActorRef];
@@ -42,10 +42,17 @@ class UserVector(id:String) extends Actor {
       if( last_vector_calculated >= last_inserted )
       {}
       else {
-        val userMove = list.count(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserMove])
+        val moveList = list.filter(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserMove])
+
+        val moveEast = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 0)
+        val moveWest = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 1)
+        val moveSouth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 2)
+        val moveNorth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 3)
+
         val userBattleResult = list.count(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserBattleResult])
         //println(id + (userMove, userBattleResult).toString())
-        sendTo ! Vectors(id, Tuple2(userMove, userBattleResult))
+
+        sendTo ! Vectors(id, Array(moveEast, moveWest, moveSouth, moveNorth, userBattleResult))
 
         last_vector_calculated = Platform.currentTime
       }

@@ -15,8 +15,8 @@ class Subscriber extends Actor {
   var cnt = 0
 
   // macro detection
-  var prevVec:Map[String, ArrayBuffer[Int]] = Map[String, ArrayBuffer[Int]] ()
-  var curVec:Map[String, ArrayBuffer[Int]] = Map[String, ArrayBuffer[Int]] ()
+  var prevVec:Map[String, Array[Int]] = Map[String, Array[Int]] ()
+  var curVec:Map[String, Array[Int]] = Map[String, Array[Int]] ()
 
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
@@ -95,14 +95,14 @@ class Subscriber extends Actor {
       self ! Dummy(newData)
 	}
 
-    case Vectors(id, (move,battle)) => {
-//      println(id + " : " + (move,battle).toString() )
-      Push(id, move, battle)
+    case Vectors(id, vec) => {
+      println(id + " : " + vec.mkString(" "))
+      Push(id, vec)
     }
   }
 
-  def Push(id:String, move:Int, battle:Int) = {
-    curVec(id) = ArrayBuffer(move, battle)
+  def Push(id:String, vec:Array[Int]) = {
+    curVec(id) = vec
 
     val isExist = prevVec.contains(id)
     if(isExist)
@@ -114,7 +114,7 @@ class Subscriber extends Actor {
     prevVec(id) = curVec(id)
   }
 
-  def GetCosine(vec1:ArrayBuffer[Int], vec2:ArrayBuffer[Int]):Double = {
+  def GetCosine(vec1:Array[Int], vec2:Array[Int]):Double = {
     val size1:Double = Math.sqrt(vec1.map(i => i * i).foldLeft(0) (_ + _))
     val size2:Double = Math.sqrt(vec2.map(i => i * i).foldLeft(0) (_ + _))
 

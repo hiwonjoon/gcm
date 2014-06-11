@@ -171,7 +171,7 @@ class CoreFrontend(port : Int) extends Actor {
           var newUserChat = UserChat(chat.user, message, chat.time)
 
       	//에스퍼로 도배 감지
-	      esper ! common.ChatWithAddress(action.user, action.msg, sender)
+	      esper ! common.ChatWithAddress(chat.user, chat.msg, sender)
 
     	  import JsonProtocol._
 
@@ -199,6 +199,14 @@ class CoreFrontend(port : Int) extends Actor {
     case _ =>
       println("?? in Core Frontend")
   }
+
+  def getQuestionString(n : Int) = {
+    var questionMark = ""
+    var i = 1
+    for(i <- 1 to n)
+    { questionMark = questionMark + "?" }
+    questionMark
+  }
 }
 
 object CoreFrontend {
@@ -217,13 +225,5 @@ object CoreFrontend {
       (frontend ! GetVector("",Main.esper_subscriber))
     }
   }
-}
 
-  def getQuestionString(n : Int) = {
-    var questionMark = ""
-    var i = 1
-    for(i <- 1 to n)
-    { questionMark = questionMark + "?" }
-    questionMark
-  }
 }
