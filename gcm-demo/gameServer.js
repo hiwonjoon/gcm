@@ -395,7 +395,7 @@
     GameServer.prototype.handleConnection = function() {
       var io;
       io = require('socket.io').listen(this.httpServer);
-			io.set('log level','1');
+      io.set('log level', '1');
       return io.on('connection', (function(_this) {
         return function(socket) {
           console.log(socket.id);
@@ -410,6 +410,25 @@
               socket.emit 'sConnection', { name: myName, sprite: mySprite }
            */
           socket.on('cMove', function(data) {
+            var player;
+            if (_this.gcmClient) {
+              player = _this.getPlayerBySocket(socket);
+              _this.sendToGcm({
+                msgType: 'move',
+                body: {
+                  id: player.name,
+                  src: {
+                    x: player.x,
+                    y: player.y
+                  },
+                  dest: {
+                    x: data.x,
+                    y: data.y
+                  },
+                  time: Date.now()
+                }
+              });
+            }
             return _this.world.processPcMove(socket, data.x, data.y);
           });
           socket.on('cStartBattle', function(data) {
@@ -428,11 +447,11 @@
                 body: {
                   user: data.from,
                   msg: data.msg,
-									time: Date.now()
+                  time: Date.now()
                 }
               });
             } else {
-              return _this.world.processChat(data.from, data.to, data.msg);
+              return _this.world.processChat(data.user, null, data.msg);
             }
           });
           return socket.on('disconnect', function() {
@@ -483,7 +502,14 @@
         return function() {
           console.log('Connected');
           _this.gcmClient = client;
-					return;
+          return _this.sendToGcm({
+            msgType: 'chat',
+            body: {
+              user: 'John',
+              msg: 'Hello, World wtf2 오호',
+              time: Date.now()
+            }
+          });
         };
       })(this));
       client.on('data', (function(_this) {
@@ -534,5 +560,3 @@
   };
 
 }).call(this);
-
-//# sourceMappingURL=gameServer.map

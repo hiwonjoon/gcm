@@ -205,7 +205,7 @@ class GameServer
 
   handleConnection: ->
     io = require('socket.io').listen @httpServer
-		io.set('log level','1')
+    io.set 'log level','1'
     io.on 'connection', (socket) =>
       console.log socket.id
 
@@ -220,6 +220,19 @@ class GameServer
       ###
 
       socket.on 'cMove', (data) =>
+        if @gcmClient
+          player = @getPlayerBySocket(socket)
+          @sendToGcm
+            msgType: 'move'
+            body:
+              id: player.name
+              src: 
+                x: player.x
+                y: player.y
+              dest:
+                x: data.x
+                y: data.y
+              time: Date.now()
         @world.processPcMove socket, data.x, data.y
 
       socket.on 'cStartBattle', (data) =>
@@ -238,7 +251,7 @@ class GameServer
             body:
               user: data.from
               msg: data.msg
-							time: Date.now()
+              time: Date.now()
         else
           @world.processChat data.user, null, data.msg
 
@@ -263,7 +276,7 @@ class GameServer
     switch json.msgType
       when 'chat'
         data = json.body
-        @world.processChat data.from, data.to, data.msg
+        @world.processChat data.user, null, data.msg
 
   connectToGcm: (ip, port) ->
     client = net.createConnection port, ip
@@ -278,14 +291,13 @@ class GameServer
     client.on 'connect', =>
       console.log 'Connected'
       @gcmClient = client
-
       #test
       @sendToGcm
         msgType: 'chat'
         body:
           user: 'John'
           msg: 'Hello, World wtf2 오호'
-					time: Date.now()
+          time: Date.now()
 
     client.on 'data', (data) =>
       newBuf = new Buffer (buf.length + data.length)
