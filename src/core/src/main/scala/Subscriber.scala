@@ -3,6 +3,7 @@ package core
 import akka.actor.{Actor, ActorRef}
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
+import scala.collection.immutable.Seq
 import scala.math
 import common._
 
@@ -15,8 +16,8 @@ class Subscriber extends Actor {
   var cnt = 0
 
   // macro detection
-  var prevVec:Map[String, Array[Int]] = Map[String, Array[Int]] ()
-  var curVec:Map[String, Array[Int]] = Map[String, Array[Int]] ()
+  var prevVec:Map[String, Seq[Int]] = Map[String, Seq[Int]] ()
+  var curVec:Map[String, Seq[Int]] = Map[String, Seq[Int]] ()
 
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
@@ -101,7 +102,7 @@ class Subscriber extends Actor {
     }
   }
 
-  def Push(id:String, vec:Array[Int]) = {
+  def Push(id:String, vec:Seq[Int]) = {
     curVec(id) = vec
 
     val isExist = prevVec.contains(id)
@@ -114,7 +115,7 @@ class Subscriber extends Actor {
     prevVec(id) = curVec(id)
   }
 
-  def GetCosine(vec1:Array[Int], vec2:Array[Int]):Double = {
+  def GetCosine(vec1:Seq[Int], vec2:Seq[Int]):Double = {
     val size1:Double = Math.sqrt(vec1.map(i => i * i).foldLeft(0) (_ + _))
     val size2:Double = Math.sqrt(vec2.map(i => i * i).foldLeft(0) (_ + _))
 

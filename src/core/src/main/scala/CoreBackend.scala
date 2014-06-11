@@ -3,6 +3,7 @@
  */
 package core
 
+import common.MachinePerformance
 import scala.concurrent.duration._
 import akka.actor.Actor
 import akka.actor.ActorRef
@@ -19,7 +20,8 @@ import com.typesafe.config.ConfigFactory
 class CoreBackend extends Actor {
   val cluster = Cluster(context.system)
 
-  val info_tree = context.system.actorOf(Props(new InformationTree(null)))
+  val info_tree = context.system.actorOf(Props(new InformationTree(self)))
+  val perf = new java_core.PerformanceMonitor;
 
   override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
   override def postStop(): Unit = cluster.unsubscribe(self)
@@ -28,6 +30,11 @@ class CoreBackend extends Actor {
     case job : Job =>
       info_tree ! job;
     case a:GetVector => info_tree ! a;
+    case GetPerformance(sendTo) =>
+      if(sendTo != null)
+        sendTo ! MachinePerformance(perf.getCpuInfo(),perf.getMemoryInfo())
+      else
+        println(perf.getCpuInfo() + " " + perf.getMemoryInfo())
     case state : CurrentClusterState =>
       state.members.filter(_.status == MemberStatus.up) foreach register
     case MemberUp(m) => register(m)

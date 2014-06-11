@@ -8,6 +8,8 @@ import spray.json.{DefaultJsonProtocol, RootJsonFormat, JsBoolean, JsString, JsN
 import spray.json.pimpAny
 import scala.Some
 import scala.concurrent.duration._
+import scala.collection.immutable.IndexedSeq
+import scala.collection.mutable.Seq
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 
@@ -158,6 +160,17 @@ class CoreFrontend(port : Int) extends Actor {
 
   val listener = context.system.actorOf(Props(new Listener(port,self)))
 
+  val system = context.system
+  import system.dispatcher
+  context.system.scheduler.schedule(10.seconds, 2.seconds) {
+    (self ! GetVector("",system.actorOf(Props(new Gatherer(backends.toSeq,Main.esper_subscriber)))))
+  }
+  ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
+  //http://java.dzone.com/articles/real-time-charts-play 이건 차트 만드는거.
+  context.system.scheduler.schedule(10.seconds, 10.seconds) {
+    backends.foreach(actor => actor ! GetPerformance(null));
+  }
+
   def receive = {
     case (handler:ActorRef,job:Job) if backends.isEmpty =>
       sender ! JobFailed("Service unavailable, try again later",job)
@@ -219,11 +232,6 @@ object CoreFrontend {
       withFallback(ConfigFactory.load())
     val system = ActorSystem("core",config)
     val frontend = system.actorOf(Props(new CoreFrontend(listener_port.toInt)), name="frontend")
-
-    import system.dispatcher
-    system.scheduler.schedule(10.seconds, 2.seconds) {
-      (frontend ! GetVector("",Main.esper_subscriber))
-    }
   }
 
 }

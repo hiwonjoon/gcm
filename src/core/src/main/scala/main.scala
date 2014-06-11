@@ -1,6 +1,5 @@
 package core
 
-
 import akka.actor.{Props, ActorSystem, ActorRef, Actor}
 import spray.httpx.unmarshalling.{MalformedContent, Unmarshaller, Deserialized}
 import scala.annotation.tailrec
@@ -13,15 +12,21 @@ object Main extends App {
     .withFallback(ConfigFactory.load())
 
   val system = ActorSystem("core", config)
+
   val tweet_processor = system.actorOf(Props(new TweetProcessor),"tweetprocessor")
   val raw_processor = system.actorOf(Props(new RawViewProcessor),"rawprocessor")
   val web_processor = system.actorOf(Props(new WebActor),"WebActor")
-  val esper_subscriber = system.actorOf(Props(classOf[Subscriber]));
+  val esper_subscriber = system.actorOf(Props(classOf[Subscriber]),"espersubscriber");
   var forbiddenWords = scala.collection.mutable.LinkedHashSet[String]()
 
   var cosine_flag = false
-  CoreFrontend.main(Seq("1338","5152").toArray)
+  CoreFrontend.main(Seq("1338","5152").toArray) //FrontEnd는 Clustering 안함.
   CoreBackend.main(Seq("5153").toArray)
+  //CoreBackend.main(Seq("0").toArray)
+
+
+  //println(perf.getCpuInfo().toString());
+  //println(perf.getMemoryInfo().toString());
 
   esper_subscriber ! "RequestDetection"
 

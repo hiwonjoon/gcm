@@ -3,6 +3,7 @@ package common
 import scala.beans.BeanProperty
 import scala.collection.immutable.Map
 import scala.collection.mutable.ArrayBuffer
+import java.util
 
 case class Request(packet:RegisterPacket)
 class RegisterPacket extends Serializable {
@@ -31,3 +32,4 @@ object C {
   val filterStr:Array[String] = Array("시발", "좆", "ㅅㅂ", "지랄", "새끼", "개새끼", "샹놈")
 }
 case class ForbiddenWords(arrayOfWords : Array[String])
+case class MachinePerformance(cpuperf:util.ArrayList[java.util.HashMap[String, String]],memperf:java.util.HashMap[String,java.lang.Long])

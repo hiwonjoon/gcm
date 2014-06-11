@@ -4,17 +4,25 @@
 package core;
 import akka.actor.{ActorRef, Actor, ActorSystem, Props};
 import scala.collection.mutable.HashMap
+import scala.collection.immutable.Seq
 import akka.event.Logging
 import scala.compat.Platform
 
+case class GetPerformance(sendTo:ActorRef)
+
 case class GetVector(id:String,sendTo:ActorRef)
-case class Vectors(id:String,vec:Array[Int])
+case class Vectors(id:String,vec:Seq[Int])
+case class VectorList(backend:ActorRef, map : HashMap[String,Seq[Int]])
 
 class InformationTree(parent : ActorRef) extends Actor {
   var user_vector_map = new HashMap[String,ActorRef];
   def receive = {
     case GetVector(_,sendTo) => {
-      user_vector_map.foreach{case(id,ref) => {ref ! GetVector(id,sendTo)}}
+      user_vector_map.foreach{
+        case(id,ref) => {
+          ref ! GetVector(id,context.system.actorOf(Props(new OneTreeGatherer(user_vector_map.size,parent,sendTo))))
+        }
+      }
     }
     case a:Job => {
       a.getId().foreach(id => {
@@ -51,8 +59,7 @@ class UserVector(id:String) extends Actor {
 
         val userBattleResult = list.count(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserBattleResult])
         //println(id + (userMove, userBattleResult).toString())
-
-        sendTo ! Vectors(id, Array(moveEast, moveWest, moveSouth, moveNorth, userBattleResult))
+        sendTo ! Vectors(id, moveEast::moveWest::moveSouth::moveNorth::userBattleResult::Nil )
 
         last_vector_calculated = Platform.currentTime
       }
