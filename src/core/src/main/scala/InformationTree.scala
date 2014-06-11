@@ -50,15 +50,16 @@ class UserVector(id:String) extends Actor {
       if( last_vector_calculated >= last_inserted )
       {}
       else {
-        val moveList = list.filter(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserMove])
+        val moveList = list.filter(job => job.getTime() >= last_inserted - 10 * 1000 && job.isInstanceOf[UserMove])
 
         val moveEast = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 0)
         val moveWest = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 1)
         val moveSouth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 2)
         val moveNorth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 3)
 
-        val userBattleResult = list.count(job => job.getTime() >= last_inserted - 2 * 1000 && job.isInstanceOf[UserBattleResult])
+        val userBattleResult = list.count(job => job.getTime() >= last_inserted - 10 * 1000 && job.isInstanceOf[UserBattleResult])
         //println(id + (userMove, userBattleResult).toString())
+
         sendTo ! Vectors(id, moveEast::moveWest::moveSouth::moveNorth::userBattleResult::Nil )
 
         last_vector_calculated = Platform.currentTime
@@ -66,7 +67,7 @@ class UserVector(id:String) extends Actor {
     }
     case a : Job => {
       last_inserted = Platform.currentTime;
-      list.filterNot(job => job.getTime() < a.getTime() - maximum)
+      list = list.filterNot(job => job.getTime() < a.getTime() - maximum)
       list = a::list;
     }
     case _ => Logging(context.system, this).info("case _ in User Vector")

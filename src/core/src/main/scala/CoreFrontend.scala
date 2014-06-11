@@ -162,7 +162,7 @@ class CoreFrontend(port : Int) extends Actor {
 
   val system = context.system
   import system.dispatcher
-  context.system.scheduler.schedule(10.seconds, 2.seconds) {
+  context.system.scheduler.schedule(10.seconds, 10.seconds) {
     (self ! GetVector("",system.actorOf(Props(new Gatherer(backends.toSeq,Main.esper_subscriber)))))
   }
   ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
