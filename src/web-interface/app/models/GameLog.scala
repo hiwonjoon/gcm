@@ -1,16 +1,21 @@
 package models
 
+import models._
+import controllers.Global
+import controllers._
 import anorm._
 import anorm.SqlParser._
 import scala.concurrent.Future
 import play.api.libs.json._
 
-import models._
-import controllers.Global
+import java.text.SimpleDateFormat
 
-case class GameLog(logType : Int, username : String, contents : String, date: DateTime)
+//logType : 1  => 도배
+//logType : 2  => 어뷰징
 
-object GameLog extends ((Int, String, String, DateTime) => GameLog) {
+case class GameLog(logType : String, username : String, contents : String, date: String)
+
+object GameLog extends ((String, String, String, String) => GameLog) {
 
   implicit val jsonFormat = Json.format[GameLog]
 
@@ -19,40 +24,49 @@ object GameLog extends ((Int, String, String, DateTime) => GameLog) {
       str("username") ~
       str("contents") ~
       str("date") map {
-      case     logType~username~contents~date =>
-        GameLog(logType,username,contents,new DateTime(date))
+      case     logType~username~contents~datetime =>
+        GameLog(getLogTypeName(logType),username,contents,datetime)
     }
 
-  def getByLogType(logType:Int) = scala.concurrent.Future {
+  def getLogTypeName(logType: Int) : String = logType match {
+      case 1 => "도배"
+      case 2 => "매크로"
+      case _ => "오류"
+  }
+
+  def getByLogType(logType:Int, startIndex:Int, count:Int) = scala.concurrent.Future {
     DB.withConnection { implicit connection =>
-      SQL(
-        """
+        SQL(
+          """
           SELECT
             type,
             username,
             contents,
             date
           FROM logs
-
-        """
-      ).on(
-
-        ).as(gameLogs *)
-    }
+          WHERE type={logType}
+          ORDER BY date desc
+          LIMIT {startIndex},{count}
+          """
+        ).on(
+            'logType -> logType,
+            'startIndex -> startIndex,
+            'count -> count
+          ).as(gameLogs *)
+     }
   }
 
-  def getAllLog() = scala.concurrent.Future {
+  def countAll(logType : Int) = Future {
     DB.withConnection { implicit connection =>
-      SQL(
+      val result = SQL(
         """
-          SELECT
-            type,
-            username,
-            contents,
-            date
-          FROM logs;
+          SELECT COUNT(1) count
+          FROM logs
+          where type={logType}
         """
-      ).on().as(gameLogs.singleOpt)
+      ).on('logType -> logType).apply()
+
+      result.head[Long]("count")
     }
   }
 

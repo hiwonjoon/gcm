@@ -1,0 +1,12 @@
+@(logType: Int)
+@main("logView"){
+<script type="text/javascript" src='@routes.Assets.at("javascripts/logView.js")'></script>
+<script type="text/javascript" src='@routes.Assets.at("javascripts/dataTables/jquery.dataTables.min.js")'></script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/dataTables/jquery.dataTables.min.css")' />
+<div>
+    <span id="logType" style="visibility:hidden">@logType</span>
+    <table id="logTable" class="display">
+
+    </table>
+</div>
+}

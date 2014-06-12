@@ -1,0 +1,37 @@
+@(form: Form[(String,String)])(implicit flash: Flash)
+<html>
+    <head>
+        <title>GCM</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/login.css")">
+    </head>
+    <body>
+    @helper.form(routes.Application.authenticate) {
+        <h1>Sign in</h1>
+            @form.globalError.map { error =>
+            <p class="error">
+                @error.message
+            </p>
+    }
+
+    @flash.get("success").map { message =>
+        <p class="success">
+            @message
+        </p>
+    }
+
+    <p>
+    <input type="text" name="id" placeholder="id" id="id" value="@form("id").value">
+    </p>
+    <p>
+    <input type="password" name="password" id="password" placeholder="Password">
+    </p>
+    <p>
+        <button type="submit" id="loginbutton">Login</button>
+    </p>
+
+    }
+
+
+    </body>
+</html>

@@ -4,6 +4,11 @@
 
 # Home page
 GET     /                           controllers.Application.index
+# login page & Authentication
+GET     /login                      controllers.Application.login
+POST    /login                              controllers.Application.authenticate
+GET     /logout                             controllers.Application.logout
+
 # menu
 GET     /assets/javascripts/menu.js  controllers.Application.menuJs(menu: String)
 #Twitter
@@ -21,7 +26,7 @@ GET     /forbidden/add          controllers.ForbiddenKeyword.add(keyword: String
 GET     /forbidden/del          controllers.ForbiddenKeyword.delete(keyword: String)
 
 #gamelog
-GET     /getlogs                        controllers.GameLogs.get(logType: Int)
-
+GET     /logView                        controllers.GameLogs.index(logType: Int)
+GET     /logView/getAjax                controllers.GameLogs.getAjax(logType: Int, draw:Int, start: Int, length:Int)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

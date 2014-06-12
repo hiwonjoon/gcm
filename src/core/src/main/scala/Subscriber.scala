@@ -34,6 +34,8 @@ class Subscriber extends Actor {
     case EsperEvent(_, MacroDetection(id, sort, avg, stddev)) => {
       val typeName = C.MacroType(sort)
       println(s"$typeName Detection($id) : avg = $avg, stddev = $stddev")
+      val typeName = C.MacroType(sort)
+	  logger_web ! MacroDetection(id, sort, avg, stddev)
     }
 
     case EsperEvent(_, AbusingDetection(user1, user2, count)) => {
