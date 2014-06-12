@@ -24,7 +24,7 @@ case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
 case class Macro(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty cosine: Double)
 case class MacroDetection(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty avg: Double, @BeanProperty stddev: Double)
 
-case class Battle(@BeanProperty user1: String, @BeanProperty user2: String, @BeanProperty winner: String, @BeanProperty duration: Long)
+case class Battle(@BeanProperty winner: String, @BeanProperty loser: String, @BeanProperty duration: Long)
 case class AbusingDetection(@BeanProperty user1: String, @BeanProperty user2: String, @BeanProperty count: Long)
 
 case class TweetListRequest()
