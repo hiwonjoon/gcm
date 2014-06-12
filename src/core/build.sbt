@@ -4,7 +4,7 @@ version := "1.0"
 
 resolvers += "spray repo" at "http://repo.spray.io"
 
-resolvers += "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots/"
+resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka"      %% "akka-actor"            % "2.2.3",
@@ -21,3 +21,4 @@ libraryDependencies ++= Seq(
   "io.spray"                % "spray-testkit"         % "1.2.0"        % "test",
   "com.typesafe.akka"      %% "akka-testkit"          % "2.2.3"        % "test"
 )
+
