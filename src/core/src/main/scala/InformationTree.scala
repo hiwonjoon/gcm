@@ -44,6 +44,7 @@ class InformationTree(parent : ActorRef) extends Actor {
 
 class UserVector(id:String) extends Actor {
   val maximum = 120 * 1000; //120seconds.
+  val check_interval = 10 * 1000;
   var last_inserted : Long = 0;
   var last_vector_calculated : Long = 0;
   var list : scala.collection.immutable.List[Job] = Nil;
@@ -54,17 +55,28 @@ class UserVector(id:String) extends Actor {
 //        sendTo ! Vectors(id, Nil)
 //      }
 //      else {
-        val moveList = list.filter(job => job.getTime() >= last_inserted - 10 * 1000 && job.isInstanceOf[UserMove])
+        val moveList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserMove])
 
         val moveEast = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 0)
         val moveWest = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 1)
         val moveSouth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 2)
         val moveNorth = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 3)
 
-        val userBattleResult = list.count(job => job.getTime() >= last_inserted - 10 * 1000 && job.isInstanceOf[UserBattleResult])
-        //println(id + (userMove, userBattleResult).toString())
+        val battleList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserBattleResult])
 
-        sendTo ! Vectors(id, moveEast::moveWest::moveSouth::moveNorth::userBattleResult::Nil )
+        val pveResult = battleList.count(job => job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == true)
+        val pvpResult = battleList.count(job => job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == false)
+
+        var skillList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserSkill])
+
+        var skillA = skillList.count(job => job.asInstanceOf[UserSkill].skill.equals("A"))
+        var skillB = skillList.count(job => job.asInstanceOf[UserSkill].skill.equals("B"))
+
+        // 반복적인 움직임 패턴 감지
+        sendTo ! Vectors(id, 0::moveEast::moveWest::moveSouth::moveNorth::Nil )
+
+        // 반복적인 사냥 감지
+//      sendTo ! Vectors(id, 1::pveResult::skillA::skillB::Nil )
 
         last_vector_calculated = Platform.currentTime
       }

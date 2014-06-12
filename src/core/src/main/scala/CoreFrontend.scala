@@ -23,6 +23,17 @@ object JsonProtocol extends DefaultJsonProtocol{
   implicit val inGameUserFormat = jsonFormat2(InGameUser);
   implicit val inGameRewardFormat = jsonFormat2(InGameReward);
 
+  implicit object userSkillFormat extends RootJsonFormat[UserSkill] {
+    def write(c: UserSkill) = JsObject()
+    def read(value: JsValue) = {
+      value.asJsObject.getFields("id", "skill", "time") match {
+        case Seq(JsString(id), JsString(skill), JsNumber(time)) =>
+          new UserSkill(id, skill, time.longValue())
+        case _ => throw new DeserializationException("UserSkill expected")
+      }
+    }
+  }
+
   implicit object userMoveFormat extends RootJsonFormat[UserMove] {
     def write(c: UserMove) = JsObject()
     def read(value: JsValue) = {
@@ -60,6 +71,8 @@ class PacketHandler(frontend:ActorRef) extends Actor {
             parsed match {
               case Some((JsString("chat"), body)) =>
                 frontend !(sender, body.convertTo[UserChat])
+              case Some((JsString("skill"), body)) =>
+                frontend !(sender, body.convertTo[UserSkill])
               case Some((JsString("move"), body)) =>
                 frontend !(sender, body.convertTo[UserMove])
               case Some((JsString("bbs"), body)) => ;

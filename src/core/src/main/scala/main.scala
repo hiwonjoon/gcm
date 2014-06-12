@@ -55,7 +55,7 @@ object Main extends App {
         if(cosine_flag && str.length > 0)
         {
           val value = str.toDouble
-          esper_subscriber ! common.Macro("overload", value)
+          esper_subscriber ! common.Macro("overload", 0, value)
         }
         else
           esper_subscriber ! common.ChatWithAddress("overload",str, null)

@@ -16,8 +16,8 @@ class Subscriber extends Actor {
   var cnt = 0
 
   // macro detection
-  var prevVec:Map[String, Seq[Int]] = Map[String, Seq[Int]] ()
-  var curVec:Map[String, Seq[Int]] = Map[String, Seq[Int]] ()
+  var prevVec:Map[Pair[String,Int], Seq[Int]] = Map[Pair[String,Int], Seq[Int]] ()
+  var curVec:Map[Pair[String,Int], Seq[Int]] = Map[Pair[String,Int], Seq[Int]] ()
 
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
@@ -31,8 +31,9 @@ class Subscriber extends Actor {
         origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 비속어를 사용했습니다.")
     }
 
-    case EsperEvent(_, MacroDetection(id, avg, stddev)) => {
-      println(s"Macro Detection($id) : avg = $avg, stddev = $stddev")
+    case EsperEvent(_, MacroDetection(id, sort, avg, stddev)) => {
+      val typeName = C.MacroType(sort)
+      println(s"$typeName Detection($id) : avg = $avg, stddev = $stddev")
     }
 
     case EsperEvent(_, AbusingDetection(user1, user2, count)) => {
@@ -59,9 +60,10 @@ class Subscriber extends Actor {
 
       packet.statement += s"""
                           insert into MacroDetection
-                          select c.id, avg(c.cosine), stddev(c.cosine)
-                          from Macro as c
-                          group by id
+                          select c.id, c.sort, avg(c.cosine), stddev(c.cosine)
+                          from Macro.std:groupwin(id, sort).win:length(10) as c
+                          group by id, sort
+                          having count(*) = 10 and avg(cosine) > 0.85 and stddev(cosine) < 0.15
                           """ -> self
 
       packet.statement += s"""
@@ -93,8 +95,8 @@ class Subscriber extends Actor {
       esper ! ChatWithAddress(id,msg,self)
     }
 
-    case Macro(id, cosine) => {
-      esper ! Macro(id, cosine)
+    case Macro(id, sort, cosine) => {
+      esper ! Macro(id, sort, cosine)
     }
 
     case Battle(user1, user2, winner, duration) => {
@@ -115,27 +117,30 @@ class Subscriber extends Actor {
 	}
 
     case Vectors(id, vec) => {
-      Push(id, vec)
+      Push(id, vec(0), vec.tail)
     }
   }
 
-  def Push(id:String, vec:Seq[Int]) = {
-    curVec(id) = vec
+  def Push(id:String, sort:Int, vec:Seq[Int]) {
+    curVec(Pair(id,sort)) = vec
 
-    val isExist = prevVec.contains(id)
+    val isExist = prevVec.contains(id,sort)
     if(isExist)
     {
-      val cosine = GetCosine(prevVec(id), curVec(id))
-      println(id + " : prev(" + prevVec(id).mkString(",") + "), cur(" + vec.mkString(",") + ") : cosine = " + cosine)
-      self ! Macro(id, cosine)
+      val cosine = GetCosine(prevVec(id,sort), curVec(id,sort))
+      println(id + " (" + C.MacroType(sort) + ") : prev(" + prevVec(id,sort).mkString(",") + "), cur(" + vec.mkString(",") + ") : cosine = " + cosine)
+      self ! Macro(id, sort, cosine)
     }
 
-    prevVec(id) = curVec(id)
+    prevVec(Pair(id,sort)) = curVec(Pair(id,sort))
   }
 
   def GetCosine(vec1:Seq[Int], vec2:Seq[Int]):Double = {
     val size1:Double = Math.sqrt(vec1.map(i => i * i).foldLeft(0) (_ + _))
     val size2:Double = Math.sqrt(vec2.map(i => i * i).foldLeft(0) (_ + _))
+
+    if(size1 * size2== 0)
+      return 0
 
     var multipleSum:Double = 0
     for(i<- 0 until vec1.length)
