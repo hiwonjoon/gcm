@@ -34,7 +34,7 @@ class TweetList(tweets : Seq[(String,Int)]) extends Serializable {
 }
 object C {
   val filterStr:Array[String] = Array("시발", "좆", "ㅅㅂ", "지랄", "새끼", "개새끼", "샹놈")
-  val MacroType = Array("Auto Bot(Move)", "Auto Bot(NPC Hunting)")
+  val MacroType = Array("Auto Bot(Move)", "Auto Bot(NPC Hunting)", "PvP Fraud")
 }
 case class ForbiddenWords(arrayOfWords : Array[String])
 case class MachinePerformance(cpuperf:util.ArrayList[java.util.HashMap[String, String]],memperf:java.util.HashMap[String,java.lang.Long])

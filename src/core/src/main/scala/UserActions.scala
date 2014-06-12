@@ -42,6 +42,13 @@ case class UserSkill(user: String, skill : String, time : Long) extends Job
 }
 case class UserBattleResult(isDraw : Boolean, duration : Long, pos : InGameLocation, winner : InGameUser, loser : InGameUser, reward : InGameReward, time : Long) extends Job
 {
+  def GetZone():Int = {
+    val i = 1600 / pos.x
+    val j = 1600 / pos.y
+    val zone = i + 4 * j
+    zone
+  }
+
   def getTime() = { time; }
   def getId() = {
     if( winner.isNpc == false && loser.isNpc == false )

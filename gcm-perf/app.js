@@ -178,9 +178,10 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         pc = _ref[_i];
-        if (!(!pc.isBound)) {
+        if (!(!pc.isBound) || pc.id == this.id) {
           continue;
         }
+        
         this.opponent = pc;
         this.opponent.isBound = true;
         this.isBound = true;

@@ -64,8 +64,15 @@ class UserVector(id:String) extends Actor {
 
         val battleList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserBattleResult])
 
-        val pveResult = battleList.count(job => job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == true)
-        val pvpResult = battleList.count(job => job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == false)
+        val pveResult = battleList.count(job => job.asInstanceOf[UserBattleResult].winner.id == id && job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == true)
+
+        val pvpList = battleList.filter(job => job.asInstanceOf[UserBattleResult].winner.id == id && job.asInstanceOf[UserBattleResult].winner.isNpc == false && job.asInstanceOf[UserBattleResult].loser.isNpc == false)
+        var pvpResult:Seq[Int] = Nil
+        for(i <- 0 to 15)
+        {
+          pvpResult :+= pvpList.count(job => job.asInstanceOf[UserBattleResult].GetZone() == i)
+        }
+
 
         var skillList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserSkill])
 
@@ -77,6 +84,9 @@ class UserVector(id:String) extends Actor {
 
         // 반복적인 사냥 감지
 //      sendTo ! Vectors(id, 1::pveResult::skillA::skillB::Nil )
+
+        // 특정 지역에서 유저를 계속 죽이고 다니는 놈 감지
+//      sendTo ! Vectors(id, 2+:pvpResult)
 
         last_vector_calculated = Platform.currentTime
       }
