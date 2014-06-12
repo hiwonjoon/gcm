@@ -69,10 +69,10 @@ class Subscriber extends Actor {
 
       packet.statement += s"""
                           insert into AbusingDetection
-                          select c.user1, c.user2, count(*)
-                          from Battle.std:groupwin(user1, user2).win:length(5) as c
-                          group by user1, user2
-                          having avg(duration) < 10 and stddev(duration) < 1
+                          select c.winner, c.loser, count(*)
+                          from Battle.std:groupwin(winner, loser).win:length(5) as c
+                          group by winner, loser
+                          having count(*) = 5 and max(duration) < 10
                           """ -> self
 
 //      having avg(cosine) > 0.8 and stddev(cosine) < 0.2
@@ -100,8 +100,8 @@ class Subscriber extends Actor {
       esper ! Macro(id, sort, cosine)
     }
 
-    case Battle(user1, user2, winner, duration) => {
-      esper ! Battle(user1, user2, winner, duration)
+    case Battle(winner, loser, duration) => {
+      esper ! Battle(winner, loser, duration)
     }
 
     case EsperError(_) => {

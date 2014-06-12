@@ -51,6 +51,10 @@ object Main extends App {
         esper_subscriber ! common.Battle("a", "b", 5)
       case "battle2" =>
         esper_subscriber ! common.Battle("a", "b", 15)
+      case "battle3" =>
+        esper_subscriber ! common.Battle("b", "a", 5)
+      case "battle4" =>
+        esper_subscriber ! common.Battle("b", "a", 15)
       case str:String =>
         if(cosine_flag && str.length > 0)
         {
