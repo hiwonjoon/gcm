@@ -26,3 +26,4 @@ dist
 */*/.project
 /RUNNING_PID
 /.settings
+src/web-interface/db/webdb.db

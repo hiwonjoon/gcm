@@ -16,11 +16,17 @@ import akka.cluster.ClusterEvent.MemberUp
 import akka.cluster.Member
 import akka.cluster.MemberStatus
 import com.typesafe.config.ConfigFactory
+import akka.routing.ConsistentHashingRouter
+import akka.routing.ConsistentHashingRouter.ConsistentHashMapping
+import akka.routing.Broadcast
 
 class CoreBackend extends Actor {
   val cluster = Cluster(context.system)
 
-  val info_tree = context.system.actorOf(Props(new InformationTree(self)))
+  def hashMapping : ConsistentHashMapping = {
+    case a:Job => a.getId()
+  }
+  val info_tree = context.system.actorOf(Props(new InformationTree(self)).withRouter(ConsistentHashingRouter(10,hashMapping = hashMapping)))
   val perf = new java_core.PerformanceMonitor;
 
   override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
@@ -29,12 +35,12 @@ class CoreBackend extends Actor {
   def receive = {
     case job : Job =>
       info_tree ! job;
-    case a:GetVector => info_tree ! a;
+    case a:GetVector => info_tree ! Broadcast(a)
     case GetPerformance(sendTo) =>
       if(sendTo != null)
         sendTo ! MachinePerformance(perf.getCpuInfo(),perf.getMemoryInfo())
       else
-        println(perf.getCpuInfo() + " " + perf.getMemoryInfo())
+        println(perf.getMemoryInfo() + " " + perf.getCpuInfo())
     case state : CurrentClusterState =>
       state.members.filter(_.status == MemberStatus.up) foreach register
     case MemberUp(m) => register(m)

@@ -75,7 +75,6 @@ class Subscriber extends Actor {
                           having count(*) = 5 and max(duration) < 10
                           """ -> self
 
-//      having avg(cosine) > 0.8 and stddev(cosine) < 0.2
 
       packet.eventTypes += "ChatWithAddress" -> classOf[ChatWithAddress]
       packet.eventTypes += "ChatAbusing" -> classOf[ChatAbusing]

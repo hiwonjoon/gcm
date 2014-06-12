@@ -127,7 +127,7 @@ class WordElement(text_ : String) extends Actor {
 }
 
 class TweetProcessor extends Actor {
-  val analyzer = new MorphologyAnalyzer("./lib/datas/")
+  val analyzer = new MorphologyAnalyzer("./core/lib/datas/")
   val word_count = new scala.collection.mutable.HashMap[String,scala.collection.mutable.HashMap[String,Int]];
   var tweets_count = 0;
   val index_tree = context.system.actorOf(Props(new TweetIndexTree(null)));

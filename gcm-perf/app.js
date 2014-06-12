@@ -500,7 +500,8 @@
       if (this.gcmClient) {
         this.gcmClient.write(this.makePacket(jsonData));
       }
-      return console.log(jsonData);
+      //return console.log(jsonData);
+      return;
     };
 
     World.prototype.onGcm = function(json) {

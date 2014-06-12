@@ -12,6 +12,9 @@ import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable.Seq
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
+import akka.cluster.Cluster
+import akka.routing.{Broadcast, FromConfig}
+import akka.cluster.routing.{ClusterRouterSettings, AdaptiveLoadBalancingRouter, ClusterRouterConfig}
 
 /**
  * Created by wonjoon-g on 2014. 6. 4..
@@ -166,8 +169,10 @@ class Listener(port: Int, frontend: ActorRef) extends Actor {
 
 class CoreFrontend(port : Int) extends Actor {
   import JsonProtocol._
-
   var backends = IndexedSeq.empty[ActorRef];
+  val backendRouter = context.actorOf(Props.empty.withRouter(ClusterRouterConfig(
+      AdaptiveLoadBalancingRouter(metricsSelector = akka.cluster.routing.HeapMetricsSelector),ClusterRouterSettings(totalInstances = 100, routeesPath="/user/backend",allowLocalRoutees = true, useRole=Some("backend")))),name="backend_router")
+
   var jobCounter = 0;
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
 
@@ -177,8 +182,7 @@ class CoreFrontend(port : Int) extends Actor {
   val system = context.system
   import system.dispatcher
   context.system.scheduler.schedule(10.seconds, 10.seconds) {
-
-    (self ! GetVector("",system.actorOf(Props(new Gatherer(backends.toSeq,Main.esper_subscriber)))))
+    (self ! GetVector("",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),Main.esper_subscriber)))))
   }
   ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
   //http://java.dzone.com/articles/real-time-charts-play 이건 차트 만드는거.
@@ -189,8 +193,8 @@ class CoreFrontend(port : Int) extends Actor {
   }
 
   def receive = {
-    case (handler:ActorRef,job:Job) if backends.isEmpty =>
-      sender ! JobFailed("Service unavailable, try again later",job)
+//    case (handler:ActorRef,job:Job) if backends.isEmpty =>
+//      sender ! JobFailed("Service unavailable, try again later",job)
     case (handler:ActorRef,job:Job) =>
       job match {
         case chat:UserChat =>
@@ -214,11 +218,12 @@ class CoreFrontend(port : Int) extends Actor {
           handler ! Tcp.Write(header ++ body)
         case _ =>
           jobCounter += 1;
-          backends(jobCounter % backends.size) ! job
+          backendRouter ! job
       }
     case a:GetVector => {
       //클러스터에 잇는 모든 친구들에게 데이터를 요청 후 받아서 처리.
-      backends.foreach(backend => backend ! a)
+      backendRouter ! Broadcast(a)
+      //backends.foreach(backend => backend ! a)
     }
     case BackendRegistration if !backends.contains(sender) =>
       context watch sender
@@ -248,7 +253,12 @@ object CoreFrontend {
       withFallback(ConfigFactory.parseString("akka.cluster.roles = [frontend]")).
       withFallback(ConfigFactory.load())
     val system = ActorSystem("core",config)
+//    Cluster(system) registerOnMemberUp {
+//      system.actorOf(Props(new CoreFrontend(listener_port.toInt)), name="frontend")
+//    }
     val frontend = system.actorOf(Props(new CoreFrontend(listener_port.toInt)), name="frontend")
+
+    ///println(frontend.toString())
   }
 
 }

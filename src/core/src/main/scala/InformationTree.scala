@@ -9,13 +9,13 @@ import akka.event.Logging
 import scala.compat.Platform
 
 case class GetPerformance(sendTo:ActorRef)
-
+case class DeleteUser()
 case class GetVector(id:String,sendTo:ActorRef)
 case class Vectors(id:String,vec:Seq[Int])
+case class AllVectorSent(backend:ActorRef)
 case class VectorList(backend:ActorRef, map : HashMap[String,Seq[Int]])
 
 class InformationTree(parent : ActorRef) extends Actor {
-  //TODO : 유저 벡터 멥에서 데이터 없는 애들은 스스로 삭제 되는 코드 넣어야지.
   var user_vector_map = new HashMap[String,ActorRef];
   def receive = {
     case GetVector(_,sendTo) => {
@@ -37,6 +37,9 @@ class InformationTree(parent : ActorRef) extends Actor {
         }
       })
     }
+    case DeleteUser => {
+      sender ! akka.actor.PoisonPill
+    }
     case _ => Logging(context.system, this).info("case _ in Information Tree")
   }
 
@@ -44,12 +47,18 @@ class InformationTree(parent : ActorRef) extends Actor {
 
 class UserVector(id:String) extends Actor {
   val maximum = 120 * 1000; //120seconds.
+  //val maximum = 10 * 60 * 1000; //10 MINUTES
   val check_interval = 10 * 1000;
+
   var last_inserted : Long = 0;
   var last_vector_calculated : Long = 0;
   var list : scala.collection.immutable.List[Job] = Nil;
   def receive = {
     case GetVector(_,sendTo) => {
+        if( last_inserted <= Platform.currentTime - maximum )
+        {
+          sender ! DeleteUser()
+        }
 //      if( last_vector_calculated >= last_inserted )
 //      {
 //        sendTo ! Vectors(id, Nil)
