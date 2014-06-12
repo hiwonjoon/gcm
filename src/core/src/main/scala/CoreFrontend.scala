@@ -1,6 +1,6 @@
 package core;
 
-import akka.actor._;
+import akka.actor._
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import java.net.InetSocketAddress
@@ -172,16 +172,20 @@ class CoreFrontend(port : Int) extends Actor {
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
 
   val listener = context.system.actorOf(Props(new Listener(port,self)))
+  var logger_web = context.actorSelection("akka.tcp://web@127.0.0.1:8999/user/LogActor");
 
   val system = context.system
   import system.dispatcher
   context.system.scheduler.schedule(10.seconds, 10.seconds) {
+
     (self ! GetVector("",system.actorOf(Props(new Gatherer(backends.toSeq,Main.esper_subscriber)))))
   }
   ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
   //http://java.dzone.com/articles/real-time-charts-play 이건 차트 만드는거.
   context.system.scheduler.schedule(10.seconds, 10.seconds) {
-    backends.foreach(actor => actor ! GetPerformance(null));
+    logger_web.resolveOne(5.seconds).foreach{
+      ref => backends.foreach(actor => actor ! GetPerformance(ref))
+    }
   }
 
   def receive = {
