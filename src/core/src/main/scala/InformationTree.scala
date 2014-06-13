@@ -12,6 +12,7 @@ case class GetPerformance(sendTo:ActorRef)
 case class DeleteUser()
 case class GetVector(id:String,sendTo:ActorRef)
 case class Vectors(id:String,vec:Seq[Int])
+case class VectorsEmpty(id:String)
 case class AllVectorSent(backend:ActorRef)
 case class VectorList(backend:ActorRef, map : HashMap[String,Seq[Int]])
 
@@ -59,11 +60,11 @@ class UserVector(id:String) extends Actor {
         {
           sender ! DeleteUser()
         }
-//      if( last_vector_calculated >= last_inserted )
-//      {
-//        sendTo ! Vectors(id, Nil)
-//      }
-//      else {
+        else if( last_vector_calculated >= last_inserted )
+        {
+          sendTo ! VectorsEmpty(id)
+        }
+        else {
         val moveList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserMove])
 
         val moveEast = moveList.count(job => job.asInstanceOf[UserMove].getDir() == 0)
@@ -89,17 +90,17 @@ class UserVector(id:String) extends Actor {
         var skillB = skillList.count(job => job.asInstanceOf[UserSkill].skill.equals("B"))
 
         // 반복적인 움직임 패턴 감지
-        sendTo ! Vectors(id, 0::moveEast::moveWest::moveSouth::moveNorth::Nil )
+//        sendTo ! Vectors(id, 0::moveEast::moveWest::moveSouth::moveNorth::Nil )
 
         // 반복적인 사냥 감지
-//      sendTo ! Vectors(id, 1::pveResult::skillA::skillB::Nil )
+       sendTo ! Vectors(id, 1::pveResult::skillA::skillB::Nil )
 
         // 특정 지역에서 유저를 계속 죽이고 다니는 놈 감지
 //      sendTo ! Vectors(id, 2+:pvpResult)
 
         last_vector_calculated = Platform.currentTime
       }
-//    }
+    }
     case a : Job => {
       last_inserted = Platform.currentTime;
       list = list.filterNot(job => job.getTime() < a.getTime() - maximum)

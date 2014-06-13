@@ -23,6 +23,13 @@ class OneTreeGatherer(user_size:Int,backend:ActorRef,sendTo:ActorRef) extends Ac
         context.system.stop(self)
       }
     }
+    case a:VectorsEmpty => {
+      user_remained -= 1;
+      if( user_remained <= 0 ) {
+        sendTo ! AllVectorSent(backend)
+        context.system.stop(self)
+      }
+    }
   }
 }
 class Gatherer(backend_list:scala.collection.mutable.Seq[ActorRef],sendTo:ActorRef) extends Actor{
