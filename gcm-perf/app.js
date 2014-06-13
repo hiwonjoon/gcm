@@ -42,13 +42,13 @@
       this.x = Math.floor(Math.random() * size.width);
       this.y = Math.floor(Math.random() * size.height);
 	
-	  this.tickTime = 10;
+	  this.tickTime = 200;
 	  
 	  // move destination      
       this.hasDestination = false;      
       this.destX = -1;
       this.destY = -1;
-	  
+	 	
 	  // target
 	  this.targetList = [];
 	  this.target = null;
@@ -65,6 +65,10 @@
       this.rotateIndex = -1;
       
       this.id = IdGenerator.generateId(prefix);
+
+      this.getZone = function() {
+    	return parseInt(this.x / (this.world.size.width/4)) + parseInt(this.y / (this.world.size.height/4)) * 4;
+      }
     }
 
     Character.prototype.isBound = false;
@@ -78,6 +82,7 @@
     Character.prototype.y = 0;
 
     Character.prototype.tick = function(now) {};
+    
 
     return Character;
 
@@ -154,9 +159,15 @@
       	// Attack
       	if(this.leftAttackCnt > 0)
       	{	
+      		var rand = Math.floor(Math.random() * 100);
+			if(rand < 10)
+			{      		
+   				this.skillIndex = Math.floor(Math.random() * 2);
+			}
+			
 			if(this.skillIndex >= this.skillPattern.length) 
 				this.skillIndex = 0;
-			
+						
 			this.world.sendSkill(this.id, this.skillPattern[this.skillIndex]);
 			this.skillIndex += 1;
       	}
@@ -173,21 +184,75 @@
     };
 
     Pc.prototype.attackPc = function() {
-      var pc, _i, _len, _ref, _results;
-      _ref = this.world.pcs;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        pc = _ref[_i];
-        if (!(!pc.isBound) || pc.id == this.id) {
-          continue;
-        }
-        
-        this.opponent = pc;
-        this.opponent.isBound = true;
-        this.isBound = true;
-        _results.push(this.world.sendBattleResult(false, 1000, this.x, this.y, this, pc, 100, 10));
+      // Search the PC
+      if(this.hasDestination == false && this.target == null)
+      {
+	      var pc, _i, _len, _ref, minDis, targetPc;
+    	  minDis = 10000;
+    	  
+    	  if(this.targetList.length == 0)
+    	  {
+    	  	this.targetList = this.world.pcs.concat(this.world.bots)
+    	  	this.targetList.splice(this.targetList.indexOf(this), 1);
+    	  }
+    	  
+      	  _ref = this.targetList;
+      	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+       	  	pc = _ref[_i];
+       	 	if (!(!pc.isBound) || pc.getZone() != this.getZone()) {
+          		continue;
+        	}
+        	
+	        var dis = Math.sqrt(Math.pow(pc.x - this.x,2) + Math.pow(pc.y - this.y, 2));
+            if(dis < minDis)
+            {
+          	  targetPc = pc;
+        	  minDis = dis;
+            }
+          }
+      	  
+      	  if(targetPc != null)
+      	  {
+	      	  this.target = targetPc;
+		  	  this.destX = this.target.x;
+	  		  this.destY = this.target.y;
+	  	  	  this.hasDestination = true;
+      	  }
       }
-      return _results;
+    	
+      // Move
+      this.move();
+      
+      // Arrive
+      if(this.hasDestination == false && this.target != null)
+      {
+      	this.leftAttackCnt -= 1;
+      	
+      	// Attack
+      	if(this.leftAttackCnt > 0)
+      	{	
+      		var rand = Math.floor(Math.random() * 100);
+			if(rand < 10)
+			{      		
+   				this.skillIndex = Math.floor(Math.random() * 2);
+			}
+			
+			if(this.skillIndex >= this.skillPattern.length) 
+				this.skillIndex = 0;
+						
+			this.world.sendSkill(this.id, this.skillPattern[this.skillIndex]);
+			this.skillIndex += 1;
+      	}
+      	// Finish
+      	else
+      	{
+    	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
+      		this.world.sendBattleResult(false, 1000, this.x, this.y, this, this.target, 100, 10);
+
+			this.leftAttackCnt = Math.floor(Math.random() * this.maxAttackCnt) + 1;
+			this.target = null;
+	  	}
+      }
     };
 
     Pc.prototype.chat = function() {
@@ -216,13 +281,23 @@
     };
 
 	Pc.prototype.SetDestination = function() {
-		var index = this.rotateIndex + 1;
-		if(index >= this.rotateList.length) index = 0;
 		
-		this.destX = this.x + this.rotateList[index][0];
-		this.destY = this.y + this.rotateList[index][1];
+		var rand = Math.floor(Math.random() * 10)
+		if(rand <= 2)
+		{
+		  	this.destX = this.x+Math.floor(Math.random() * 11)-5;
+		  	this.destY = this.y+Math.floor(Math.random() * 11)-5;			
+		}
+		else
+		{
+			var index = this.rotateIndex + 1;
+			if(index >= this.rotateList.length) index = 0;
 		
-		this.rotateIndex = index;
+			this.destX = this.x + this.rotateList[index][0];
+			this.destY = this.y + this.rotateList[index][1];
+		
+			this.rotateIndex = index;
+		}
 	}
 
 	Pc.prototype.rotate = function() {
@@ -291,7 +366,7 @@
         this.oponent = null;
       }
 
-      return this.rotate();
+      return this.wander();
       
 /*
       rand = Math.floor(Math.random() * 10);
@@ -322,7 +397,8 @@
     function Bot(world) {
       Bot.__super__.constructor.call(this, world);
 
-      this.botType = 'move_bot'
+      this.botType = 'move_bot';
+      this.tickTime = 50;
     }
 	
     Bot.prototype.lastActionTime = 0;
@@ -330,6 +406,13 @@
     Bot.prototype.tick = function(now) {
       if (now - this.lastActionTime < this.tickTime) {
         return;
+      }
+
+      this.lastActionTime = now;
+      this.isBound = false;
+      if (this.opponent) {
+        this.opponent.isBound = false;
+        this.oponent = null;
       }
       
       if(this.botType == 'move_bot')
@@ -534,8 +617,7 @@
       if (this.gcmClient) {
         this.gcmClient.write(this.makePacket(jsonData));
       }
-      //return console.log(jsonData);
-      return;
+      return console.log(jsonData);
     };
 
     World.prototype.onGcm = function(json) {
@@ -602,12 +684,12 @@
   gcmPerf = new World;
 
   gcmPerf.init({
-    pc: 1,
-    move_bot: 10,
-    hunting_bot: 10,
-    pvp_bot: 10,
-    abusing_bot: 10,
-    npc: 1000,
+    pc: 1000,
+    move_bot: 0,
+    hunting_bot: 0,
+    pvp_bot: 1,
+    abusing_bot: 0,
+    Npc: 1000,
     worldWidth: 1600,
     worldHeight: 1600
   });
