@@ -77,7 +77,7 @@ class World
     player.y = y
     playerSocket.broadcast.emit 'sPcMove', { name: player.name, sprite: player.sprite, x: player.x, y: player.y }
 
-  processBattle: (socket, x, y) ->
+  processStartBattle: (socket, x, y) ->
     player = @playerIdTable[socket.id]
     return unless player
 
@@ -86,11 +86,25 @@ class World
     player.y = y
 
     for k, v of @npcTable
-      if ((Math.abs(x - v.x) < 5 and Math.abs(y - v.y) < 5) and v.occupied == false)
+      dx = Math.abs x - v.x
+      dy = Math.abs y - v.y
+      dist = Math.sqrt dx*dx + dy*dy
+      console.log dist
+      if dist < 50 and v.occupied == false
         player.occupied = true
         v.occupied = true
         playerSocket.emit 'sStartBattle', { name: v.name, sprite: v.sprite }
         break
+
+
+  processEndBattle: (socket, x, y) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+
+    @processLogin socket
+
+
+
 
   processNpcMove: (npc, x, y) ->
     npc.x = x
@@ -220,6 +234,9 @@ class GameServer
       ###
 
       socket.on 'cMove', (data) =>
+        now = Date.now()
+        return if now - @lastActionTime < 500
+        @lastActionTime = now
         if @gcmClient
           player = @getPlayerBySocket(socket)
           @sendToGcm
@@ -232,11 +249,14 @@ class GameServer
               dest:
                 x: data.x
                 y: data.y
-              time: Date.now()
+              time: now
         @world.processPcMove socket, data.x, data.y
 
       socket.on 'cStartBattle', (data) =>
-        @world.processBattle socket, data.x, data.y
+        @world.processStartBattle socket, data.x, data.y
+
+      socket.on 'cEndBattle', (data) =>
+        @world.procesEndBattle socket, data.win
 
       socket.on 'cAttack', (data) =>
         @world.processAttack socket, data.x, data.y
@@ -253,7 +273,7 @@ class GameServer
               msg: data.msg
               time: Date.now()
         else
-          @world.processChat data.user, null, data.msg
+          @world.processChat data.from, null, data.msg
 
       socket.on 'disconnect', () =>
         @world.processLogout socket
@@ -271,6 +291,7 @@ class GameServer
     @gcmClient.write makePacket jsonData
 
   gcmClient: null
+  lastActionTime: 0
 
   onGcm: (json) ->
     switch json.msgType

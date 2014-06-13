@@ -169,8 +169,8 @@
       });
     };
 
-    World.prototype.processBattle = function(socket, x, y) {
-      var k, player, playerSocket, v, _ref, _results;
+    World.prototype.processStartBattle = function(socket, x, y) {
+      var dist, dx, dy, k, player, playerSocket, v, _ref, _results;
       player = this.playerIdTable[socket.id];
       if (!player) {
         return;
@@ -182,7 +182,11 @@
       _results = [];
       for (k in _ref) {
         v = _ref[k];
-        if ((Math.abs(x - v.x) < 5 && Math.abs(y - v.y) < 5) && v.occupied === false) {
+        dx = Math.abs(x - v.x);
+        dy = Math.abs(y - v.y);
+        dist = Math.sqrt(dx * dx + dy * dy);
+        console.log(dist);
+        if (dist < 50 && v.occupied === false) {
           player.occupied = true;
           v.occupied = true;
           playerSocket.emit('sStartBattle', {
@@ -195,6 +199,15 @@
         }
       }
       return _results;
+    };
+
+    World.prototype.processEndBattle = function(socket, x, y) {
+      var player;
+      player = this.playerIdTable[socket.id];
+      if (!player) {
+        return;
+      }
+      return this.processLogin(socket);
     };
 
     World.prototype.processNpcMove = function(npc, x, y) {
@@ -410,14 +423,12 @@
               socket.emit 'sConnection', { name: myName, sprite: mySprite }
            */
           socket.on('cMove', function(data) {
-          	
-          	var now = Date.now()
-          	if((now - _this.lastActionTime) < 500) {
-          		return;
-          	}
-          	_this.lastActionTime = now;
-          	
-            var player;
+            var now, player;
+            now = Date.now();
+            if (now - _this.lastActionTime < 500) {
+              return;
+            }
+            _this.lastActionTime = now;
             if (_this.gcmClient) {
               player = _this.getPlayerBySocket(socket);
               _this.sendToGcm({
@@ -432,14 +443,17 @@
                     x: data.x,
                     y: data.y
                   },
-                  time: Date.now()
+                  time: now
                 }
               });
             }
             return _this.world.processPcMove(socket, data.x, data.y);
           });
           socket.on('cStartBattle', function(data) {
-            return _this.world.processBattle(socket, data.x, data.y);
+            return _this.world.processStartBattle(socket, data.x, data.y);
+          });
+          socket.on('cEndBattle', function(data) {
+            return _this.world.procesEndBattle(socket, data.win);
           });
           socket.on('cAttack', function(data) {
             return _this.world.processAttack(socket, data.x, data.y);
@@ -458,7 +472,7 @@
                 }
               });
             } else {
-              return _this.world.processChat(data.user, null, data.msg);
+              return _this.world.processChat(data.from, null, data.msg);
             }
           });
           return socket.on('disconnect', function() {
@@ -483,9 +497,9 @@
     };
 
     GameServer.prototype.gcmClient = null;
-	
-	GameServer.prototype.lastActionTime = 0
-	
+
+    GameServer.prototype.lastActionTime = 0;
+
     GameServer.prototype.onGcm = function(json) {
       var data;
       switch (json.msgType) {
@@ -569,3 +583,5 @@
   };
 
 }).call(this);
+
+//# sourceMappingURL=gameServer.map

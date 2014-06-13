@@ -34,6 +34,7 @@ var res = {
     siren_png : "res/npc/siren.png",
 
     fire_png : "res/particle/fire.png",
+    stars_png : "res/particle/stars.png",
 
     battle_png: "res/pokemon_x_y_battle_scene_by_jenske05-d5ynr9c.png",
 
@@ -83,6 +84,7 @@ var g_resources = [
     res.siren_png,
 
     res.fire_png,
+    res.stars_png,
 
     res.battle_png,
 

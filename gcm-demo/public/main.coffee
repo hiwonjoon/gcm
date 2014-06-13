@@ -1,5 +1,5 @@
 root = exports ? this
-root.debug = {}
+root.debug ?= {}
 
 classTable =
   warrior:
@@ -77,6 +77,8 @@ classTable =
 
 
 zebra.ready ->
+  return if debug.firstScene
+
   eval zebra.Import("ui", "layout")
   root = (new zCanvas 'loginCanvas', 800, 450).root
 
@@ -155,9 +157,6 @@ zebra.ready ->
     atkBar.setBounds 0, 0, selectedClass.atk, 20
     defBar.setBounds 0, 0, selectedClass.def, 20
 
-
-
-
     for bar, i in barList
       bar.setLocation 500, 240 + i * 30
       bar.setMaxValue 100
@@ -196,10 +195,12 @@ cc.game.onStart = ->
 
   cc.LoaderScene.preload g_resources, ->
     cc.director.setDisplayStats false
-    cc.director.runScene new GameScene
-    #cc.director.runScene new BattleScene
-    #cc.director.runScene new SandboxScene
+
+    firstScene = if debug.firstScene then new root[debug.firstScene] else new GameScene
+    cc.director.runScene firstScene
   , this
 
-#cc.game.run()
+
+if debug.firstScene
+  cc.game.run()
 

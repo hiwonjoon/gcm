@@ -33,8 +33,10 @@ root.Character = cc.Sprite.extend
 
     size = @getContentSize()
 
-    drawHp = cc.DrawNode.create()
-    drawHp.drawRect cc.p(0, size.height + 2), cc.p(size.width, size.height + 10), cc.color(255, 0, 0, 255)
+    @drawHp = cc.DrawNode.create()
+    @drawHp.drawRect cc.p(0, size.height + 2), cc.p(size.width, size.height + 10), cc.color(255, 255, 255, 255)
+    @bar = [cc.p(0, size.height + 2), cc.p(size.width, size.height + 10)]
+    @setHp 100
 
     drawShadow = cc.DrawNode.create()
     drawShadow.drawDot cc.p(size.width / 2, size.height / 20), size.width / 3, cc.color(100, 100, 100, 255)
@@ -46,7 +48,24 @@ root.Character = cc.Sprite.extend
 
     @addChild drawShadow, -1
     @addChild label, 1
-    @addChild drawHp, 1
+    @addChild @drawHp, 1
+
+  bar: null
+  drawHp: null
+  hpBar: null
+  hp: 100
+
+  setHp: (hp) ->
+    @hp = hp
+    ori = @bar[0]
+    dest = @bar[1]
+
+    @removeChild @hpBar if @hpBar
+    @hpBar = cc.DrawNode.create()
+
+    @hpBar.drawRect cc.p(ori.x, ori.y), cc.p(dest.x * hp / 100.0, dest.y), cc.color(255, 0, 0, 255), 0, cc.color(120, 120, 120, 255)
+    @addChild @hpBar, 2
+
 
   moveUp: ->
     @stopAction @nowAction if @nowAction
@@ -94,6 +113,8 @@ root.GameLayer = cc.Layer.extend
     @_super()
     size = cc.director.getWinSize()
 
+    console.log 'init'
+
     # map 로딩
     tileMapTag = 337
     @tileMap = cc.TMXTiledMap.create res.test_tmx
@@ -114,6 +135,7 @@ root.GameLayer = cc.Layer.extend
         onKeyReleased: (key, event) =>
           g.keys[key] = false
           if key == 70 # F키를 누를 경우
+            @startBattleEffect()
             socket.emit 'cStartBattle', { x: @avatar.mX, y: @avatar.mY }
       cc.eventManager.addListener param, this
 
@@ -123,6 +145,20 @@ root.GameLayer = cc.Layer.extend
     @npcs = {}
 
     true
+
+  startBattleEffect: ->
+    return unless @avatar
+    console.log "battleEffect #{@avatar.name}"
+
+    emitter = cc.ParticleFlower.create()
+    emitter.texture = cc.textureCache.addImage res.stars_png
+    emitter.setShapeType = cc.ParticleSystem.STAR_SHAPE
+    emitter.setDuration 0.3
+    emitter.setLife 0.2
+    emitter.setAutoRemoveOnFinish true
+
+    emitter.setPosition @avatar.getPosition()
+    @addChild emitter, 3
 
   map2screen: (x, y) ->
 
@@ -194,10 +230,10 @@ root.GameLayer = cc.Layer.extend
             g.enemy = npc
             battleScene = new BattleScene
             transition = cc.TransitionProgressRadialCW.create 0.5, battleScene
-            cc.director.runScene transition
+            cc.director.pushScene transition
 
         when 'sQuit'
-          if quit of @otherPcs
+          for quit of @otherPcs
             other = @otherPcs[quit]
             @tileMap.removeChild other
             delete @otherPcs[quit]
@@ -211,11 +247,12 @@ root.GameLayer = cc.Layer.extend
 
       dX += 3 if g.keys[cc.KEY.right] and mX < mapSize.width
       dX -= 3 if g.keys[cc.KEY.left] and mX > 0
-      dY += 3 if g.keys[cc.KEY.up] and mY < mapSize.height
-      dY -= 3 if g.keys[cc.KEY.down] and mY > 0
+
+      if dX == 0
+        dY += 3 if g.keys[cc.KEY.up] and mY < mapSize.height
+        dY -= 3 if g.keys[cc.KEY.down] and mY > 0
 
       @avatar.setMapPos mX+dX, mY+dY
-
       socket.emit 'cMove', { x: @avatar.mX, y: @avatar.mY } if dX != 0 or dY != 0
 
       mapPos = @tileMap.getPosition()
@@ -223,9 +260,12 @@ root.GameLayer = cc.Layer.extend
       mapPos.y = size.height / 2 - @avatar.mY
       @tileMap.setPosition mapPos
 
+
 root.GameScene = cc.Scene.extend
   onEnter: ->
     this._super()
     layer = new GameLayer()
     layer.init()
     this.addChild layer
+
+    console.log 'onEnter'

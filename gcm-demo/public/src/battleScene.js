@@ -4,10 +4,98 @@
 
   root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
+  if (root.debug == null) {
+    root.debug = {};
+  }
+
+  root.Actions = {
+    attack: 0,
+    defend: 1,
+    skill: 2,
+    flee: 3
+  };
+
+  root.BattleStatus = {
+    playerTurn: 0,
+    cpuTurn: 1
+  };
+
+  root.BattleResult = {
+    draw: 0,
+    lose: 1,
+    win: 2
+  };
+
   root.BattleLayer = cc.Layer.extend({
+    actions: [],
+    status: BattleStatus.playerTurn,
+    defenceMode: false,
+    endBattle: function(result) {
+      console.log("Battle ended " + result);
+      return this.callAfter(4.0, (function(_this) {
+        return function() {
+          return cc.director.popScene();
+        };
+      })(this));
+    },
+    processPlayerAttack: function() {
+      var win;
+      win = this.throwFire(false);
+      if (win) {
+        return this.endBattle(BattleResult.win);
+      } else {
+        return this.callAfter(3.0, (function(_this) {
+          return function() {
+            return _this.processCpuAttack();
+          };
+        })(this));
+      }
+    },
+    processPlayerSkill: function() {
+      var win;
+      win = this.throwFire(true);
+      if (win) {
+        return this.endBattle(BattleResult.win);
+      } else {
+        return this.callAfter(3.0, (function(_this) {
+          return function() {
+            return _this.processCpuAttack();
+          };
+        })(this));
+      }
+    },
+    processPlayerFlee: function() {
+      return this.callAfter(4.0, (function(_this) {
+        return function() {
+          return cc.director.popScene();
+        };
+      })(this));
+    },
+    processPlayerDefend: function() {
+      this.defenceMode = true;
+      return this.callAfter(3.0, (function(_this) {
+        return function() {
+          return _this.processCpuAttack();
+        };
+      })(this));
+    },
+    statusLabel: null,
+    setStatusText: function(status) {
+      if (this.statusLabel) {
+        this.removeChild(this.statusLabel);
+      }
+      this.statusLabel = cc.LabelTTF.create(status, 'Consolas', 30);
+      this.statusLabel.color = cc.color(20, 200, 200, 255);
+      this.statusLabel.setPosition(cc.p(500, 400));
+      return this.addChild(this.statusLabel, 2);
+    },
     init: function() {
-      var bg, minScale, size, xScale, yScale;
+      var action, bg, drawBounds, drawShadow, fadeIn, fadeOut, fadeSeq, forever, i, k, label, minScale, param, size, v, xScale, yScale;
       this._super();
+      for (k in Actions) {
+        v = Actions[k];
+        this.actions[v] = k.toString().toUpperCase();
+      }
       size = cc.director.getWinSize();
       bg = cc.Sprite.create(res.battle_png);
       xScale = size.width / bg.width;
@@ -26,13 +114,176 @@
       this.enemy.setPosition(size.width * 292 / 400, size.height * 110 / 238);
       this.addChild(this.me, 0);
       this.addChild(this.enemy, 0);
-      return true;
+      drawBounds = cc.DrawNode.create();
+      drawBounds.drawRect(cc.p(30, 300), cc.p(350, 430), cc.color(10, 10, 10, 255), 5, cc.color(120, 120, 120, 255));
+      this.addChild(drawBounds, 1);
+      drawShadow = cc.DrawNode.create();
+      drawShadow.drawDot(cc.p(100, 100), 30, cc.color(20, 20, 20, 255));
+      for (action in Actions) {
+        i = Actions[action];
+        label = cc.LabelTTF.create(action.toString().toUpperCase(), 'Consolas', 15);
+        label.color = cc.color(230, 100, 100, 255);
+        label.setPosition(cc.p(100, 410 - 30 * i));
+        label.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
+        this.addChild(label, 2);
+      }
+      this.arrow = cc.LabelTTF.create('<-', 'Consolas', 15);
+      this.arrow.color = cc.color(255, 20, 255, 255);
+      this.arrow.setPosition(cc.p(230, 410));
+      this.arrow.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
+      this.addChild(this.arrow, 2);
+      fadeIn = cc.FadeIn.create(0.5);
+      fadeOut = cc.FadeOut.create(0.5);
+      fadeSeq = cc.Sequence.create(fadeIn, fadeOut);
+      forever = cc.RepeatForever.create(fadeSeq);
+      this.arrow.runAction(forever);
+      this.setStatusText('Player turn');
+      this.scheduleUpdate();
+      if ('keyboard' in cc.sys.capabilities) {
+        param = {
+          event: cc.EventListener.KEYBOARD,
+          onKeyPressed: (function(_this) {
+            return function(key, event) {
+              if (_this.status !== BattleStatus.playerTurn) {
+                return;
+              }
+              console.log(key);
+              switch (key) {
+                case 40:
+                  console.log('down');
+                  if (_this.selectedIndex < 3) {
+                    return _this.selectedIndex++;
+                  }
+                  break;
+                case 38:
+                  console.log('up');
+                  if (_this.selectedIndex > 0) {
+                    return _this.selectedIndex--;
+                  }
+                  break;
+                case 39:
+                  return console.log('left');
+                case 37:
+                  return console.log('right');
+              }
+            };
+          })(this),
+          onKeyReleased: (function(_this) {
+            return function(key, event) {
+              if (_this.status !== BattleStatus.playerTurn) {
+                return;
+              }
+              console.log(key);
+              switch (key) {
+                case 70:
+                  console.log(_this.selectedIndex);
+                  switch (_this.actions[_this.selectedIndex]) {
+                    case 'ATTACK':
+                      _this.processPlayerAttack();
+                      break;
+                    case 'SKILL':
+                      _this.processPlayerSkill();
+                      break;
+                    case 'DEFEND':
+                      _this.processPlayerDefend();
+                      break;
+                    case 'FLEE':
+                      _this.processPlayerFlee();
+                  }
+                  _this.status = BattleStatus.cpuTurn;
+                  return _this.setStatusText('Waiting...');
+              }
+            };
+          })(this)
+        };
+        return cc.eventManager.addListener(param, this);
+      }
     },
+    attack: function(from, to, isSkill) {
+      var actionTo, after, emitter;
+      if (isSkill) {
+        emitter = cc.ParticleFire.create();
+        emitter.setEmitterMode(1);
+      } else {
+        emitter = cc.ParticleGalaxy.create();
+        emitter.setShapeType(cc.ParticleSystem.BALL_SHAPE);
+        emitter.setTotalParticles(100);
+      }
+      emitter.texture = cc.textureCache.addImage(res.fire_png);
+      emitter.setPosition(from.getPosition());
+      this.addChild(emitter);
+      emitter.setScale(1);
+      emitter.setAutoRemoveOnFinish(true);
+      emitter.setDuration(1);
+      emitter.setLife(0.5);
+      actionTo = cc.MoveTo.create(1, to.getPosition());
+      after = cc.CallFunc.create((function(_this) {
+        return function() {
+          var color, damage, damageAction, hp, maxDamage, tint;
+          maxDamage = isSkill ? 50 : 20;
+          damage = Math.floor(Math.random() * maxDamage);
+          hp = to.hp - damage;
+          if (hp < 0) {
+            hp = 0;
+          }
+          to.setHp(hp);
+          color = to.getColor();
+          tint = cc.Sequence.create(cc.TintTo.create(0.7, 255, 0, 0), cc.TintTo.create(0.3, color.r, color.g, color.b));
+          damageAction = cc.Spawn.create([cc.Blink.create(1, 3), tint]);
+          return to.runAction(damageAction);
+        };
+      })(this));
+      emitter.runAction(cc.Sequence.create(actionTo, after));
+      return to.hp === 0;
+    },
+    callAfter: function(after, callback) {
+      var delay;
+      delay = cc.DelayTime.create(3.0);
+      after = cc.CallFunc.create((function(_this) {
+        return function() {
+          return callback();
+        };
+      })(this));
+      return this.runAction(cc.Sequence.create(delay, after));
+    },
+    throwFire: function(isSkill) {
+      return this.attack(this.me, this.enemy, isSkill);
+    },
+    processCpuAttack: function() {
+      var win;
+      console.log('hello');
+      win = this.attack(this.enemy, this.me, Math.random() > 0.7);
+      if (win) {
+        return this.endBattle(BattleResult.lose);
+      } else {
+        return this.callAfter(3.0, (function(_this) {
+          return function() {
+            _this.status = BattleStatus.playerTurn;
+            return _this.setStatusText('Player Turn');
+          };
+        })(this));
+      }
+    },
+    selectedIndex: 0,
     update: function(dt) {
       var size;
-      return size = cc.director.getWinSize();
+      size = cc.director.getWinSize();
+      return this.arrow.setPosition(cc.p(250, 410 - 30 * this.selectedIndex));
     }
   });
+
+
+  /*
+  
+  
+      delay = cc.DelayTime.create 10.0
+      change = cc.CallFunc.create ->
+        cc.director.popScene()
+  
+       *@runAction cc.Sequence.create(delay, change)
+  
+       * keyboard 핸들러 등록
+   */
 
   root.BattleScene = cc.Scene.extend({
     onEnter: function() {

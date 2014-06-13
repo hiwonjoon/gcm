@@ -6,7 +6,7 @@
 
   root.Character = cc.Sprite.extend({
     ctor: function(name, spriteImage) {
-      var animFrames, createMoveAction, drawHp, drawShadow, frame, height, i, j, label, size, texSize, texture, width, _i, _j;
+      var animFrames, createMoveAction, drawShadow, frame, height, i, j, label, size, texSize, texture, width, _i, _j;
       texture = cc.textureCache.addImage(spriteImage);
       texSize = texture.getContentSize();
       width = texSize.width / 4;
@@ -35,8 +35,10 @@
       this.nowAction = this.moveAction.down;
       this.runAction(this.nowAction);
       size = this.getContentSize();
-      drawHp = cc.DrawNode.create();
-      drawHp.drawRect(cc.p(0, size.height + 2), cc.p(size.width, size.height + 10), cc.color(255, 0, 0, 255));
+      this.drawHp = cc.DrawNode.create();
+      this.drawHp.drawRect(cc.p(0, size.height + 2), cc.p(size.width, size.height + 10), cc.color(255, 255, 255, 255));
+      this.bar = [cc.p(0, size.height + 2), cc.p(size.width, size.height + 10)];
+      this.setHp(100);
       drawShadow = cc.DrawNode.create();
       drawShadow.drawDot(cc.p(size.width / 2, size.height / 20), size.width / 3, cc.color(100, 100, 100, 255));
       drawShadow.setScaleY(0.3);
@@ -45,7 +47,23 @@
       label.setPosition(cc.p(size.width / 2, size.height + 20));
       this.addChild(drawShadow, -1);
       this.addChild(label, 1);
-      return this.addChild(drawHp, 1);
+      return this.addChild(this.drawHp, 1);
+    },
+    bar: null,
+    drawHp: null,
+    hpBar: null,
+    hp: 100,
+    setHp: function(hp) {
+      var dest, ori;
+      this.hp = hp;
+      ori = this.bar[0];
+      dest = this.bar[1];
+      if (this.hpBar) {
+        this.removeChild(this.hpBar);
+      }
+      this.hpBar = cc.DrawNode.create();
+      this.hpBar.drawRect(cc.p(ori.x, ori.y), cc.p(dest.x * hp / 100.0, dest.y), cc.color(255, 0, 0, 255), 0, cc.color(120, 120, 120, 255));
+      return this.addChild(this.hpBar, 2);
     },
     moveUp: function() {
       if (this.nowAction) {
@@ -105,6 +123,7 @@
       var param, size, tileMapTag;
       this._super();
       size = cc.director.getWinSize();
+      console.log('init');
       tileMapTag = 337;
       this.tileMap = cc.TMXTiledMap.create(res.test_tmx);
       this.addChild(this.tileMap, 0, tileMapTag);
@@ -123,6 +142,7 @@
             return function(key, event) {
               g.keys[key] = false;
               if (key === 70) {
+                _this.startBattleEffect();
                 return socket.emit('cStartBattle', {
                   x: _this.avatar.mX,
                   y: _this.avatar.mY
@@ -138,9 +158,24 @@
       this.npcs = {};
       return true;
     },
+    startBattleEffect: function() {
+      var emitter;
+      if (!this.avatar) {
+        return;
+      }
+      console.log("battleEffect " + this.avatar.name);
+      emitter = cc.ParticleFlower.create();
+      emitter.texture = cc.textureCache.addImage(res.stars_png);
+      emitter.setShapeType = cc.ParticleSystem.STAR_SHAPE;
+      emitter.setDuration(0.3);
+      emitter.setLife(0.2);
+      emitter.setAutoRemoveOnFinish(true);
+      emitter.setPosition(this.avatar.getPosition());
+      return this.addChild(emitter, 3);
+    },
     map2screen: function(x, y) {},
     update: function(dt) {
-      var battleScene, dX, dY, data, mX, mY, mapPos, mapSize, msgType, name, npc, other, packet, packets, player, size, sprite, transition, x, y, _i, _len, _ref, _ref1;
+      var battleScene, dX, dY, data, mX, mY, mapPos, mapSize, msgType, name, npc, other, packet, packets, player, quit, size, sprite, transition, x, y, _i, _len, _ref, _ref1;
       size = cc.director.getWinSize();
       if (g.logged === false && g.name && g.sprite) {
         this.avatar = new Player(g.name, g.sprite);
@@ -208,11 +243,11 @@
               g.enemy = npc;
               battleScene = new BattleScene;
               transition = cc.TransitionProgressRadialCW.create(0.5, battleScene);
-              cc.director.runScene(transition);
+              cc.director.pushScene(transition);
             }
             break;
           case 'sQuit':
-            if (quit in this.otherPcs) {
+            for (quit in this.otherPcs) {
               other = this.otherPcs[quit];
               this.tileMap.removeChild(other);
               delete this.otherPcs[quit];
@@ -232,11 +267,13 @@
         if (g.keys[cc.KEY.left] && mX > 0) {
           dX -= 3;
         }
-        if (g.keys[cc.KEY.up] && mY < mapSize.height) {
-          dY += 3;
-        }
-        if (g.keys[cc.KEY.down] && mY > 0) {
-          dY -= 3;
+        if (dX === 0) {
+          if (g.keys[cc.KEY.up] && mY < mapSize.height) {
+            dY += 3;
+          }
+          if (g.keys[cc.KEY.down] && mY > 0) {
+            dY -= 3;
+          }
         }
         this.avatar.setMapPos(mX + dX, mY + dY);
         if (dX !== 0 || dY !== 0) {
@@ -259,7 +296,8 @@
       this._super();
       layer = new GameLayer();
       layer.init();
-      return this.addChild(layer);
+      this.addChild(layer);
+      return console.log('onEnter');
     }
   });
 

@@ -10,17 +10,30 @@
     <meta name="x5-fullscreen" content="true"/>
     <meta name="360-fullscreen" content="true"/>
     <style>
-        body, canvas, div {
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -khtml-user-select: none;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        div {
+            display: inline-block;
+            background: black;
+            border: 0px solid black;
+            border-radius: 10px;
+            box-shadow: 0 5px 50px #333;
         }
+
     </style>
 </head>
 <body style="padding:0; margin: 0; background: #000;">
-<canvas id="gameCanvas" width="800" height="450"></canvas>
+
+<div>
+    <canvas id="gameCanvas" width="800" height="450"></canvas>
+</div>
+
+<script type="text/javascript">
+    debug = {
+        firstScene: 'BattleScene'
+    };
+</script>
+
+<script src="javascripts/jquery-2.1.1.js"></script>
+<script src="javascripts/zebra.js"></script>
 <script src="frameworks/cocos2d-html5/CCBoot.js"></script>
 <script src="main.js"></script>
 <script src="gameClient.js"></script>
