@@ -22,6 +22,7 @@ case class ChatSlang(@BeanProperty id: String, @BeanProperty messsage: String, @
 case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
 
 case class Macro(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty cosine: Double)
+case class Macro2(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty cosine1: Double, @BeanProperty cosine2: Double)
 case class MacroDetection(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty avg: Double, @BeanProperty stddev: Double)
 
 case class Battle(@BeanProperty winner: String, @BeanProperty loser: String, @BeanProperty duration: Long)

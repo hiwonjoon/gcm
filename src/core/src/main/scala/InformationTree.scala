@@ -4,6 +4,7 @@
 package core;
 import akka.actor.{ActorRef, Actor, ActorSystem, Props};
 import scala.collection.mutable.HashMap
+import scala.collection.mutable.Map
 import scala.collection.immutable.Seq
 import akka.event.Logging
 import scala.compat.Platform
@@ -38,7 +39,8 @@ class InformationTree(parent : ActorRef) extends Actor {
         }
       })
     }
-    case DeleteUser => {
+    case DeleteUser() => {
+      //println("DeleteUser");
       sender ! akka.actor.PoisonPill
     }
     case _ => Logging(context.system, this).info("case _ in Information Tree")
@@ -51,16 +53,19 @@ class UserVector(id:String) extends Actor {
   //val maximum = 10 * 60 * 1000; //10 MINUTES
   val check_interval = 10 * 1000;
 
-  var last_inserted : Long = 0;
-  var last_vector_calculated : Long = 0;
+  var last_inserted : Long = Platform.currentTime;
+  var last_vector_calculated : Map[Int, Long] = Map[Int, Long](0->0, 1->0, 2->0);
+
   var list : scala.collection.immutable.List[Job] = Nil;
   def receive = {
     case GetVector(kind,_,sendTo) => {
-        if( last_inserted <= Platform.currentTime - maximum )
-        {
-          sender ! DeleteUser()
-        }
-        else if( last_vector_calculated >= last_inserted )
+//        if( last_inserted <= Platform.currentTime - maximum )
+//        {
+//          println("DeleteUser_______")
+//          sender ! DeleteUser()
+//        }
+        //else
+        if( last_vector_calculated(kind) >= last_inserted )
         {
           sendTo ! VectorsEmpty(id)
         }
@@ -83,6 +88,11 @@ class UserVector(id:String) extends Actor {
             pvpResult :+= pvpList.count(job => job.asInstanceOf[UserBattleResult].GetZone() == i)
           }
 
+          var moveResult:Seq[Int] = Nil
+          for(i <- 0 to 15)
+          {
+            moveResult :+= moveList.count(job => job.asInstanceOf[UserMove].GetZone() == i)
+          }
 
           var skillList = list.filter(job => job.getTime() >= last_inserted - check_interval && job.isInstanceOf[UserSkill])
 
@@ -92,16 +102,16 @@ class UserVector(id:String) extends Actor {
           kind match {
             case 0 =>
               // 반복적인 움직임 패턴 감지
-              sendTo ! Vectors(id, 0::moveEast::moveWest::moveSouth::moveNorth::Nil )
+              sendTo ! Vectors(id, moveEast::moveWest::moveSouth::moveNorth::Nil )
             case 1 =>
               // 반복적인 사냥 감지
-              sendTo ! Vectors(id, 1::pveResult::skillA::skillB::Nil )
+              sendTo ! Vectors(id, pveResult::skillA::skillB::Nil )
             case 2 =>
               //특정 지역에서 유저를 계속 죽이고 다니는 놈 감지
-              sendTo ! Vectors(id, 2+:pvpResult)
+              sendTo ! Vectors(id, pveResult::pvpList.length::moveEast::moveWest::moveSouth::moveNorth::Nil)
 
          }
-        last_vector_calculated = Platform.currentTime
+        last_vector_calculated(kind) = Platform.currentTime
       }
     }
     case a : Job => {

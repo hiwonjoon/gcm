@@ -182,12 +182,14 @@ class CoreFrontend(port : Int) extends Actor {
   val system = context.system
   import system.dispatcher
   context.system.scheduler.schedule(10.seconds, 10.seconds) {
-    (self ! GetVector(0,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),Main.esper_subscriber)))))
-    (self ! GetVector(1,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),Main.esper_subscriber)))))
-    (self ! GetVector(2,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),Main.esper_subscriber)))))
+    (self ! GetVector(0,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),0,Main.esper_subscriber)))))
+    (self ! GetVector(1,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),1,Main.esper_subscriber)))))
+    (self ! GetVector(2,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),2,Main.esper_subscriber)))))
   }
+
   ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
   //http://java.dzone.com/articles/real-time-charts-play 이건 차트 만드는거.
+
   context.system.scheduler.schedule(10.seconds, 10.seconds) {
     logger_web.resolveOne(5.seconds).foreach{
       ref => backends.foreach(actor => actor ! GetPerformance(ref))

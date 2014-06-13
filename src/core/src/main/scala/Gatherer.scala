@@ -32,7 +32,7 @@ class OneTreeGatherer(user_size:Int,backend:ActorRef,sendTo:ActorRef) extends Ac
     }
   }
 }
-class Gatherer(backend_list:scala.collection.mutable.Seq[ActorRef],sendTo:ActorRef) extends Actor{
+class Gatherer(backend_list:scala.collection.mutable.Seq[ActorRef],kind:Int,sendTo:ActorRef) extends Actor{
   var backend_remain : scala.collection.mutable.ArrayBuffer[(ActorRef,Int)] = (backend_list.map { actor => (actor,10) }).to[scala.collection.mutable.ArrayBuffer]
   val aggregation = new HashMap[String,Seq[Int]]
 
@@ -65,7 +65,7 @@ class Gatherer(backend_list:scala.collection.mutable.Seq[ActorRef],sendTo:ActorR
       {
         aggregation.foreach {
           case (elem, vec) =>
-            sendTo ! Vectors(elem, vec)
+            sendTo ! Vectors(elem, kind+:vec)
             context.system.stop(self)
         }
       }

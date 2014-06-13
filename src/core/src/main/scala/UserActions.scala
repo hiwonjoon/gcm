@@ -18,6 +18,13 @@ case class UserChat(user: String, msg: String, time : Long ) extends Job
 }
 case class UserMove(user: String, from : InGameLocation, to: InGameLocation, time : Long ) extends Job
 {
+  def GetZone():Int = {
+    val i = to.x / 400
+    val j = to.y / 400
+    val zone = i + 4 * j
+    zone
+  }
+
   def getDir():Int = {
     var dir = 0
     if(to.x > from.x) dir = 0

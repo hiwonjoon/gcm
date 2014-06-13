@@ -124,8 +124,10 @@
     	  minDis = 10000;
     	  
     	  if(this.targetList.length == 0)
-    	  	this.targetList = this.world.npcs;
-    	  	
+    	  {
+    	  	this.targetList = this.world.npcs.slice(0);
+    	  }
+    	  
       	  _ref = this.targetList;
       	  _results = [];
       	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -141,82 +143,17 @@
         	  minDis = dis;
             }
           }
-      	
-      	  this.target = targetNpc;
-	  	  this.destX = this.target.x;
-	  	  this.destY = this.target.y;
-	  	  this.hasDestination = true;
-      }
-    	
-      // Move
-      this.move();
-      
-      // Arrive
-      if(this.hasDestination == false)
-      {
-      	this.leftAttackCnt -= 1;
-      	
-      	// Attack
-      	if(this.leftAttackCnt > 0)
-      	{	
-      		var rand = Math.floor(Math.random() * 100);
-			if(rand < 10)
-			{      		
-   				this.skillIndex = Math.floor(Math.random() * 2);
-			}
-			
-			if(this.skillIndex >= this.skillPattern.length) 
-				this.skillIndex = 0;
-						
-			this.world.sendSkill(this.id, this.skillPattern[this.skillIndex]);
-			this.skillIndex += 1;
-      	}
-      	// Finish
-      	else
-      	{
-    	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
-      		this.world.sendBattleResult(false, 1000, this.x, this.y, this, this.target, 100, 10);
-
-			this.leftAttackCnt = Math.floor(Math.random() * this.maxAttackCnt) + 1;
-			this.target = null;
-	  	}
-      }
-    };
-
-    Pc.prototype.attackPc = function() {
-      // Search the PC
-      if(this.hasDestination == false && this.target == null)
-      {
-	      var pc, _i, _len, _ref, minDis, targetPc;
-    	  minDis = 10000;
-    	  
-    	  if(this.targetList.length == 0)
-    	  {
-    	  	this.targetList = this.world.pcs.concat(this.world.bots)
-    	  	this.targetList.splice(this.targetList.indexOf(this), 1);
-    	  }
-    	  
-      	  _ref = this.targetList;
-      	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-       	  	pc = _ref[_i];
-       	 	if (!(!pc.isBound) || pc.getZone() != this.getZone()) {
-          		continue;
-        	}
-        	
-	        var dis = Math.sqrt(Math.pow(pc.x - this.x,2) + Math.pow(pc.y - this.y, 2));
-            if(dis < minDis)
-            {
-          	  targetPc = pc;
-        	  minDis = dis;
-            }
-          }
       	  
-      	  if(targetPc != null)
-      	  {
-	      	  this.target = targetPc;
+      	  if(targetNpc != null)
+      	  {	
+	      	  this.target = targetNpc;
 		  	  this.destX = this.target.x;
 	  		  this.destY = this.target.y;
 	  	  	  this.hasDestination = true;
+      	  }
+      	  else
+      	  {
+      	  	console.log("Not found Npc");
       	  }
       }
     	
@@ -252,6 +189,67 @@
 			this.leftAttackCnt = Math.floor(Math.random() * this.maxAttackCnt) + 1;
 			this.target = null;
 	  	}
+      }
+    };
+
+    Pc.prototype.attackPc = function() {
+    	
+      if(this.hasDestination == false)
+      {
+      	do {
+      		this.SetDestination();      		
+      	} while(this.destX < 0 || 
+		      	this.destX > this.world.size.width ||
+      			this.destY < 0 ||
+      			this.destY > this.world.size.height);
+	 
+	  	this.hasDestination = true;	
+      }
+      
+      this.move();
+    	
+      // Search the PC
+      if(this.target == null)
+      {
+	      var pc, _i, _len, _ref, minDis, targetPc;
+    	  minDis = 10000;
+    	  
+    	  if(this.targetList.length == 0)
+    	  {
+    	  	this.targetList = this.world.pcs.concat(this.world.bots)
+    	  	this.targetList.splice(this.targetList.indexOf(this), 1);
+    	  }
+    	  
+      	  _ref = this.targetList;
+      	  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+       	  	pc = _ref[_i];
+       	 	if (!(!pc.isBound)) {
+          		continue;
+        	}
+        	
+	        var dis = Math.sqrt(Math.pow(pc.x - this.x,2) + Math.pow(pc.y - this.y, 2));
+            if(dis < minDis)
+            {
+          	  targetPc = pc;
+        	  minDis = dis;
+            }
+          }
+      	  
+      	  if(targetPc != null)
+      	  {
+	      	  this.target = targetPc;
+      	  }
+      }
+    	
+      // Move
+//    this.move();
+      
+      // Arrive
+      if(this.target != null)
+      {
+   	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
+   		this.world.sendBattleResult(false, 1000, this.x, this.y, this, this.target, 100, 10);
+		this.target = null;
       }
     };
 
@@ -617,7 +615,7 @@
       if (this.gcmClient) {
         this.gcmClient.write(this.makePacket(jsonData));
       }
-      return console.log(jsonData);
+//      return console.log(jsonData);
     };
 
     World.prototype.onGcm = function(json) {
@@ -684,12 +682,12 @@
   gcmPerf = new World;
 
   gcmPerf.init({
-    pc: 1000,
-    move_bot: 0,
-    hunting_bot: 0,
-    pvp_bot: 1,
-    abusing_bot: 0,
-    Npc: 1000,
+    pc: 50,
+    move_bot: 50,
+    hunting_bot: 50,
+    pvp_bot: 50,
+    abusing_bot: 50,
+    npc: 1000,
     worldWidth: 1600,
     worldHeight: 1600
   });
