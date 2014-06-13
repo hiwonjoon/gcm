@@ -112,7 +112,7 @@
     Pc.prototype.opponent = null;
 		
     Pc.prototype.attackNpc = function() {
-      // ?? ??? ?? ??? NPC ??
+      // Search the NPC
       if(this.target == null && this.hasDestination == false)
       {
 	      var npc, _i, _len, _ref, _results, minDis, targetNpc;
@@ -143,15 +143,15 @@
 	  	  this.hasDestination = true;
       }
     	
-      // ???? ??
+      // Move
       this.move();
       
-      // ?? 
+      // Arrive
       if(this.hasDestination == false)
       {
       	this.leftAttackCnt -= 1;
       	
-      	// ???
+      	// Attack
       	if(this.leftAttackCnt > 0)
       	{	
 			if(this.skillIndex >= this.skillPattern.length) 
@@ -160,7 +160,7 @@
 			this.world.sendSkill(this.id, this.skillPattern[this.skillIndex]);
 			this.skillIndex += 1;
       	}
-      	// ???
+      	// Finish
       	else
       	{
     	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
@@ -321,16 +321,33 @@
 
     function Bot(world) {
       Bot.__super__.constructor.call(this, world);
-    }
 
+      this.botType = 'move_bot'
+    }
+	
     Bot.prototype.lastActionTime = 0;
 
     Bot.prototype.tick = function(now) {
-      if (now - this.lastActionTime < 1000) {
+      if (now - this.lastActionTime < this.tickTime) {
         return;
       }
       
-//    return this.attackNpc();
+      if(this.botType == 'move_bot')
+      {
+      	return this.rotate();
+      }
+      else if(this.botType == 'hunting_bot')
+      {
+      	return this.attackNpc();
+      }
+      else if(this.botType == 'pvp_bot')
+      {
+      	return this.attackPc();
+      }
+      else if(this.botType == 'abusing_bot')
+      {
+      	
+      }
     };
 
     return Bot;
@@ -387,7 +404,7 @@
     World.prototype.gcmClient = null;
 
     World.prototype.init = function(cfg) {
-      var bot, i, npc, pc, _i, _j, _k, _ref, _ref1, _ref2, _results;
+      var bot, i, npc, pc, _i, _j, _k1, _k2, _k3, _k4 , _ref, _ref1, _ref_k1, _ref_k2, _ref_k3, _ref_k4, _results;
       this.size.width = cfg.worldWidth;
       this.size.height = cfg.worldHeight;
       this.npcs = [];
@@ -400,10 +417,27 @@
         this.npcs.push(npc);
       }
       _results = [];
-      for (i = _k = 0, _ref2 = cfg.bot; 0 <= _ref2 ? _k < _ref2 : _k > _ref2; i = 0 <= _ref2 ? ++_k : --_k) {
+      
+      for (i = _k1 = 0, _ref_k1 = cfg.move_bot; 0 <= _ref_k1 ? _k1 < _ref_k1 : _k1 > _ref_k1; i = 0 <= _ref_k1 ? ++_k1 : --_k1) {
         bot = new Bot(this);
+        bot.botType = 'move_bot';
         _results.push(this.bots.push(bot));
       }
+      for (i = _k2 = 0, _ref_k2 = cfg.hunting_bot; 0 <= _ref_k2 ? _k2 < _ref_k2 : _k2 > _ref_k2; i = 0 <= _ref_k2 ? ++_k2 : --_k2) {
+        bot = new Bot(this);
+        bot.botType = 'hunting_bot';
+        _results.push(this.bots.push(bot));
+      }
+      for (i = _k3 = 0, _ref_k3 = cfg.pvp_bot; 0 <= _ref_k3 ? _k3 < _ref_k3 : _k3 > _ref_k3; i = 0 <= _ref_k3 ? ++_k3 : --_k3) {
+        bot = new Bot(this);
+        bot.botType = 'pvp_bot';
+        _results.push(this.bots.push(bot));
+      }
+      for (i = _k4 = 0, _ref_k4 = cfg.abusing_bot; 0 <= _ref_k4 ? _k4 < _ref_k4 : _k4 > _ref_k4; i = 0 <= _ref_k4 ? ++_k4 : --_k4) {
+        bot = new Bot(this);
+        bot.botType = 'abusing_bot';
+        _results.push(this.bots.push(bot));
+      }      
       return _results;
     };
 
@@ -569,7 +603,10 @@
 
   gcmPerf.init({
     pc: 1,
-    bot: 10,
+    move_bot: 10,
+    hunting_bot: 10,
+    pvp_bot: 10,
+    abusing_bot: 10,
     npc: 1000,
     worldWidth: 1600,
     worldHeight: 1600
