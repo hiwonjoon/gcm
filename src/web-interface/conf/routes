@@ -24,7 +24,8 @@ GET     /assets/javascripts/chatroom.js  controllers.ChatRoomController.chatRoom
 GET     /forbidden                       controllers.ForbiddenKeyword.readFile
 GET     /forbidden/add          controllers.ForbiddenKeyword.add(keyword: String)
 GET     /forbidden/del          controllers.ForbiddenKeyword.delete(keyword: String)
-
+#GET     /forbidden/getAjax               controllers.ForbiddenKeyword.getAjax(draw:Int, start: Int, length:Int, search:Option[String])
+GET     /forbidden/getAjax               controllers.ForbiddenKeyword.getAjax2
 #gamelog
 GET     /logView                        controllers.GameLogs.index(logType: Int)
 GET     /logView/getAjax                controllers.GameLogs.getAjax(logType: Int, draw:Int, start: Int, length:Int)

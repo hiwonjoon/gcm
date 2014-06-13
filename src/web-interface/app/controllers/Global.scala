@@ -12,7 +12,7 @@ object Global extends GlobalSettings {
   val system = ActorSystem("web")
   val core_subscriber = system.actorOf(Props(classOf[CoreSubscriber]))
   val log_processor = system.actorOf(Props(new LogSubscriber),"LogActor")
-  var forbiddenwords = scala.collection.mutable.LinkedHashSet[String]()
+  var forbiddenwords = scala.collection.mutable.SortedSet[String]()
 
   override def onStart(app: Application) {
     Logger.info("Hello Started!")
@@ -42,6 +42,7 @@ object Global extends GlobalSettings {
     var words = "";
     forbiddenwords.map { list => words = words + list + "\n" ; Logger.info(list) }
     withFileWriter("db/forbiddenWords.txt", false) { fileWriter => fileWriter.write(words) }
+
   }
 
   def withFileWriter(name:String, append:Boolean)(f: (java.io.FileWriter) => Any) {

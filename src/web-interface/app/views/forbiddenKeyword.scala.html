@@ -1,21 +1,25 @@
 @(keywordList : Iterator[String])
 
 @main("forbiddenKeyword"){
+<script type="text/javascript" src='@routes.Assets.at("javascripts/dataTables/jquery.dataTables.min.js")'></script>
+<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/dataTables/jquery.dataTables.min.css")' />
     <script type="text/javascript" src='@routes.Assets.at("javascripts/forbiddenkeyword.js")'></script>
 
 <div>
-        <ul>
-            @keywordList.map{ list =>
-                <li id="keyword_@list" class="keyword_li">
-                    <div class="keyword_div">@list</div>
-                    <button class="delete">Delete</a>
-                </li>
-            }
+    <div id="sDom">
 
-        </ul>
     </div>
-    <div>
-        새로운 키워드 입력
-        <input id="addKeyword" type="text" /> <button id="addKeywordButton">추가</button>
+    <div id="TableDiv" style="margin-left:15px; width:90%;">
+    <table id="ForbiddenKeywordTable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>Keyword</th>
+        </tr>
+        </thead>
+    </table>
+        <div>
+            <input id="addKeyword" type="text" placeholder="새로운 키워드 입력" /> <button id="addKeywordButton" class="btn btn-info">추가</button>&nbsp;&nbsp;<button id="delete" class="btn btn-danger" href="#"><i class="icon-trash icon-white"></i>선택된 키워드 삭제</button>
+        </div>
     </div>
+</div>
 }

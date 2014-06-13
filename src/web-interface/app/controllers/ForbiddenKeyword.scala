@@ -6,6 +6,16 @@ import play.api.Play.current
 import scala.io.Source
 import java.io
 import java.io.PrintWriter
+import play.api.libs.json.Json
+
+case class ForBiddenData(str : String)
+object ForBiddenData{
+  implicit val jsonFormat2 = Json.format[ForBiddenData]
+}
+case class ForBiddenKeywordTable(draw : Int, recordsTotal:Long , recordsFiltered:Long, data:Seq[ForBiddenData])
+object ForBiddenKeywordTable extends ((Int, Long, Long, Seq[ForBiddenData]) => ForBiddenKeywordTable) {
+  implicit val jsonFormat = Json.format[ForBiddenKeywordTable]
+}
 
 object ForbiddenKeyword extends Controller {
 
@@ -17,7 +27,31 @@ object ForbiddenKeyword extends Controller {
   def readFile = Action {
     Ok(views.html.forbiddenKeyword(Global.forbiddenwords.iterator))
   }
+  def getAjax2 = Action { implicit request =>
 
+      val draw = request.getQueryString("draw") match { case Some(s) => s.toInt case None => 0 }
+      val start = request.getQueryString("start") match {case Some(s) => s.toInt case None => 0 }
+      val length = request.getQueryString("length") match {case Some(s) => s.toInt case None => 0}
+      val keyword = request.getQueryString("search[value]") match {case Some(s) => s case None => ""}
+
+      Logger.info(draw + " " + start + " " + length + " " + keyword)
+    Logger.info(request.getQueryString("draw") + " " + request.getQueryString("start") + " " + request.getQueryString("length") + " " + request.getQueryString("keyword"))
+
+      val count = Global.forbiddenwords.size
+      val lengthCount = if(start + length > count ) count - start else length
+      val filtered = if(keyword != "") Global.forbiddenwords.filter(str => str.contains(keyword)) else Global.forbiddenwords
+      Ok(Json.toJson(ForBiddenKeywordTable(draw, count, filtered.size, filtered.toSeq.slice(start, lengthCount).map( str => ForBiddenData(str)))))
+
+  }
+  def getAjax(draw:Int, start:Int, length:Int, keyword:Option[String]) = Action {
+
+    val count = Global.forbiddenwords.size
+    val lengthCount = if(start + length > count ) count - start else length
+    Logger.info(count + " " + lengthCount)
+    val filtered = Global.forbiddenwords.filter(str => str.contains(keyword.getOrElse("")))
+    Ok(Json.toJson(ForBiddenKeywordTable(draw, count, filtered.size, filtered.toSeq.slice(start, lengthCount).map( str => ForBiddenData(str)))))
+
+  }
   def add(keyword : String) = Action
   {
     if(keyword == "")
