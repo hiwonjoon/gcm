@@ -30,8 +30,21 @@
     actions: [],
     status: BattleStatus.playerTurn,
     defenceMode: false,
-    endBattle: function(result) {
-      console.log("Battle ended " + result);
+    endBattle: function(isDraw, winner, isWinnerNpc, loser, isLoserNpc) {
+      var duration;
+      duration = Date.now() - this.beginTime;
+      socket.emit('cEndBattle', {
+        isDraw: isDraw,
+        winner: {
+          name: winner,
+          isNpc: isWinnerNpc
+        },
+        loser: {
+          name: loser,
+          isNpc: isLoserNpc
+        },
+        duration: duration
+      });
       return this.callAfter(4.0, (function(_this) {
         return function() {
           return cc.director.popScene();
@@ -42,7 +55,7 @@
       var win;
       win = this.throwFire(false);
       if (win) {
-        return this.endBattle(BattleResult.win);
+        return this.endBattle(false, this.me.name, false, this.enemy.name, true);
       } else {
         return this.callAfter(3.0, (function(_this) {
           return function() {
@@ -55,7 +68,7 @@
       var win;
       win = this.throwFire(true);
       if (win) {
-        return this.endBattle(BattleResult.win);
+        return this.endBattle(false, this.me.name, false, this.enemy.name, true);
       } else {
         return this.callAfter(3.0, (function(_this) {
           return function() {
@@ -89,9 +102,11 @@
       this.statusLabel.setPosition(cc.p(500, 400));
       return this.addChild(this.statusLabel, 2);
     },
+    beginTime: Date.now(),
     init: function() {
       var action, bg, drawBounds, drawShadow, fadeIn, fadeOut, fadeSeq, forever, i, k, label, minScale, param, size, v, xScale, yScale;
       this._super();
+      this.beginTime = Date.now();
       for (k in Actions) {
         v = Actions[k];
         this.actions[v] = k.toString().toUpperCase();
@@ -200,7 +215,7 @@
       }
     },
     attack: function(from, to, isSkill) {
-      var actionTo, after, emitter;
+      var actionTo, after, damage, emitter, hp, maxDamage;
       if (isSkill) {
         emitter = cc.ParticleFire.create();
         emitter.setEmitterMode(1);
@@ -216,16 +231,16 @@
       emitter.setAutoRemoveOnFinish(true);
       emitter.setDuration(1);
       emitter.setLife(0.5);
+      maxDamage = isSkill ? 50 : 20;
+      damage = Math.floor(Math.random() * maxDamage);
+      hp = to.hp - damage;
+      if (hp < 0) {
+        hp = 0;
+      }
       actionTo = cc.MoveTo.create(1, to.getPosition());
       after = cc.CallFunc.create((function(_this) {
         return function() {
-          var color, damage, damageAction, hp, maxDamage, tint;
-          maxDamage = isSkill ? 50 : 20;
-          damage = Math.floor(Math.random() * maxDamage);
-          hp = to.hp - damage;
-          if (hp < 0) {
-            hp = 0;
-          }
+          var color, damageAction, tint;
           to.setHp(hp);
           color = to.getColor();
           tint = cc.Sequence.create(cc.TintTo.create(0.7, 255, 0, 0), cc.TintTo.create(0.3, color.r, color.g, color.b));
@@ -234,7 +249,7 @@
         };
       })(this));
       emitter.runAction(cc.Sequence.create(actionTo, after));
-      return to.hp === 0;
+      return hp === 0;
     },
     callAfter: function(after, callback) {
       var delay;
@@ -251,10 +266,9 @@
     },
     processCpuAttack: function() {
       var win;
-      console.log('hello');
       win = this.attack(this.enemy, this.me, Math.random() > 0.7);
       if (win) {
-        return this.endBattle(BattleResult.lose);
+        return this.endBattle(false, this.enemy.name, true, this.me.name, false);
       } else {
         return this.callAfter(3.0, (function(_this) {
           return function() {
@@ -266,9 +280,24 @@
     },
     selectedIndex: 0,
     update: function(dt) {
-      var size;
+      var data, msgType, packet, packets, size, _i, _len, _ref, _results;
       size = cc.director.getWinSize();
-      return this.arrow.setPosition(cc.p(250, 410 - 30 * this.selectedIndex));
+      this.arrow.setPosition(cc.p(250, 410 - 30 * this.selectedIndex));
+      packets = g.packets;
+      g.packets = [];
+      _results = [];
+      for (_i = 0, _len = packets.length; _i < _len; _i++) {
+        packet = packets[_i];
+        msgType = packet.msgType;
+        data = packet.data;
+        switch (msgType) {
+          case 'Todo':
+            break;
+          default:
+            _results.push((_ref = g.world) != null ? _ref.handlePacket(msgType, data) : void 0);
+        }
+      }
+      return _results;
     }
   });
 

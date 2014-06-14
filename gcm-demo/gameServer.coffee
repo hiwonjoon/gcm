@@ -96,15 +96,9 @@ class World
         playerSocket.emit 'sStartBattle', { name: v.name, sprite: v.sprite }
         break
 
-
-  processEndBattle: (socket, x, y) ->
+  processEndBattle: (socket) ->
     player = @playerIdTable[socket.id]
     return unless player
-
-    @processLogin socket
-
-
-
 
   processNpcMove: (npc, x, y) ->
     npc.x = x
@@ -242,7 +236,7 @@ class GameServer
           @sendToGcm
             msgType: 'move'
             body:
-              id: player.name
+              id: player?.name
               src: 
                 x: player.x
                 y: player.y
@@ -256,7 +250,30 @@ class GameServer
         @world.processStartBattle socket, data.x, data.y
 
       socket.on 'cEndBattle', (data) =>
-        @world.procesEndBattle socket, data.win
+        @world.processEndBattle socket
+        player = @getPlayerBySocket(socket)
+        return unless player
+
+        winner = data.winner
+        loser = data.loser
+        @sendToGcm
+          msgType: 'battleResult'
+          body:
+            isDraw: data.isDraw
+            duration: data.duration
+            pos:
+              x: player.x
+              y: player.y
+            winner:
+              id: winner.name
+              isNpc: winner.isNpc
+            loser:
+              id: loser.name
+              isNpc: loser.isNpc
+            reward:
+              exp: 20
+              gold: 100
+            time: Date.now()
 
       socket.on 'cAttack', (data) =>
         @world.processAttack socket, data.x, data.y
@@ -288,7 +305,8 @@ class GameServer
     packet
 
   sendToGcm: (jsonData) ->
-    @gcmClient.write makePacket jsonData
+    @gcmClient?.write makePacket jsonData
+
 
   gcmClient: null
   lastActionTime: 0

@@ -119,17 +119,68 @@
   });
 
   root.GameLayer = cc.Layer.extend({
+    npcs: {},
+    otherPcs: {},
+    onNewNpc: function(name, sprite, x, y) {
+      var npc;
+      npc = new Npc(name, sprite);
+      npc.x = x;
+      npc.y = y;
+      npc.setMapPos(x, y);
+      this.tileMap.addChild(npc, 1);
+      return this.npcs[name] = npc;
+    },
+    onNewPc: function(name, sprite, x, y) {
+      var pc, _ref;
+      pc = new Player(name, sprite);
+      pc.setMapPos(x, y);
+      _ref = [x, y], pc.x = _ref[0], pc.y = _ref[1];
+      return this.tileMap.addChild(pc, 1);
+    },
+    onQuitPc: function(name) {
+      var other;
+      other = this.otherPcs[name];
+      if (other) {
+        this.tileMap.removeChild(other);
+      }
+      return delete this.otherPcs[name];
+    },
+    onMovePc: function(name, x, y) {
+      var _ref;
+      return (_ref = this.otherPcs[name]) != null ? _ref.setMapPos(x, y) : void 0;
+    },
+    onMoveNpc: function(name, x, y) {
+      var _ref;
+      return (_ref = this.npcs[name]) != null ? _ref.setMapPos(x, y) : void 0;
+    },
     init: function() {
-      var param, size, tileMapTag;
+      var info, k, param, size, tileMapTag, _ref, _ref1;
       this._super();
       size = cc.director.getWinSize();
-      console.log('init');
+      g.world.setGameLayer(this);
       tileMapTag = 337;
       this.tileMap = cc.TMXTiledMap.create(res.test_tmx);
       this.addChild(this.tileMap, 0, tileMapTag);
       this.tileMap.anchorX = 0;
       this.tileMap.anchorY = 0;
       cc.director.setProjection(cc.Director.PROJECTION_2D);
+      this.avatar = new Player(g.world.avatarName, g.world.avatarSprite);
+      this.avatar.x = size.width / 2;
+      this.avatar.y = size.height / 2;
+      this.avatar.mX = this.avatar.x;
+      this.avatar.mY = this.avatar.y;
+      this.addChild(this.avatar, 1);
+      _ref = g.world.otherPcInfos;
+      for (k in _ref) {
+        info = _ref[k];
+        this.onNewPc(info.name, info.sprite, info.x, info.y);
+      }
+      _ref1 = g.world.npcInfos;
+      for (k in _ref1) {
+        info = _ref1[k];
+        this.onNewNpc(info.name, info.sprite, info.x, info.y);
+      }
+      console.log('init');
       if ('keyboard' in cc.sys.capabilities) {
         param = {
           event: cc.EventListener.KEYBOARD,
@@ -154,8 +205,6 @@
         cc.eventManager.addListener(param, this);
       }
       this.scheduleUpdate();
-      this.otherPcs = {};
-      this.npcs = {};
       return true;
     },
     startBattleEffect: function() {
@@ -163,7 +212,6 @@
       if (!this.avatar) {
         return;
       }
-      console.log("battleEffect " + this.avatar.name);
       emitter = cc.ParticleFlower.create();
       emitter.texture = cc.textureCache.addImage(res.stars_png);
       emitter.setShapeType = cc.ParticleSystem.STAR_SHAPE;
@@ -175,17 +223,8 @@
     },
     map2screen: function(x, y) {},
     update: function(dt) {
-      var battleScene, dX, dY, data, mX, mY, mapPos, mapSize, msgType, name, npc, other, packet, packets, player, quit, size, sprite, transition, x, y, _i, _len, _ref, _ref1;
+      var battleScene, dX, dY, data, mX, mY, mapPos, mapSize, msgType, npc, packet, packets, size, transition, _i, _len, _ref, _ref1, _ref2;
       size = cc.director.getWinSize();
-      if (g.logged === false && g.name && g.sprite) {
-        this.avatar = new Player(g.name, g.sprite);
-        this.avatar.x = size.width / 2;
-        this.avatar.y = size.height / 2;
-        this.avatar.mX = this.avatar.x;
-        this.avatar.mY = this.avatar.y;
-        this.addChild(this.avatar, 1);
-        g.logged = true;
-      }
       packets = g.packets;
       g.packets = [];
       for (_i = 0, _len = packets.length; _i < _len; _i++) {
@@ -193,48 +232,6 @@
         msgType = packet.msgType;
         data = packet.data;
         switch (msgType) {
-          case 'sLogin':
-            g.sprite = data.sprite;
-            g.name = data.name;
-            break;
-          case 'sPcMove':
-            name = data.name;
-            sprite = data.sprite;
-            x = data.x;
-            y = data.y;
-            if (name in this.otherPcs) {
-              player = this.otherPcs[name];
-              player.setMapPos(x, y);
-              player.x = x;
-              player.y = y;
-            } else {
-              player = new Player(name, sprite);
-              player.setMapPos(x, y);
-              player.x = x;
-              player.y = y;
-              this.tileMap.addChild(player, 1);
-              this.otherPcs[name] = player;
-            }
-            break;
-          case 'sNpcMove':
-            name = data.name;
-            sprite = data.sprite;
-            x = data.x;
-            y = data.y;
-            if (name in this.npcs) {
-              npc = this.npcs[name];
-              npc.setMapPos(x, y);
-              npc.x = x;
-              npc.y = y;
-            } else {
-              npc = new Npc(name, sprite);
-              npc.setMapPos(x, y);
-              npc.x = x;
-              npc.y = y;
-              this.tileMap.addChild(npc, 1);
-              this.npcs[name] = npc;
-            }
-            break;
           case 'sStartBattle':
             console.log('sStartBattle');
             if (data.name in this.npcs) {
@@ -246,11 +243,9 @@
               cc.director.pushScene(transition);
             }
             break;
-          case 'sQuit':
-            for (quit in this.otherPcs) {
-              other = this.otherPcs[quit];
-              this.tileMap.removeChild(other);
-              delete this.otherPcs[quit];
+          default:
+            if ((_ref = g.world) != null) {
+              _ref.handlePacket(msgType, data);
             }
         }
       }
@@ -259,8 +254,8 @@
           return;
         }
         mapSize = this.tileMap.getContentSize();
-        _ref = [this.avatar.mX, this.avatar.mY], mX = _ref[0], mY = _ref[1];
-        _ref1 = [0, 0], dX = _ref1[0], dY = _ref1[1];
+        _ref1 = [this.avatar.mX, this.avatar.mY], mX = _ref1[0], mY = _ref1[1];
+        _ref2 = [0, 0], dX = _ref2[0], dY = _ref2[1];
         if (g.keys[cc.KEY.right] && mX < mapSize.width) {
           dX += 3;
         }

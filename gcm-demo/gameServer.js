@@ -201,13 +201,12 @@
       return _results;
     };
 
-    World.prototype.processEndBattle = function(socket, x, y) {
+    World.prototype.processEndBattle = function(socket) {
       var player;
       player = this.playerIdTable[socket.id];
       if (!player) {
-        return;
+
       }
-      return this.processLogin(socket);
     };
 
     World.prototype.processNpcMove = function(npc, x, y) {
@@ -434,7 +433,7 @@
               _this.sendToGcm({
                 msgType: 'move',
                 body: {
-                  id: player.name,
+                  id: player != null ? player.name : void 0,
                   src: {
                     x: player.x,
                     y: player.y
@@ -453,7 +452,38 @@
             return _this.world.processStartBattle(socket, data.x, data.y);
           });
           socket.on('cEndBattle', function(data) {
-            return _this.world.procesEndBattle(socket, data.win);
+            var loser, player, winner;
+            _this.world.processEndBattle(socket);
+            player = _this.getPlayerBySocket(socket);
+            if (!player) {
+              return;
+            }
+            winner = data.winner;
+            loser = data.loser;
+            return _this.sendToGcm({
+              msgType: 'battleResult',
+              body: {
+                isDraw: data.isDraw,
+                duration: data.duration,
+                pos: {
+                  x: player.x,
+                  y: player.y
+                },
+                winner: {
+                  id: winner.name,
+                  isNpc: winner.isNpc
+                },
+                loser: {
+                  id: loser.name,
+                  isNpc: loser.isNpc
+                },
+                reward: {
+                  exp: 20,
+                  gold: 100
+                },
+                time: Date.now()
+              }
+            });
           });
           socket.on('cAttack', function(data) {
             return _this.world.processAttack(socket, data.x, data.y);
@@ -493,7 +523,8 @@
     };
 
     GameServer.prototype.sendToGcm = function(jsonData) {
-      return this.gcmClient.write(makePacket(jsonData));
+      var _ref;
+      return (_ref = this.gcmClient) != null ? _ref.write(makePacket(jsonData)) : void 0;
     };
 
     GameServer.prototype.gcmClient = null;

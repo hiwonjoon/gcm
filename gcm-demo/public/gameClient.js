@@ -46,7 +46,8 @@
   onSuper = socket.$emit;
 
   socket.$emit = function() {
-    if (arguments[0] === 'sChat') {
+    var _ref;
+    if ((_ref = arguments[0]) === 'sChat' || _ref === 'sLogin') {
       return onSuper.apply(socket, arguments);
     } else {
       return root.g.packets.push({
@@ -58,6 +59,13 @@
 
   socket.on('sChat', function(content) {
     return addMessage(content);
+  });
+
+  socket.on('sLogin', function(content) {
+    var _ref;
+    console.log(content);
+    _ref = [content.name, content.sprite], g.name = _ref[0], g.sprite = _ref[1];
+    return cc.game.run();
   });
 
   inputElement = document.getElementById('input');

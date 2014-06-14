@@ -24,15 +24,25 @@ root.BattleLayer = cc.Layer.extend
 
   defenceMode: false
 
-  endBattle: (result) ->
-    console.log "Battle ended #{result}"
+  endBattle: (isDraw, winner, isWinnerNpc, loser, isLoserNpc) ->
+    duration = Date.now() - @beginTime
+    socket.emit 'cEndBattle',
+      isDraw: isDraw
+      winner:
+        name: winner
+        isNpc: isWinnerNpc
+      loser:
+        name: loser
+        isNpc: isLoserNpc
+      duration: duration
+
     @callAfter 4.0, =>
       cc.director.popScene()
 
   processPlayerAttack: ->
     win = @throwFire false
     if win
-      @endBattle BattleResult.win
+      @endBattle false, @me.name, false, @enemy.name, true
     else
       @callAfter 3.0, =>
         @processCpuAttack()
@@ -40,7 +50,7 @@ root.BattleLayer = cc.Layer.extend
   processPlayerSkill: ->
     win = @throwFire true
     if win
-      @endBattle BattleResult.win
+      @endBattle false, @me.name, false, @enemy.name, true
     else
       @callAfter 3.0, =>
         @processCpuAttack()
@@ -62,8 +72,11 @@ root.BattleLayer = cc.Layer.extend
     @statusLabel.setPosition cc.p 500, 400
     @addChild @statusLabel, 2
 
+  beginTime: Date.now()
+
   init: ->
     @_super()
+    @beginTime = Date.now()
     for k, v of Actions
       @actions[v] = k.toString().toUpperCase()
 
@@ -177,14 +190,14 @@ root.BattleLayer = cc.Layer.extend
     emitter.setDuration 1
     emitter.setLife 0.5
 
+    maxDamage = if isSkill then 50 else 20
+    damage = Math.floor Math.random() * maxDamage
+    hp = to.hp - damage
+    if hp < 0
+      hp = 0
+
     actionTo = cc.MoveTo.create 1, to.getPosition()
     after = cc.CallFunc.create =>
-      maxDamage = if isSkill then 50 else 20
-      damage = Math.floor Math.random() * maxDamage
-      hp = to.hp - damage
-      if hp < 0
-        hp = 0
-
       to.setHp hp
       color = to.getColor()
       tint = cc.Sequence.create cc.TintTo.create(0.7, 255, 0, 0), cc.TintTo.create(0.3, color.r, color.g, color.b)
@@ -193,7 +206,7 @@ root.BattleLayer = cc.Layer.extend
       to.runAction damageAction
 
     emitter.runAction cc.Sequence.create actionTo, after
-    return to.hp == 0
+    return hp == 0
 
   callAfter: (after, callback) ->
     delay = cc.DelayTime.create 3.0
@@ -205,10 +218,9 @@ root.BattleLayer = cc.Layer.extend
     @attack @me, @enemy, isSkill
 
   processCpuAttack: ->
-    console.log 'hello'
     win = @attack @enemy, @me, (Math.random() > 0.7)
     if win
-      @endBattle BattleResult.lose
+      @endBattle false, @enemy.name, true, @me.name, false
     else
       @callAfter 3.0, =>
         @status = BattleStatus.playerTurn
@@ -220,6 +232,16 @@ root.BattleLayer = cc.Layer.extend
     size = cc.director.getWinSize()
     @arrow.setPosition cc.p 250, 410 - 30 * @selectedIndex
 
+    packets = g.packets
+    g.packets = []
+
+    for packet in packets
+      msgType = packet.msgType
+      data = packet.data
+      switch msgType
+        when 'Todo'
+        else
+          g.world?.handlePacket msgType, data
 
 ###
 

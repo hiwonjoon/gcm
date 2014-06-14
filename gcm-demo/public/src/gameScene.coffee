@@ -109,11 +109,39 @@ root.Player = Character.extend
     @_super name, "res/pc/#{sprite}.png"
 
 root.GameLayer = cc.Layer.extend
+  npcs: {}
+  otherPcs: {}
+
+  onNewNpc: (name, sprite, x, y) ->
+    npc = new Npc name, sprite
+    npc.x = x
+    npc.y = y
+    npc.setMapPos x, y
+    @tileMap.addChild npc, 1
+    @npcs[name] = npc
+
+  onNewPc: (name, sprite, x, y) ->
+    pc = new Player name, sprite
+    pc.setMapPos x, y
+    [pc.x, pc.y] = [x, y]
+    @tileMap.addChild pc, 1
+
+  onQuitPc: (name) ->
+    other = @otherPcs[name]
+    @tileMap.removeChild other if other
+    delete @otherPcs[name]
+
+  onMovePc: (name, x, y) ->
+    @otherPcs[name]?.setMapPos x, y
+
+  onMoveNpc: (name, x, y) ->
+    @npcs[name]?.setMapPos x, y
+
   init: ->
     @_super()
     size = cc.director.getWinSize()
 
-    console.log 'init'
+    g.world.setGameLayer @
 
     # map 로딩
     tileMapTag = 337
@@ -125,6 +153,21 @@ root.GameLayer = cc.Layer.extend
 
     # tilemap의 aritifact 없애기 위해서
     cc.director.setProjection cc.Director.PROJECTION_2D
+
+    @avatar = new Player g.world.avatarName, g.world.avatarSprite
+    @avatar.x = size.width / 2
+    @avatar.y = size.height / 2
+    @avatar.mX = @avatar.x
+    @avatar.mY = @avatar.y
+    @addChild @avatar, 1
+
+    for k, info of g.world.otherPcInfos
+      @onNewPc info.name, info.sprite, info.x, info.y
+
+    for k, info of g.world.npcInfos
+      @onNewNpc info.name, info.sprite, info.x, info.y
+
+    console.log 'init'
 
     # keyboard 핸들러 등록
     if 'keyboard' of cc.sys.capabilities
@@ -141,14 +184,10 @@ root.GameLayer = cc.Layer.extend
 
     @scheduleUpdate()
 
-    @otherPcs = {}
-    @npcs = {}
-
     true
 
   startBattleEffect: ->
     return unless @avatar
-    console.log "battleEffect #{@avatar.name}"
 
     emitter = cc.ParticleFlower.create()
     emitter.texture = cc.textureCache.addImage res.stars_png
@@ -164,14 +203,6 @@ root.GameLayer = cc.Layer.extend
 
   update: (dt) ->
     size = cc.director.getWinSize()
-    if g.logged == false and g.name and g.sprite
-      @avatar = new Player g.name, g.sprite
-      @avatar.x = size.width / 2
-      @avatar.y = size.height / 2
-      @avatar.mX = @avatar.x
-      @avatar.mY = @avatar.y
-      @addChild @avatar, 1
-      g.logged = true
 
     packets = g.packets
     g.packets = []
@@ -180,48 +211,6 @@ root.GameLayer = cc.Layer.extend
       msgType = packet.msgType
       data = packet.data
       switch msgType
-        when 'sLogin'
-          g.sprite = data.sprite
-          g.name = data.name
-
-        when 'sPcMove'
-          name = data.name
-          sprite = data.sprite
-          x = data.x
-          y = data.y
-
-          if name of @otherPcs
-            player = @otherPcs[name]
-            player.setMapPos x, y
-            player.x = x
-            player.y = y
-          else
-            player = new Player name, sprite
-            player.setMapPos x, y
-            player.x = x
-            player.y = y
-            @tileMap.addChild player, 1
-            @otherPcs[name] = player
-
-        when 'sNpcMove'
-          name = data.name
-          sprite = data.sprite
-          x = data.x
-          y = data.y
-
-          if name of @npcs
-            npc = @npcs[name]
-            npc.setMapPos x, y
-            npc.x = x
-            npc.y = y
-          else
-            npc = new Npc name, sprite
-            npc.setMapPos x, y
-            npc.x = x
-            npc.y = y
-            @tileMap.addChild npc, 1
-            @npcs[name] = npc
-
         when 'sStartBattle'
           console.log 'sStartBattle'
           if data.name of @npcs
@@ -231,12 +220,8 @@ root.GameLayer = cc.Layer.extend
             battleScene = new BattleScene
             transition = cc.TransitionProgressRadialCW.create 0.5, battleScene
             cc.director.pushScene transition
-
-        when 'sQuit'
-          for quit of @otherPcs
-            other = @otherPcs[quit]
-            @tileMap.removeChild other
-            delete @otherPcs[quit]
+        else
+          g.world?.handlePacket msgType, data
 
     unless cc.sys.isNative
       return unless @avatar
@@ -259,6 +244,10 @@ root.GameLayer = cc.Layer.extend
       mapPos.x = size.width / 2 - @avatar.mX
       mapPos.y = size.height / 2 - @avatar.mY
       @tileMap.setPosition mapPos
+
+
+
+
 
 
 root.GameScene = cc.Scene.extend

@@ -226,8 +226,7 @@
         sprite: sprite
       });
       $('#loginCanvas').hide();
-      $('#gameCanvas').show();
-      return cc.game.run();
+      return $('#gameCanvas').show();
     });
     panel.add(textField);
     panel.add(lst);
@@ -242,6 +241,7 @@
     return cc.LoaderScene.preload(g_resources, function() {
       var firstScene;
       cc.director.setDisplayStats(false);
+      g.world = new World(g.name, g.sprite);
       firstScene = debug.firstScene ? new root[debug.firstScene] : new GameScene;
       return cc.director.runScene(firstScene);
     }, this);

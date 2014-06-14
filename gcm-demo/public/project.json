@@ -13,6 +13,7 @@
     "jsList" : [
         "src/resource.js",
         "src/app.js",
+        "src/world.js",
         "src/gameScene.js",
         "src/loginScene.js",
         "src/battleScene.js",

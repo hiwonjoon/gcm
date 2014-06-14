@@ -33,7 +33,7 @@ socket.emit = ->
 
 onSuper = socket.$emit
 socket.$emit = ->
-  if arguments[0] == 'sChat' # bypass only 'sChat'
+  if arguments[0] in ['sChat', 'sLogin'] # bypass only 'sChat'
     onSuper.apply socket, arguments
   else
     root.g.packets.push
@@ -42,6 +42,11 @@ socket.$emit = ->
 
 socket.on 'sChat', (content) ->
   addMessage content
+
+socket.on 'sLogin', (content) ->
+  console.log content
+  [g.name, g.sprite] = [content.name, content.sprite]
+  cc.game.run()
 
 inputElement = document.getElementById 'input'
 inputElement.onkeydown = (keyboardEvent) ->
@@ -54,4 +59,6 @@ inputElement.onkeydown = (keyboardEvent) ->
     false
   else
     true
+
+
 

@@ -179,13 +179,11 @@ zebra.ready ->
     socket.emit 'cLogin', { name, sprite }
     $('#loginCanvas').hide()
     $('#gameCanvas').show()
-    cc.game.run()
 
   panel.add textField
   panel.add lst
   panel.add imageLabel
   panel.add btn
-
 
   $('#gameCanvas').hide()
 
@@ -196,6 +194,7 @@ cc.game.onStart = ->
   cc.LoaderScene.preload g_resources, ->
     cc.director.setDisplayStats false
 
+    g.world = new World g.name, g.sprite
     firstScene = if debug.firstScene then new root[debug.firstScene] else new GameScene
     cc.director.runScene firstScene
   , this
