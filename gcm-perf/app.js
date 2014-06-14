@@ -248,8 +248,167 @@
       if(this.target != null)
       {
    	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
-   		this.world.sendBattleResult(false, 1000, this.x, this.y, this, this.target, 100, 10);
-		this.target = null;
+   		  this.world.sendBattleResult(false, 3000, this.x, this.y, this, this.target, 100, 10);
+        console.log(this.id,this.target.id);
+        this.lastActionTime = (new Date().getTime() + Math.random() * 1500);
+		    this.target = null;
+      }
+    };
+
+    Pc.prototype.attackFriend = function() {
+      
+      if(this.hasDestination == false)
+      {
+        do {
+          this.SetDestination();          
+        } while(this.destX < 0 || 
+            this.destX > this.world.size.width ||
+            this.destY < 0 ||
+            this.destY > this.world.size.height);
+   
+      this.hasDestination = true; 
+      }
+      
+      
+      // Search the PC
+      if(this.target == null)
+      {
+        var pc, _i, _len, _ref, minDis, targetPc;
+        minDis = 10000;
+        
+        if(this.targetList.length == 0)
+        {
+          
+          var local_id = parseInt(this.id.split('_')[1]);
+          if( local_id % 2 == 0 )
+            var target_id = 'PC_'+ (local_id+1);
+          else
+            var target_id = 'PC_'+ (local_id-1);
+
+          this.targetList = this.world.bots.filter( function(target) {
+            return target.id == target_id
+          })
+          //console.log(this.targetList)
+        }
+        
+          _ref = this.targetList;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            pc = _ref[_i];
+          if (!(!pc.isBound)) {
+              continue;
+          }
+          
+          var dis = Math.sqrt(Math.pow(pc.x - this.x,2) + Math.pow(pc.y - this.y, 2));
+            if(dis < minDis)
+            {
+              targetPc = pc;
+            minDis = dis;
+            }
+          }
+          
+          if(targetPc != null)
+          {
+            this.target = targetPc;
+          }
+      }
+      
+      // Move
+       this.move();
+      
+      // Arrive
+      this.world.sendBattleResult(false, Math.random() * 500 + 500, this.x, this.y, this, this.target, 100, 10);
+      this.lastActionTime = (new Date().getTime() + Math.random() * 1500);
+    };
+
+    Pc.prototype.attackFriend2 = function() {
+      
+      if(this.hasDestination == false)
+      {
+        do {
+          this.SetDestination();          
+        } while(this.destX < 0 || 
+            this.destX > this.world.size.width ||
+            this.destY < 0 ||
+            this.destY > this.world.size.height);
+   
+      this.hasDestination = true; 
+      }
+      
+      
+      // Search the PC
+      if(this.target == null)
+      {
+        var pc, _i, _len, _ref, minDis, targetPc;
+        minDis = 10000;
+        
+        if(this.targetList.length == 0)
+        {
+          
+          var local_id = parseInt(this.id.split('_')[1]);
+          if( local_id % 5 == 0 )
+          {
+            var target_id_1 = 'PC_'+ (local_id+1);
+            var target_id_2 = 'PC_'+ (local_id+2);
+            var target_id_3 = 'PC_'+ (local_id+3);
+            var target_id_4 = 'PC_'+ (local_id+4);
+          }
+          else if( local_id % 5 == 1)
+          {
+            var target_id_1 = 'PC_'+ (local_id-1);
+            var target_id_3 = 'PC_'+ (local_id+1);
+            var target_id_4 = 'PC_'+ (local_id+2);
+            var target_id_5 = 'PC_'+ (local_id+3);
+          }
+          else if( local_id % 5 == 2)
+          {
+            var target_id_1 = 'PC_'+ (local_id-2);
+            var target_id_2 = 'PC_'+ (local_id-1);
+            var target_id_3 = 'PC_'+ (local_id+1);
+            var target_id_4 = 'PC_'+ (local_id+2);
+          }
+          else if( local_id % 5 == 3)
+          {
+            var target_id_1 = 'PC_'+ (local_id-1);
+            var target_id_2 = 'PC_'+ (local_id-2);
+            var target_id_3 = 'PC_'+ (local_id-3);
+            var target_id_4 = 'PC_'+ (local_id+1);
+          }
+          else
+          {
+            var target_id_1 = 'PC_'+ (local_id-1);
+            var target_id_2 = 'PC_'+ (local_id-2);
+            var target_id_3 = 'PC_'+ (local_id-3);
+            var target_id_4 = 'PC_'+ (local_id-4);
+          }
+            
+
+          this.targetList = this.world.bots.filter( function(target) {
+            return target.id == target_id_1 || target.id == target_id_2 || target.id == target_id_3 || target.id == target_id_4
+          })
+          //console.log(local_id + " " + this.targetList)
+        }
+        
+          if( this.targetList.length > 0)
+            this.target = this.targetList[0];
+      }
+      
+      // Move
+       this.move();
+      
+      // Arrive
+      if(this.target != null)
+      {
+        this.targetList = this.targetList.slice(1);
+        this.world.sendBattleResult(false, Math.random() * 500 + 500, this.x, this.y, this, this.target, 100, 10);
+        console.log(this.id,this.target.id);
+
+        if( this.targetList.length == 0 )
+          this.target = null;
+        else
+          this.target = this.targetList[0];
+
+        
+        this.lastActionTime = (new Date().getTime() + 1500);
       }
     };
 
@@ -396,12 +555,13 @@
       Bot.__super__.constructor.call(this, world);
 
       this.botType = 'move_bot';
-      this.tickTime = 50;
+      this.tickTime = 500;
     }
 	
     Bot.prototype.lastActionTime = 0;
 
     Bot.prototype.tick = function(now) {
+
       if (now - this.lastActionTime < this.tickTime) {
         return;
       }
@@ -427,7 +587,7 @@
       }
       else if(this.botType == 'abusing_bot')
       {
-      	
+      	return this.attackFriend();
       }
     };
 
@@ -682,11 +842,11 @@
   gcmPerf = new World;
 
   gcmPerf.init({
-    pc: 50,
-    move_bot: 50,
-    hunting_bot: 50,
-    pvp_bot: 50,
-    abusing_bot: 50,
+    pc: 0,
+    move_bot: 0,
+    hunting_bot: 0,
+    pvp_bot: 0,
+    abusing_bot: 5,
     npc: 1000,
     worldWidth: 1600,
     worldHeight: 1600

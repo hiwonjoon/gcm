@@ -33,14 +33,21 @@ class CoreBackend extends Actor {
   override def postStop(): Unit = cluster.unsubscribe(self)
 
   def receive = {
+    //Vector 관련 코드
     case job : Job =>
       info_tree ! job;
     case a:GetVector => info_tree ! Broadcast(a)
+    //Graph 관련 코드
+    case MakeNode(id,frontend) =>
+      val node = context.system.actorOf(Props(new UserNode(id,frontend)))
+      sender ! MadeNode(id,node)
+    //Performance 관련 코드
     case GetPerformance(sendTo) =>
       if(sendTo != null)
         sendTo ! MachinePerformance(perf.getCpuInfo(),perf.getMemoryInfo())
       else
         println(perf.getMemoryInfo() + " " + perf.getCpuInfo())
+    //akka-cluster 관련 코드
     case state : CurrentClusterState =>
       state.members.filter(_.status == MemberStatus.up) foreach register
     case MemberUp(m) => register(m)

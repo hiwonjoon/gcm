@@ -173,6 +173,9 @@ class CoreFrontend(port : Int) extends Actor {
   val backendRouter = context.actorOf(Props.empty.withRouter(ClusterRouterConfig(
       AdaptiveLoadBalancingRouter(metricsSelector = akka.cluster.routing.HeapMetricsSelector),ClusterRouterSettings(totalInstances = 100, routeesPath="/user/backend",allowLocalRoutees = true, useRole=Some("backend")))),name="backend_router")
 
+  val userNode = collection.mutable.HashMap.empty[String,ActorRef];
+  val suspiciousNode = collection.mutable.HashSet.empty[ActorRef];
+
   var jobCounter = 0;
   var esper = context.actorSelection("akka.tcp://akka-esper@127.0.0.1:5150/user/EsperActor")
 
@@ -185,6 +188,14 @@ class CoreFrontend(port : Int) extends Actor {
     (self ! GetVector(0,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),0,Main.esper_subscriber)))))
     (self ! GetVector(1,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),1,Main.esper_subscriber)))))
     (self ! GetVector(2,"",system.actorOf(Props(new Gatherer(scala.collection.mutable.ArraySeq(backends:_*),2,Main.esper_subscriber)))))
+
+    val gatherer = context.system.actorOf(Props(new ClusteringResultGatherer(suspiciousNode.size,logger_web)))
+    suspiciousNode.foreach{ node =>
+      //여기만 esepr로 고치면 됨.
+      val clustering = context.system.actorOf(Props(new Clustering(0.5,gatherer)))
+      clustering ! Friends(node::Nil)
+    }
+    suspiciousNode.clear()
   }
 
   ///성열아 여기 수정하면되. 이거 없애고, 이 액터에서 receive 받아서, 아래 내용 실행한 다음에, null을 웹쪽으로 뿌리도록 해버리면 됨.
@@ -199,32 +210,60 @@ class CoreFrontend(port : Int) extends Actor {
   def receive = {
 //    case (handler:ActorRef,job:Job) if backends.isEmpty =>
 //      sender ! JobFailed("Service unavailable, try again later",job)
-    case (handler:ActorRef,job:Job) =>
+    case (handler:ActorRef,job:Job) => {
       job match {
-        case chat:UserChat =>
+        case chat:UserChat => {
+          var message = chat.msg
+          Main.forbiddenWords.foreach{ words => message = message.replaceAll(words, getQuestionString(words.length()))}
+          var newUserChat = UserChat(chat.user, message, chat.time)
+          if(chat.msg != message) // 욕설 필터링 감지
+            logger_web ! common.ChatLog(0,chat.user, chat.msg)
+          //에스퍼로 도배 감지
+          esper ! common.ChatWithAddress(chat.user, chat.msg, sender)
 
-
-      	var message = chat.msg
-        Main.forbiddenWords.foreach{ words => message = message.replaceAll(words, getQuestionString(words.length()))}
-        var newUserChat = UserChat(chat.user, message, chat.time)
-        if(chat.msg != message) // 욕설 필터링 감지
-          logger_web ! common.ChatLog(0,chat.user, chat.msg)
-      	//에스퍼로 도배 감지
-	      esper ! common.ChatWithAddress(chat.user, chat.msg, sender)
-
-    	  import JsonProtocol._
-
-      	  val json = JsObject(
-          	"msgType" -> JsString("chat"),
-        	"body" -> newUserChat.toJson
-      	  )
+          import JsonProtocol._
+          val json = JsObject(
+            "msgType" -> JsString("chat"),
+            "body" -> newUserChat.toJson
+          )
           val body = ByteString(json.prettyPrint)
           val header = ByteString(s"${body.length}\r\n\r\n")
           handler ! Tcp.Write(header ++ body)
+        }
+        case battleResult @ UserBattleResult(_,duration,_,InGameUser(winner,_),InGameUser(loser,_),_,time)  => {
+          if( battleResult.getId().length == 2 ) {
+            var winner_ref : ActorRef = null;
+            userNode.get(winner) match {
+              case Some(node) => winner_ref = node
+              case _ => backendRouter ! MakeNode(winner,self)
+            }
+            var loser_ref : ActorRef = null;
+            userNode.get(loser) match {
+              case Some(node) => loser_ref = node
+              case _ => backendRouter ! MakeNode(loser,self)
+            }
+            if(winner_ref != null && loser_ref != null)
+            {
+              winner_ref ! AddWeight(loser_ref,1000.toDouble/duration.toDouble)
+              loser_ref ! AddWeight(winner_ref,1000.toDouble/duration.toDouble)
+            }
+          }
+          backendRouter ! job;
+        }
         case _ =>
           jobCounter += 1;
           backendRouter ! job
       }
+    }
+    case MadeNode(id,new_node) => {
+      userNode += (id -> new_node)
+    }
+    case Suspicious(node) => {
+      suspiciousNode += node
+      //println("suspicious!")
+    }
+    case Clustered(nodes) =>
+      println("Detected" + nodes)
     case a:GetVector => {
       //클러스터에 잇는 모든 친구들에게 데이터를 요청 후 받아서 처리.
       backendRouter ! Broadcast(a)

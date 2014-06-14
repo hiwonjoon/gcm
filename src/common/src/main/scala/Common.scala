@@ -35,7 +35,8 @@ class TweetList(tweets : Seq[(String,Int)]) extends Serializable {
 }
 object C {
   val filterStr:Array[String] = Array("시발", "좆", "ㅅㅂ", "지랄", "새끼", "개새끼", "샹놈")
-  val MacroType = Array("Auto Bot(Move)", "Auto Bot(NPC Hunting)", "PvP Fraud")
+
+  val MacroType = Array("Auto Bot(Move)", "Auto Bot(NPC Hunting)", "PvP Fraud", "Abusing")
   val ChatLogType = Array("욕설", "도배")
 }
 case class ForbiddenWords(arrayOfWords : Array[String])
