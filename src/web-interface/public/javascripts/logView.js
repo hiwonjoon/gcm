@@ -4,7 +4,7 @@ $(function() {
         {
             "processing" : true,
             "serverSide" : true,
-            "searching" : false,
+            "searching" : true,
             "scrollY" : "400px",
             "scrollCollapse" : true,
             "ordering" : false,

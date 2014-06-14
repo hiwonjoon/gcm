@@ -27,7 +27,7 @@ object ForbiddenKeyword extends Controller {
   def readFile = Action {
     Ok(views.html.forbiddenKeyword(Global.forbiddenwords.iterator))
   }
-  def getAjax2 = Action { implicit request =>
+  def getAjax = Action { implicit request =>
 
       val draw = request.getQueryString("draw") match { case Some(s) => s.toInt case None => 0 }
       val start = request.getQueryString("start") match {case Some(s) => s.toInt case None => 0 }
@@ -43,15 +43,7 @@ object ForbiddenKeyword extends Controller {
       Ok(Json.toJson(ForBiddenKeywordTable(draw, count, filtered.size, filtered.toSeq.slice(start, lengthCount).map( str => ForBiddenData(str)))))
 
   }
-  def getAjax(draw:Int, start:Int, length:Int, keyword:Option[String]) = Action {
 
-    val count = Global.forbiddenwords.size
-    val lengthCount = if(start + length > count ) count - start else length
-    Logger.info(count + " " + lengthCount)
-    val filtered = Global.forbiddenwords.filter(str => str.contains(keyword.getOrElse("")))
-    Ok(Json.toJson(ForBiddenKeywordTable(draw, count, filtered.size, filtered.toSeq.slice(start, lengthCount).map( str => ForBiddenData(str)))))
-
-  }
   def add(keyword : String) = Action
   {
     if(keyword == "")
