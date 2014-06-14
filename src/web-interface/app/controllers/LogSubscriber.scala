@@ -14,31 +14,15 @@ import java.util.ArrayList._
 class LogSubscriber extends Actor {
 
   def receive = {
-    // 도배 로그
-    case common.ChatLog(id, message) => {
-      GameLog.insertLog(1, id, message)
+    // 욕설 및 도배
+    case common.ChatLog(chatLogType, id, message) => {
+      GameLog.insertLog(1, id, chatLogType match{ case 1 => "도배가 감지되었습니다." case 0 => "욕설을 하고 있습니다.=>"+message})
     }
     // 매크로 로그
     case common.MacroDetection(id,sort,avg,stddev) => {
-      GameLog.insertLog(2, id, "avg: " + sort + " avg:" + avg + "stddev: " + stddev)
+      GameLog.insertLog(2, id, common.C.MacroType(sort) + " 매크로가 감지되었습니다.")
     }
-    //
     case common.MachinePerformance(cpuperf, memperf) => {
-      var it = cpuperf.iterator()
-      while(it.hasNext())
-      {
-        var a = it.next().entrySet().iterator()
-        while(a.hasNext()) {
-          var b = a.next()
-          Logger.info(b.getKey() + " & " + b.getValue())
-        }
-      }
-      var mem_it = memperf.entrySet().iterator()
-      while(mem_it.hasNext()) {
-        var c = mem_it.next()
-        Logger.info(c.getKey() + " & " + c.getValue())
-      }
-
     }
   }
 

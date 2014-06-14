@@ -19,7 +19,7 @@ case class Chat(@BeanProperty id: String, @BeanProperty message: String)
 case class ChatWithAddress(@BeanProperty id: String, @BeanProperty message: String, @BeanProperty origin:AnyRef)
 case class ChatAbusing(@BeanProperty id: String, @BeanProperty origin:AnyRef)
 case class ChatSlang(@BeanProperty id: String, @BeanProperty messsage: String, @BeanProperty origin:AnyRef)
-case class ChatLog(@BeanProperty id: String, @BeanProperty log: String)
+case class ChatLog(@BeanProperty chatLogType: Int, @BeanProperty id: String, @BeanProperty log: String)
 
 case class Macro(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty cosine: Double)
 case class Macro2(@BeanProperty id: String, @BeanProperty sort: Int, @BeanProperty cosine1: Double, @BeanProperty cosine2: Double)
@@ -36,6 +36,7 @@ class TweetList(tweets : Seq[(String,Int)]) extends Serializable {
 object C {
   val filterStr:Array[String] = Array("시발", "좆", "ㅅㅂ", "지랄", "새끼", "개새끼", "샹놈")
   val MacroType = Array("Auto Bot(Move)", "Auto Bot(NPC Hunting)", "PvP Fraud")
+  val ChatLogType = Array("욕설", "도배")
 }
 case class ForbiddenWords(arrayOfWords : Array[String])
 case class MachinePerformance(cpuperf:util.ArrayList[java.util.HashMap[String, String]],memperf:java.util.HashMap[String,java.lang.Long])

@@ -127,8 +127,9 @@ class ChatRoom extends Actor {
       notifyAll("talk",username,text)
     }
 
-    case ChatLog(username, text) => {
-      notifyAll("talk","관리자", s"($username)$text")
+    case ChatLog(logType, username, text) => {
+      var logTypeStr = common.C.ChatLogType(logType)
+      notifyAll("talk","관리자", s"($logTypeStr):($username)$text")
     }
   }
   

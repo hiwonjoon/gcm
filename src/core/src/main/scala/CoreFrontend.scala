@@ -202,12 +202,13 @@ class CoreFrontend(port : Int) extends Actor {
     case (handler:ActorRef,job:Job) =>
       job match {
         case chat:UserChat =>
-         
-		//필터링
-      	  var message = chat.msg
-          Main.forbiddenWords.foreach{ words => message = message.replaceAll(words, getQuestionString(words.length()))}
-          var newUserChat = UserChat(chat.user, message, chat.time)
 
+
+      	var message = chat.msg
+        Main.forbiddenWords.foreach{ words => message = message.replaceAll(words, getQuestionString(words.length()))}
+        var newUserChat = UserChat(chat.user, message, chat.time)
+        if(chat.msg != message) // 욕설 필터링 감지
+          logger_web ! common.ChatLog(0,chat.user, chat.msg)
       	//에스퍼로 도배 감지
 	      esper ! common.ChatWithAddress(chat.user, chat.msg, sender)
 

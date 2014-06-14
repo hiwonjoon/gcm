@@ -24,13 +24,13 @@ class Subscriber extends Actor {
   def receive = {
     case EsperEvent(_, ChatAbusing(id, origin)) => {
       if(origin != null)
-        origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 도배를 하고 있습니다.")
-      logger_web ! ChatLog(id, " 님이 도배를 하고 있습니다.")
+        origin.asInstanceOf[ActorRef] ! ChatLog(1, id, " 님이 도배를 하고 있습니다.")
+      logger_web ! ChatLog(1,id, " 님이 도배를 하고 있습니다.")
     }
 
     case EsperEvent(_, ChatSlang(id, message, origin)) => {
       if(origin != null)
-        origin.asInstanceOf[ActorRef] ! ChatLog(id, " 님이 비속어를 사용했습니다.")
+        origin.asInstanceOf[ActorRef] ! ChatLog(0, id, " 님이 비속어를 사용했습니다.")
     }
 
     case EsperEvent(_, MacroDetection(id, sort, avg, stddev)) => {
@@ -112,8 +112,8 @@ class Subscriber extends Actor {
       esper ! Request(packet)
     }
 
-    case ChatLog(id, msg) => {
-      println(s"($id)$msg")
+    case ChatLog(logType, id, msg) => {
+      println(s"($logType)($id)$msg")
     }
 
     case ChatWithAddress(id,msg,origin) => {
