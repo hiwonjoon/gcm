@@ -109,14 +109,17 @@ class ClusteringResultGatherer(gather_count:Int,sendTo:ActorSelection) extends A
       clusters += result
       //println("Custered : " + gathered)
       if( gathered == gather_count ) {
+        val found_out = scala.collection.mutable.HashSet.empty[String];
         clusters.foreach(cluster => {
-          println("Custered : " + cluster);
+          //println("Custered : " + cluster);
           if( cluster.size >= 2 ) {
-            cluster.foreach(id =>
+            cluster.foreach(id => {
               sendTo ! common.MacroDetection(id, 3, 0, 0)
-            )
+              found_out += id;
+            })
           }
         })
+        println("ClusterMacroFound[" + found_out.size +"] : " + found_out);
       }
     }
     case _ => Logging(context.system,this).info("Case _ in ClusteringResultGatherer")

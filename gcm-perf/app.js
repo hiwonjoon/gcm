@@ -249,8 +249,8 @@
       {
    	  	this.targetList.splice(this.targetList.indexOf(this.target), 1);
    		  this.world.sendBattleResult(false, 3000, this.x, this.y, this, this.target, 100, 10);
-        console.log(this.id,this.target.id);
-        this.lastActionTime = (new Date().getTime() + Math.random() * 1500);
+        //console.log(this.id,this.target.id);
+        //this.lastActionTime = (new Date().getTime() + Math.random() * 1500);
 		    this.target = null;
       }
     };
@@ -400,7 +400,7 @@
       {
         this.targetList = this.targetList.slice(1);
         this.world.sendBattleResult(false, Math.random() * 500 + 500, this.x, this.y, this, this.target, 100, 10);
-        console.log(this.id,this.target.id);
+        //console.log(this.id,this.target.id);
 
         if( this.targetList.length == 0 )
           this.target = null;
@@ -555,7 +555,7 @@
       Bot.__super__.constructor.call(this, world);
 
       this.botType = 'move_bot';
-      this.tickTime = 500;
+      this.tickTime = 50;
     }
 	
     Bot.prototype.lastActionTime = 0;
@@ -589,6 +589,10 @@
       {
       	return this.attackFriend();
       }
+      else if(this.botType == 'abusing_bot2')
+      {
+      	return this.attackFriend2();
+      }	
     };
 
     return Bot;
@@ -645,7 +649,7 @@
     World.prototype.gcmClient = null;
 
     World.prototype.init = function(cfg) {
-      var bot, i, npc, pc, _i, _j, _k1, _k2, _k3, _k4 , _ref, _ref1, _ref_k1, _ref_k2, _ref_k3, _ref_k4, _results;
+      var bot, i, npc, pc, _i, _j, _k1, _k2, _k3, _k4 , k5, _ref, _ref1, _ref_k1, _ref_k2, _ref_k3, _ref_k4, _ref_k5, _results;
       this.size.width = cfg.worldWidth;
       this.size.height = cfg.worldHeight;
       this.npcs = [];
@@ -678,7 +682,17 @@
         bot = new Bot(this);
         bot.botType = 'abusing_bot';
         _results.push(this.bots.push(bot));
+      }
+      for (i = _k5 = 0, _ref_k5 = cfg.abusing_bot2; 0 <= _ref_k5 ? _k5 < _ref_k5 : _k5 > _ref_k5; i = 0 <= _ref_k5 ? ++_k5 : --_k5) {
+        bot = new Bot(this);
+        bot.botType = 'abusing_bot2';
+        this.bots.push(bot);
       }      
+      for(i = 0; i < this.bots.length; i+=50)
+      {
+        console.log( this.bots[i].botType + " : " + this.bots[i].id )
+        //console.log( _results[i].botType + " : " + _results[i].id)
+      }
       return _results;
     };
 
@@ -842,11 +856,12 @@
   gcmPerf = new World;
 
   gcmPerf.init({
-    pc: 0,
-    move_bot: 0,
-    hunting_bot: 0,
-    pvp_bot: 0,
-    abusing_bot: 5,
+    pc: 100,
+    move_bot: 100,
+    hunting_bot: 100,
+    pvp_bot: 100,
+    abusing_bot: 50,
+	abusing_bot2 : 50,
     npc: 1000,
     worldWidth: 1600,
     worldHeight: 1600

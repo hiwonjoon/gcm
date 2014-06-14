@@ -48,9 +48,10 @@ class Subscriber extends Actor {
       }
 
       val len = detectedBot(C.MacroType(sort)).length
-      println(s"$typeName Detected($len) : " + detectedBot(C.MacroType(sort)).mkString(","))
+      //println(s"$typeName Detected($len) : " + detectedBot(C.MacroType(sort)).mkString(","))
+      println(s"$typeName Detected($len) : " + id)
 
-//    logger_web ! MacroDetection(id, sort, avg, stddev)
+      logger_web ! MacroDetection(id, sort, avg, stddev)
     }
 
     case EsperEvent(_, AbusingDetection(user1, user2, count)) => {
