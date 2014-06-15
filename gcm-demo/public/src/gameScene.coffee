@@ -168,7 +168,17 @@ root.GameLayer = cc.Layer.extend
     @avatar.y = size.height / 2
     @avatar.mX = @avatar.x
     @avatar.mY = @avatar.y
+
+    if g.me
+      @avatar.mX = g.me.mX
+      @avatar.mY = g.me.mY
+      mapPos = @tileMap.getPosition()
+      mapPos.x = size.width / 2 - @avatar.mX
+      mapPos.y = size.height / 2 - @avatar.mY
+      @tileMap.setPosition mapPos
+
     @addChild @avatar, 1
+    socket.emit 'cMove', { x: @avatar.mX, y: @avatar.mY }
 
     for k, info of g.world.otherPcInfos
       @onNewPc info.name, info.sprite, info.x, info.y
@@ -222,13 +232,19 @@ root.GameLayer = cc.Layer.extend
       switch msgType
         when 'sStartBattle'
           console.log 'sStartBattle'
-          if data.name of @npcs
-            npc = @npcs[data.name]
-            g.me = @avatar
-            g.enemy = npc
-            battleScene = new BattleScene
-            transition = cc.TransitionProgressRadialCW.create 0.5, battleScene
-            cc.director.pushScene transition
+          enemy = @otherPcs[data.name]
+          enemy = @npcs[data.name] unless enemy
+          return unless enemy
+
+          g.me = @avatar
+          g.enemy = enemy
+          g.enemyIsNpc = data.isNpc
+          g.firstAttack = data.isFirst
+
+          battleScene = new BattleScene
+          transition = cc.TransitionProgressRadialCW.create 0.5, battleScene
+          cc.director.pushScene transition
+
         else
           g.world?.handlePacket msgType, data
 

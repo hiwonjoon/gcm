@@ -17,7 +17,9 @@
     sprite: null,
     packets: [],
     me: null,
-    enemy: null
+    enemy: null,
+    enemyIsNpc: false,
+    firstAttack: false
   };
 
   addMessage = function(from, msg) {

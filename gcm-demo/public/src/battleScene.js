@@ -17,7 +17,7 @@
 
   root.BattleStatus = {
     playerTurn: 0,
-    cpuTurn: 1
+    opponentTurn: 1
   };
 
   root.BattleResult = {
@@ -30,65 +30,53 @@
     actions: [],
     status: BattleStatus.playerTurn,
     defenceMode: false,
-    endBattle: function(isDraw, winner, isWinnerNpc, loser, isLoserNpc) {
-      var duration;
-      duration = Date.now() - this.beginTime;
-      socket.emit('cEndBattle', {
-        isDraw: isDraw,
-        winner: {
-          name: winner,
-          isNpc: isWinnerNpc
-        },
-        loser: {
-          name: loser,
-          isNpc: isLoserNpc
-        },
-        duration: duration
-      });
+    processEndBattle: function(winner, loser, isDraw) {
       return this.callAfter(4.0, (function(_this) {
         return function() {
           return cc.director.popScene();
         };
       })(this));
     },
-    processPlayerAttack: function() {
-      var win;
-      win = this.throwFire(false);
-      if (win) {
-        return this.endBattle(false, this.me.name, false, this.enemy.name, true);
+    processAttack: function(fromName, toName, isSkill, damage, hp) {
+      var actionTo, after, emitter, from, to, _ref, _ref1;
+      if (this.me.name === fromName) {
+        _ref = [this.me, this.enemy], from = _ref[0], to = _ref[1];
       } else {
-        return this.callAfter(3.0, (function(_this) {
-          return function() {
-            return _this.processCpuAttack();
-          };
-        })(this));
+        _ref1 = [this.enemy, this.me], from = _ref1[0], to = _ref1[1];
       }
-    },
-    processPlayerSkill: function() {
-      var win;
-      win = this.throwFire(true);
-      if (win) {
-        return this.endBattle(false, this.me.name, false, this.enemy.name, true);
+      if (isSkill) {
+        emitter = cc.ParticleFire.create();
+        emitter.setEmitterMode(1);
       } else {
-        return this.callAfter(3.0, (function(_this) {
-          return function() {
-            return _this.processCpuAttack();
-          };
-        })(this));
+        emitter = cc.ParticleGalaxy.create();
+        emitter.setShapeType(cc.ParticleSystem.BALL_SHAPE);
+        emitter.setTotalParticles(100);
       }
+      emitter.texture = cc.textureCache.addImage(res.fire_png);
+      emitter.setPosition(from.getPosition());
+      this.addChild(emitter);
+      emitter.setScale(1);
+      emitter.setAutoRemoveOnFinish(true);
+      emitter.setDuration(1);
+      emitter.setLife(0.5);
+      actionTo = cc.MoveTo.create(1, to.getPosition());
+      after = cc.CallFunc.create((function(_this) {
+        return function() {
+          var color, damageAction, tint;
+          to.setHp(hp);
+          color = to.getColor();
+          tint = cc.Sequence.create(cc.TintTo.create(0.7, 255, 0, 0), cc.TintTo.create(0.3, color.r, color.g, color.b));
+          damageAction = cc.Spawn.create([cc.Blink.create(1, 3), tint]);
+          return to.runAction(damageAction);
+        };
+      })(this));
+      emitter.runAction(cc.Sequence.create(actionTo, after));
+      return hp === 0;
     },
     processPlayerFlee: function() {
       return this.callAfter(4.0, (function(_this) {
         return function() {
           return cc.director.popScene();
-        };
-      })(this));
-    },
-    processPlayerDefend: function() {
-      this.defenceMode = true;
-      return this.callAfter(3.0, (function(_this) {
-        return function() {
-          return _this.processCpuAttack();
         };
       })(this));
     },
@@ -102,11 +90,9 @@
       this.statusLabel.setPosition(cc.p(500, 400));
       return this.addChild(this.statusLabel, 2);
     },
-    beginTime: Date.now(),
     init: function() {
       var action, bg, drawBounds, drawShadow, fadeIn, fadeOut, fadeSeq, forever, i, k, label, minScale, param, size, v, xScale, yScale;
       this._super();
-      this.beginTime = Date.now();
       for (k in Actions) {
         v = Actions[k];
         this.actions[v] = k.toString().toUpperCase();
@@ -120,7 +106,14 @@
       bg.setPosition(size.width / 2, size.height / 2);
       this.addChild(bg, -1);
       this.me = g.me ? new Player(g.me.name, g.me.sprite) : new Player('mario', '08sprite');
-      this.enemy = g.enemy ? new Npc(g.enemy.name, g.enemy.sprite) : new Player('luigi', '17sprite');
+      this.enemy = g.enemy ? g.enemyIsNpc ? new Npc(g.enemy.name, g.enemy.sprite) : new Player(g.enemy.name, g.enemy.sprite) : new Player('luigi', '17sprite');
+      if (g.firstAttack) {
+        this.setStatusText('Player turn');
+        this.status = BattleStatus.playerTurn;
+      } else {
+        this.setStatusText('Waiting...');
+        this.status = BattleStatus.opponentTurn;
+      }
       this.me.moveUp();
       this.enemy.moveDown();
       this.me.setScale(3.5);
@@ -152,7 +145,6 @@
       fadeSeq = cc.Sequence.create(fadeIn, fadeOut);
       forever = cc.RepeatForever.create(fadeSeq);
       this.arrow.runAction(forever);
-      this.setStatusText('Player turn');
       this.scheduleUpdate();
       if ('keyboard' in cc.sys.capabilities) {
         param = {
@@ -162,7 +154,6 @@
               if (_this.status !== BattleStatus.playerTurn) {
                 return;
               }
-              console.log(key);
               switch (key) {
                 case 40:
                   console.log('down');
@@ -194,18 +185,22 @@
                   console.log(_this.selectedIndex);
                   switch (_this.actions[_this.selectedIndex]) {
                     case 'ATTACK':
-                      _this.processPlayerAttack();
+                      socket.emit('cAttack', {
+                        isSkill: false
+                      });
                       break;
                     case 'SKILL':
-                      _this.processPlayerSkill();
+                      socket.emit('cAttack', {
+                        isSkill: true
+                      });
                       break;
                     case 'DEFEND':
-                      _this.processPlayerDefend();
+                      socket.emit('cDefend');
                       break;
                     case 'FLEE':
-                      _this.processPlayerFlee();
+                      socket.emit('cFlee');
                   }
-                  _this.status = BattleStatus.cpuTurn;
+                  _this.status = BattleStatus.opponentTurn;
                   return _this.setStatusText('Waiting...');
               }
             };
@@ -213,43 +208,6 @@
         };
         return cc.eventManager.addListener(param, this);
       }
-    },
-    attack: function(from, to, isSkill) {
-      var actionTo, after, damage, emitter, hp, maxDamage;
-      if (isSkill) {
-        emitter = cc.ParticleFire.create();
-        emitter.setEmitterMode(1);
-      } else {
-        emitter = cc.ParticleGalaxy.create();
-        emitter.setShapeType(cc.ParticleSystem.BALL_SHAPE);
-        emitter.setTotalParticles(100);
-      }
-      emitter.texture = cc.textureCache.addImage(res.fire_png);
-      emitter.setPosition(from.getPosition());
-      this.addChild(emitter);
-      emitter.setScale(1);
-      emitter.setAutoRemoveOnFinish(true);
-      emitter.setDuration(1);
-      emitter.setLife(0.5);
-      maxDamage = isSkill ? 50 : 20;
-      damage = Math.floor(Math.random() * maxDamage);
-      hp = to.hp - damage;
-      if (hp < 0) {
-        hp = 0;
-      }
-      actionTo = cc.MoveTo.create(1, to.getPosition());
-      after = cc.CallFunc.create((function(_this) {
-        return function() {
-          var color, damageAction, tint;
-          to.setHp(hp);
-          color = to.getColor();
-          tint = cc.Sequence.create(cc.TintTo.create(0.7, 255, 0, 0), cc.TintTo.create(0.3, color.r, color.g, color.b));
-          damageAction = cc.Spawn.create([cc.Blink.create(1, 3), tint]);
-          return to.runAction(damageAction);
-        };
-      })(this));
-      emitter.runAction(cc.Sequence.create(actionTo, after));
-      return hp === 0;
     },
     callAfter: function(after, callback) {
       var delay;
@@ -260,23 +218,6 @@
         };
       })(this));
       return this.runAction(cc.Sequence.create(delay, after));
-    },
-    throwFire: function(isSkill) {
-      return this.attack(this.me, this.enemy, isSkill);
-    },
-    processCpuAttack: function() {
-      var win;
-      win = this.attack(this.enemy, this.me, Math.random() > 0.7);
-      if (win) {
-        return this.endBattle(false, this.enemy.name, true, this.me.name, false);
-      } else {
-        return this.callAfter(3.0, (function(_this) {
-          return function() {
-            _this.status = BattleStatus.playerTurn;
-            return _this.setStatusText('Player Turn');
-          };
-        })(this));
-      }
     },
     selectedIndex: 0,
     update: function(dt) {
@@ -291,7 +232,16 @@
         msgType = packet.msgType;
         data = packet.data;
         switch (msgType) {
-          case 'Todo':
+          case 'sAttack':
+            console.log('sAttack', data);
+            _results.push(this.processAttack(data.from, data.to, data.isSkill, data.damage, data.hp));
+            break;
+          case 'sBattleStatus':
+            this.setStatusText(data.msg);
+            _results.push(this.status = data.turn ? BattleStatus.playerTurn : BattleStatus.opponentTurn);
+            break;
+          case 'sEndBattle':
+            _results.push(this.processEndBattle(data.winner, data.loser, data.isDraw));
             break;
           default:
             _results.push((_ref = g.world) != null ? _ref.handlePacket(msgType, data) : void 0);

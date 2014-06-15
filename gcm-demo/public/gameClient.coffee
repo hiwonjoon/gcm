@@ -13,6 +13,8 @@ root.g =
   packets: []
   me: null
   enemy: null
+  enemyIsNpc: false
+  firstAttack: false
 
 addMessage = (from, msg) ->
   container = $ '#messages'

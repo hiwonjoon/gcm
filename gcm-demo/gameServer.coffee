@@ -7,7 +7,9 @@ class Player
   constructor: (@world, @socket, @name, @sprite) ->
   x: 0
   y: 0
-  occupied: false
+  hp: 100
+  isNpc: false
+  battle: null
   move: (x, y) ->
   attack: (x, y) ->
   tick: ->
@@ -16,12 +18,16 @@ class Npc
   constructor: (@world, @name, @sprite) ->
   x: 0
   y: 0
-  occupied: false
+  hp: 100
+  isNpc: true
+  battle: null
   testTick: 0
   move: (x, y) ->
   attack: (x, y) ->
   tick: ->
     @testTick++
+    return if @battle
+
     if @testTick % 10 == 0
       x = @x - 2 + Math.floor( Math.random() * 5 )
       y = @y - 2 + Math.floor( Math.random() * 5 )
@@ -33,8 +39,151 @@ class Projectile
   y: 0
   tick: ->
 
+class Battle
+  constructor: (@world, @char1, @char2) ->
+    @char1.battle = @
+    @char2.battle = @
+    @isPvp = @char1.isNpc or @char2.isNpc
+    @charList = [@char1, @char2]
+
+  isPvp: false
+  charList: []
+  attacker: null
+  isDefending: false
+
+  beginTime: Date.now()
+  start: ->
+    @char1.socket?.emit 'sStartBattle',
+      name: @char2.name
+      sprite: @char2.sprite
+      isNpc: @char2.isNpc
+      isFirst: true
+
+    @char1.socket?.emit 'sBattleStatus',
+      msg: 'Your Turn'
+      turn: true
+
+    @char2.socket?.emit 'sStartBattle',
+      name: @char1.name
+      sprite: @char1.sprite
+      isNpc: @char1.isNpc
+      isFirst: false
+
+    @char2.socket?.emit 'sBattleStatus',
+      msg: 'Waiting...'
+      turn: false
+
+    @attacker = @char1
+
+  getOpponent: (char) ->
+    if char == @char1 then @char2 else @char1
+
+  processAttack: (attacker, isSkill) ->
+    return unless @attacker == attacker
+
+    maxDamage = if isSkill then 50 else 20
+    damage = Math.floor Math.random() * maxDamage
+    damage /= 2 if @isDefending
+    @isDefending = false
+
+    attackee = @getOpponent(attacker)
+    hp = attackee.hp - damage
+    hp = 0 if hp < 0
+    attackee.hp = hp
+
+    data =
+      from: attacker.name
+      to: attackee.name
+      isSkill: isSkill
+      damage: damage
+      hp: hp
+
+    console.log 'sAttack', data
+
+    attacker.socket?.emit 'sAttack', data
+    attackee.socket?.emit 'sAttack', data
+
+    if hp > 0
+      @changeTurn()
+    else
+      @finish attacker, attackee, false
+
+  processDefend: (attacker) ->
+    return unless @attacker == attacker
+
+    @isDefending = true
+    @changeTurn()
+
+  changeTurn: ->
+    nextAttacker = @getOpponent @attacker
+    nextAttacker.socket?.emit 'sBattleStatus',
+      msg: 'Your Turn'
+      turn: true
+
+    @attacker.socket?.emit 'sBattleStatus',
+      msg: 'Waiting...'
+      turn: false
+    @attacker = nextAttacker
+
+  processFlee: (attacker) ->
+    return unless @attacker == attacker
+    @finish @getOpponent(attacker), attacker, false
+
+  aiTick: null
+  tick: ->
+    now = Date.now()
+    if now - @beginTime > 5 * 60 * 1000
+      @finish @char1, @char2, true
+      return
+
+    return unless @attacker.isNpc
+
+    @aiTick = now unless @aiTick
+    if (now - @aiTick) > (3000 + Math.random() * 2000)
+      isSkill = Math.random() > 0.7
+      @attacker.battle.processAttack @attacker, isSkill
+      @aiTick = null
+
+  finish: (winner, loser, isDraw) ->
+    duration = Date.now() - @beginTime
+    @world?.server?.sendToGcm
+      msgType: 'battleResult'
+      body:
+        isDraw: isDraw
+        duration: duration
+        pos:
+          x: winner.x
+          y: winner.y
+        winner:
+          id: winner.name
+          isNpc: winner.isNpc
+        loser:
+          id: loser.name
+          isNpc: loser.isNpc
+        reward:
+          exp: 20
+          gold: 100
+        time: Date.now()
+
+    data =
+      winner: winner.name
+      loser: loser.name
+      isDraw: isDraw
+
+    winner.socket?.emit 'sEndBattle', data
+    loser.socket?.emit 'sEndBattle', data
+
+    winner.hp = 100
+    loser.hp = 100
+    winner.battle = null
+    loser.battle = null
+    for battle, i in @world.battleList
+      if battle == @
+        @world.battleList.splice i, 1
+        break
+
 class World
-  constructor: ->
+  constructor: (@server) ->
 
   playerIdTable: {}
   playerNameTable: {}
@@ -46,14 +195,17 @@ class World
   mapHeight: 900
   index: 0
 
+  battleList: []
+
   processLogin: (socket) ->
     player = @playerIdTable[socket.id]
     return unless player
 
     playerSocket = player.socket
     playerSocket.emit 'sLogin', { name: player.name, sprite: player.sprite }
-    for k, v of @playerNameTable
-      playerSocket.emit 'sPcMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y } if v.name != player.name
+    for k, v of @playerNameTable when v.name != player.name
+      playerSocket.emit 'sPcMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y }
+      v.socket.emit 'sPcMove', { name: player.name, sprite: player.sprite, x: player.x, y: player.y }
 
     for k, v of @npcTable
       playerSocket.emit 'sNpcMove', { name: v.name, sprite: v.sprite, x: v.x, y: v.y }
@@ -77,28 +229,46 @@ class World
     player.y = y
     playerSocket.broadcast.emit 'sPcMove', { name: player.name, sprite: player.sprite, x: player.x, y: player.y }
 
+
+  getDistance: (char1, char2) ->
+    [dX, dY] = [char1.x - char2.x, char1.y - char2.y]
+    Math.sqrt dX*dX + dY*dY
+
+  getFirstCandidate: (char, table) ->
+    for k, v of table
+      dist = @getDistance char, v
+      if char != v and dist < 50 and v.battle == null
+        return v
+    null
+
   processStartBattle: (socket, x, y) ->
     player = @playerIdTable[socket.id]
     return unless player
+    return if player.battle
 
     playerSocket = player.socket
-    player.x = x
-    player.y = y
+    opponent = @getFirstCandidate player, @playerIdTable
+    opponent = @getFirstCandidate player, @npcTable unless opponent
+    return unless opponent
 
-    for k, v of @npcTable
-      dx = Math.abs x - v.x
-      dy = Math.abs y - v.y
-      dist = Math.sqrt dx*dx + dy*dy
-      console.log dist
-      if dist < 50 and v.occupied == false
-        player.occupied = true
-        v.occupied = true
-        playerSocket.emit 'sStartBattle', { name: v.name, sprite: v.sprite }
-        break
+    battle = new Battle @, player, opponent
+    @battleList.push battle
+    battle.start()
 
-  processEndBattle: (socket) ->
+  processAttack: (socket, isSkill) ->
     player = @playerIdTable[socket.id]
     return unless player
+    player.battle?.processAttack(player, isSkill)
+
+  processDefend: (socket) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+    player.battle?.processDefend player
+
+  processFlee: (socket) ->
+    player = @playerIdTable[socket.id]
+    return unless player
+    player.battle?.processFlee player
 
   processNpcMove: (npc, x, y) ->
     npc.x = x
@@ -138,6 +308,9 @@ class World
 
     for k, v of @playerIdTable
       v.tick()
+
+    for battle in @battleList
+      battle.tick()
 
     nowNpc = (v for k, v of @npcTable)
     if nowNpc.length < @maxNpc
@@ -254,37 +427,18 @@ class GameServer
       socket.on 'cStartBattle', (data) =>
         @world.processStartBattle socket, data.x, data.y
 
-      socket.on 'cEndBattle', (data) =>
-        @world.processEndBattle socket
-        player = @getPlayerBySocket(socket)
-        return unless player
-
-        winner = data.winner
-        loser = data.loser
-        @sendToGcm
-          msgType: 'battleResult'
-          body:
-            isDraw: data.isDraw
-            duration: data.duration
-            pos:
-              x: player.x
-              y: player.y
-            winner:
-              id: winner.name
-              isNpc: winner.isNpc
-            loser:
-              id: loser.name
-              isNpc: loser.isNpc
-            reward:
-              exp: 20
-              gold: 100
-            time: Date.now()
-
       socket.on 'cAttack', (data) =>
-        @world.processAttack socket, data.x, data.y
+        console.log 'cAttack', data
+        @world.processAttack socket, data.isSkill
+
+      socket.on 'cDefend', (data) =>
+        @world.processDefend socket
+
+      socket.on 'cFlee', (data) =>
+        @world.processFlee socket
 
       socket.on 'cLogin', (data) =>
-        @world.createPlayer socket, data.name, data.sprite
+        @world.createPlayer socket, data.name, data.sprite, data.x, data.y
 
       socket.on 'cChat', (data) =>
         if @gcmClient

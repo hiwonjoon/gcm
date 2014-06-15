@@ -164,7 +164,7 @@
       return _ref = [x, y], npc.x = _ref[0], npc.y = _ref[1], _ref;
     },
     init: function() {
-      var info, k, param, size, tileMapTag, _ref, _ref1;
+      var info, k, mapPos, param, size, tileMapTag, _ref, _ref1;
       this._super();
       size = cc.director.getWinSize();
       g.world.setGameLayer(this);
@@ -179,7 +179,19 @@
       this.avatar.y = size.height / 2;
       this.avatar.mX = this.avatar.x;
       this.avatar.mY = this.avatar.y;
+      if (g.me) {
+        this.avatar.mX = g.me.mX;
+        this.avatar.mY = g.me.mY;
+        mapPos = this.tileMap.getPosition();
+        mapPos.x = size.width / 2 - this.avatar.mX;
+        mapPos.y = size.height / 2 - this.avatar.mY;
+        this.tileMap.setPosition(mapPos);
+      }
       this.addChild(this.avatar, 1);
+      socket.emit('cMove', {
+        x: this.avatar.mX,
+        y: this.avatar.mY
+      });
       _ref = g.world.otherPcInfos;
       for (k in _ref) {
         info = _ref[k];
@@ -233,7 +245,7 @@
     },
     map2screen: function(x, y) {},
     update: function(dt) {
-      var battleScene, dX, dY, data, mX, mY, mapPos, mapSize, msgType, npc, packet, packets, size, transition, _i, _len, _ref, _ref1, _ref2;
+      var battleScene, dX, dY, data, enemy, mX, mY, mapPos, mapSize, msgType, packet, packets, size, transition, _i, _len, _ref, _ref1, _ref2;
       size = cc.director.getWinSize();
       packets = g.packets;
       g.packets = [];
@@ -244,14 +256,20 @@
         switch (msgType) {
           case 'sStartBattle':
             console.log('sStartBattle');
-            if (data.name in this.npcs) {
-              npc = this.npcs[data.name];
-              g.me = this.avatar;
-              g.enemy = npc;
-              battleScene = new BattleScene;
-              transition = cc.TransitionProgressRadialCW.create(0.5, battleScene);
-              cc.director.pushScene(transition);
+            enemy = this.otherPcs[data.name];
+            if (!enemy) {
+              enemy = this.npcs[data.name];
             }
+            if (!enemy) {
+              return;
+            }
+            g.me = this.avatar;
+            g.enemy = enemy;
+            g.enemyIsNpc = data.isNpc;
+            g.firstAttack = data.isFirst;
+            battleScene = new BattleScene;
+            transition = cc.TransitionProgressRadialCW.create(0.5, battleScene);
+            cc.director.pushScene(transition);
             break;
           default:
             if ((_ref = g.world) != null) {
