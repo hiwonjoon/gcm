@@ -47,5 +47,5 @@ class root.World
 
       when 'sQuit'
         name = data
-        delete @otherPcInfos[quit]
+        delete @otherPcInfos[name]
         @gameLayer?.onQuitPc? name

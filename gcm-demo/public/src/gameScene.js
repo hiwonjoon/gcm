@@ -122,11 +122,10 @@
     npcs: {},
     otherPcs: {},
     onNewNpc: function(name, sprite, x, y) {
-      var npc;
+      var npc, _ref;
       npc = new Npc(name, sprite);
-      npc.x = x;
-      npc.y = y;
       npc.setMapPos(x, y);
+      _ref = [x, y], npc.x = _ref[0], npc.y = _ref[1];
       this.tileMap.addChild(npc, 1);
       return this.npcs[name] = npc;
     },
@@ -135,7 +134,8 @@
       pc = new Player(name, sprite);
       pc.setMapPos(x, y);
       _ref = [x, y], pc.x = _ref[0], pc.y = _ref[1];
-      return this.tileMap.addChild(pc, 1);
+      this.tileMap.addChild(pc, 1);
+      return this.otherPcs[name] = pc;
     },
     onQuitPc: function(name) {
       var other;
@@ -146,12 +146,22 @@
       return delete this.otherPcs[name];
     },
     onMovePc: function(name, x, y) {
-      var _ref;
-      return (_ref = this.otherPcs[name]) != null ? _ref.setMapPos(x, y) : void 0;
+      var pc, _ref;
+      pc = this.otherPcs[name];
+      if (!pc) {
+        return;
+      }
+      pc.setMapPos(x, y);
+      return _ref = [x, y], pc.x = _ref[0], pc.y = _ref[1], _ref;
     },
     onMoveNpc: function(name, x, y) {
-      var _ref;
-      return (_ref = this.npcs[name]) != null ? _ref.setMapPos(x, y) : void 0;
+      var npc, _ref;
+      npc = this.npcs[name];
+      if (!npc) {
+        return;
+      }
+      npc.setMapPos(x, y);
+      return _ref = [x, y], npc.x = _ref[0], npc.y = _ref[1], _ref;
     },
     init: function() {
       var info, k, param, size, tileMapTag, _ref, _ref1;

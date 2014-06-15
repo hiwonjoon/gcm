@@ -14,15 +14,21 @@ root.g =
   me: null
   enemy: null
 
-messageElement = document.getElementById 'messages'
-lastMessageElement = null
+addMessage = (from, msg) ->
+  container = $ '#messages'
+  first = container.children ':first'
 
-addMessage = (message) ->
-  newMessageElement = document.createElement 'div'
-  newMessageText = document.createTextNode message
-  newMessageElement.appendChild newMessageText
-  messageElement.insertBefore newMessageElement, lastMessageElement
-  lastMessageElement = newMessageElement
+  unless from
+    labelClass = 'label-danger'
+  else if from == g.name
+    labelClass = 'label-primary'
+  else
+    labelClass = 'label-success'
+  elem = $ "<div><span class='label #{labelClass}'>#{from}</span> <span class='chat-text'>#{msg}</span></div>"
+  if first.size() == 0
+    container.append elem
+  else
+    elem.insertBefore first
 
 socket = io.connect window.location.origin
 root.socket = socket
@@ -41,7 +47,7 @@ socket.$emit = ->
       data: arguments[1]
 
 socket.on 'sChat', (content) ->
-  addMessage content
+  addMessage content.from, content.msg
 
 socket.on 'sLogin', (content) ->
   console.log content

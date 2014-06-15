@@ -234,8 +234,14 @@
         return;
       }
       playerSocket = player.socket;
-      playerSocket.emit('sChat', 'You said: ' + msg);
-      return playerSocket.broadcast.emit('sChat', player.name + ' said: ' + msg);
+      playerSocket.emit('sChat', {
+        from: from,
+        msg: msg
+      });
+      return playerSocket.broadcast.emit('sChat', {
+        from: from,
+        msg: msg
+      });
     };
 
     World.prototype.spawnNpc = function() {
@@ -423,6 +429,7 @@
            */
           socket.on('cMove', function(data) {
             var now, player;
+            _this.world.processPcMove(socket, data.x, data.y);
             now = Date.now();
             if (now - _this.lastActionTime < 500) {
               return;
@@ -430,7 +437,7 @@
             _this.lastActionTime = now;
             if (_this.gcmClient) {
               player = _this.getPlayerBySocket(socket);
-              _this.sendToGcm({
+              return _this.sendToGcm({
                 msgType: 'move',
                 body: {
                   id: player != null ? player.name : void 0,
@@ -446,7 +453,6 @@
                 }
               });
             }
-            return _this.world.processPcMove(socket, data.x, data.y);
           });
           socket.on('cStartBattle', function(data) {
             return _this.world.processStartBattle(socket, data.x, data.y);

@@ -111,8 +111,12 @@ class World
     return unless player
 
     playerSocket = player.socket
-    playerSocket.emit 'sChat', 'You said: ' + msg
-    playerSocket.broadcast.emit 'sChat', player.name + ' said: ' + msg
+    playerSocket.emit 'sChat',
+      from: from
+      msg: msg
+    playerSocket.broadcast.emit 'sChat',
+      from: from
+      msg: msg
 
   spawnNpc: ->
     rand = Math.floor(Math.random() * @npcSpriteList.length)
@@ -228,6 +232,8 @@ class GameServer
       ###
 
       socket.on 'cMove', (data) =>
+        @world.processPcMove socket, data.x, data.y
+
         now = Date.now()
         return if now - @lastActionTime < 500
         @lastActionTime = now
@@ -244,7 +250,6 @@ class GameServer
                 x: data.x
                 y: data.y
               time: now
-        @world.processPcMove socket, data.x, data.y
 
       socket.on 'cStartBattle', (data) =>
         @world.processStartBattle socket, data.x, data.y

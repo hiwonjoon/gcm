@@ -114,9 +114,8 @@ root.GameLayer = cc.Layer.extend
 
   onNewNpc: (name, sprite, x, y) ->
     npc = new Npc name, sprite
-    npc.x = x
-    npc.y = y
     npc.setMapPos x, y
+    [npc.x, npc.y] = [x, y]
     @tileMap.addChild npc, 1
     @npcs[name] = npc
 
@@ -125,6 +124,7 @@ root.GameLayer = cc.Layer.extend
     pc.setMapPos x, y
     [pc.x, pc.y] = [x, y]
     @tileMap.addChild pc, 1
+    @otherPcs[name] = pc
 
   onQuitPc: (name) ->
     other = @otherPcs[name]
@@ -132,10 +132,19 @@ root.GameLayer = cc.Layer.extend
     delete @otherPcs[name]
 
   onMovePc: (name, x, y) ->
-    @otherPcs[name]?.setMapPos x, y
+    pc = @otherPcs[name]
+    return unless pc
+
+    pc.setMapPos x, y
+    [pc.x, pc.y] = [x, y]
 
   onMoveNpc: (name, x, y) ->
-    @npcs[name]?.setMapPos x, y
+    npc = @npcs[name]
+    return unless npc
+
+    npc.setMapPos x, y
+    [npc.x, npc.y] = [x, y]
+
 
   init: ->
     @_super()

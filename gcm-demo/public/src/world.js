@@ -67,7 +67,7 @@
           break;
         case 'sQuit':
           name = data;
-          delete this.otherPcInfos[quit];
+          delete this.otherPcInfos[name];
           return (_ref6 = this.gameLayer) != null ? typeof _ref6.onQuitPc === "function" ? _ref6.onQuitPc(name) : void 0 : void 0;
       }
     };
