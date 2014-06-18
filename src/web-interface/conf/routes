@@ -8,18 +8,12 @@ GET     /                           controllers.Application.index
 GET     /login                      controllers.Application.login
 POST    /login                              controllers.Application.authenticate
 GET     /logout                             controllers.Application.logout
-
 # menu
 GET     /assets/javascripts/menu.js  controllers.Application.menuJs(menu: String)
 #Twitter
 GET     /gettwitterwords            controllers.GetTwitterWords.getMessage()
 GET     /assets/javascripts/routes  controllers.GetTwitterWords.javascriptRoutes()
 GET     /twitter                    controllers.TwitterKeyword.index
-#Chat Room
-GET     /startChat                       controllers.ChatRoomController.index
-GET     /room                            controllers.ChatRoomController.chatRoom(username: Option[String])
-GET     /room/chat                       controllers.ChatRoomController.chat(username)
-GET     /assets/javascripts/chatroom.js  controllers.ChatRoomController.chatRoomJs(username: String)
 #forbidden
 GET     /forbidden                       controllers.ForbiddenKeyword.readFile
 GET     /forbidden/add          controllers.ForbiddenKeyword.add(keyword: String)
