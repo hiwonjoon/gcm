@@ -1,4 +1,5 @@
-@(logType: Int)
+@(logType: Int, logSubType: Array[String])
+@import java.math.BigInteger; var k=0
 @main("logView"){
 <script type="text/javascript" src='@routes.Assets.at("javascripts/logView.js")'></script>
 <script type="text/javascript" src='@routes.Assets.at("javascripts/dataTables/jquery.dataTables.min.js")'></script>
@@ -7,7 +8,38 @@
     <span id="logType" style="visibility:hidden">@logType</span>
     <div id="TableDiv" style="margin-left:15px; width:90%;">
         <table id="logTable" class="display" style="width:100%;">
-
+        <thead>
+            <tr>
+                <th>로그타입</th>
+                <th>logSubType</th>
+                <th>Id</th>
+                <th>message</th>
+                <th>date</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>
+                </th>
+                <th id="search_tfoot">검색
+                <select>
+                    <option value="-1">
+                        전체
+                    </option>
+                @for(str <- logSubType) {
+                    <option value="@k">
+                        @str
+                    </option>
+                    @{k=k+1}
+                }
+                </select>
+                </th>
+                <th>
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
         </table>
     </div>
 </div>

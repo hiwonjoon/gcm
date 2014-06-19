@@ -19,11 +19,6 @@ object ForBiddenKeywordTable extends ((Int, Long, Long, Seq[ForBiddenData]) => F
 
 object ForbiddenKeyword extends Controller {
 
-  def index = Action {
-    Ok(views.html.twitterKeyword())
-
-  }
-
   def readFile = Action {
     Ok(views.html.forbiddenKeyword(Global.forbiddenwords.iterator))
   }
