@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "file": "background.js",
+  "sourceRoot": "",
+  "sources": [
+    "background.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAA;AAAA,MAAA,IAAA;;AAAA,EAAA,IAAA,wDAAO,UAAU,IAAjB,CAAA;;AAAA,EACA,IAAI,CAAC,WAAL,GAAmB,KADnB,CAAA;AAAA"
+}

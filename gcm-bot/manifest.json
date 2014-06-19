@@ -1,0 +1,29 @@
+{
+    "manifest_version": 2,
+    "name": "Gcm Bot",
+    "description": "Bot for Gcm Demo",
+    "version": "0.1",
+    "icons": {
+        "16": "superman_16x16.png",
+        "48": "superman_48x48.png",
+        "128": "superman_128x128.png"
+    },
+
+    "permissions": [
+        "tabs",
+        "http://*/"
+    ],
+
+    "background": {
+        "scripts": ["background.js"]
+    },
+
+    "browser_action": {
+        "default_icon": {
+            "19": "superman_19x19.png",
+            "38": "superman_38x38.png"
+        },
+        "default_title": "Wow, fantastic!!!",
+        "default_popup": "./popup.html"
+    }
+}
