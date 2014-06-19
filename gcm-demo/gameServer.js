@@ -126,7 +126,7 @@
       }
       if ((_ref1 = this.char1.socket) != null) {
         _ref1.emit('sBattleStatus', {
-          msg: 'Your Turn',
+          msg: 'YourTurn',
           turn: true
         });
       }
@@ -206,7 +206,7 @@
       nextAttacker = this.getOpponent(this.attacker);
       if ((_ref = nextAttacker.socket) != null) {
         _ref.emit('sBattleStatus', {
-          msg: 'Your Turn',
+          msg: 'YourTurn',
           turn: true
         });
       }
@@ -336,6 +336,8 @@
     World.prototype.index = 0;
 
     World.prototype.battleList = [];
+
+    World.prototype.npcNames = ['Alfie', 'Annie', 'Clarabel', 'Arthur', 'Bash', 'Dash', 'Belle', 'Bertie', 'Bill', 'Ben', 'Billy', 'BoCo', 'Bulgy', 'Bulstrode', 'Buster', 'Butch', 'Byron', 'Caroline', 'Captain', 'Charlie', 'Colin', 'Cranky', 'Daisy', 'Dennis', 'Derek', 'Dodge', 'Donald', 'Douglas', 'Duck', 'Duke', 'Duncan', 'Edward', 'Emily', 'Elizabeth', 'Ferdinand', 'Fergus', 'Flora', 'Gordon', 'Hank', 'Harold', 'Harvey', 'Hector', 'Henrietta', 'Henry', 'Hiro', 'Jack', 'James', 'Jeremy', 'Kelly', 'Kevin', 'Madge', 'Mavis', 'Molly', 'Murdoch', 'Nelson', 'Neville', 'Oliver', 'Patrick', 'Percy', 'Rheneas', 'Rocky', 'Rosie', 'Rusty', 'Salty', 'Skarloey', 'Smudger', 'Spencer', 'Stanley', 'Stepney', 'Thomas', 'Toad', 'Toby', 'Victor', 'Whiff'];
 
     World.prototype.processLogin = function(socket) {
       var k, player, playerSocket, v, _ref, _ref1, _results;
@@ -513,9 +515,16 @@
     };
 
     World.prototype.spawnNpc = function() {
-      var k, npc, rand, v, _ref, _results;
+      var k, newName, npc, oriName, rand, suffix, v, _ref, _results;
       rand = Math.floor(Math.random() * this.npcSpriteList.length);
-      npc = new Npc(this, "" + this.index + "_test", this.npcSpriteList[rand]);
+      oriName = this.npcNames[this.index % this.npcNames.length];
+      suffix = 0;
+      newName = oriName;
+      while (newName in this.npcTable) {
+        newName = oriName + suffix;
+        suffix++;
+      }
+      npc = new Npc(this, newName, this.npcSpriteList[rand]);
       npc.x = Math.floor(Math.random() * this.mapWidth);
       npc.y = Math.floor(Math.random() * this.mapHeight);
       this.npcTable[npc.name] = npc;
@@ -654,8 +663,14 @@
     };
 
     World.prototype.createPlayer = function(socket, name, sprite) {
-      var player;
-      player = new Player(this, socket, name, sprite);
+      var newName, player, suffix;
+      suffix = 0;
+      newName = name;
+      while (newName in this.playerNameTable) {
+        newName = name + suffix;
+        suffix++;
+      }
+      player = new Player(this, socket, newName, sprite);
       this.playerIdTable[socket.id] = player;
       this.playerNameTable[player.name] = player;
       return this.processLogin(socket);

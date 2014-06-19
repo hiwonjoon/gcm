@@ -42,9 +42,9 @@
       drawShadow = cc.DrawNode.create();
       drawShadow.drawDot(cc.p(size.width / 2, size.height / 20), size.width / 3, cc.color(100, 100, 100, 255));
       drawShadow.setScaleY(0.3);
-      label = cc.LabelTTF.create(name, 'Consolas', 15);
-      label.color = cc.color(20, 20, 20);
+      label = cc.LabelBMFont.create(name, res.littera03_fnt, 15);
       label.setPosition(cc.p(size.width / 2, size.height + 20));
+      label.setScale(0.5);
       this.addChild(drawShadow, -1);
       this.addChild(label, 1);
       return this.addChild(this.drawHp, 1);

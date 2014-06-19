@@ -85,8 +85,8 @@
       if (this.statusLabel) {
         this.removeChild(this.statusLabel);
       }
-      this.statusLabel = cc.LabelTTF.create(status, 'Consolas', 30);
-      this.statusLabel.color = cc.color(20, 200, 200, 255);
+      this.statusLabel = cc.LabelBMFont.create(status, res.littera01_fnt, 50);
+      this.statusLabel.setScale(1.5);
       this.statusLabel.setPosition(cc.p(500, 400));
       return this.addChild(this.statusLabel, 2);
     },
@@ -108,7 +108,7 @@
       this.me = g.me ? new Player(g.me.name, g.me.sprite) : new Player('mario', '08sprite');
       this.enemy = g.enemy ? g.enemyIsNpc ? new Npc(g.enemy.name, g.enemy.sprite) : new Player(g.enemy.name, g.enemy.sprite) : new Player('luigi', '17sprite');
       if (g.firstAttack) {
-        this.setStatusText('Player turn');
+        this.setStatusText('PlayerTurn');
         this.status = BattleStatus.playerTurn;
       } else {
         this.setStatusText('Waiting...');
@@ -129,22 +129,18 @@
       drawShadow.drawDot(cc.p(100, 100), 30, cc.color(20, 20, 20, 255));
       for (action in Actions) {
         i = Actions[action];
-        label = cc.LabelTTF.create(action.toString().toUpperCase(), 'Consolas', 15);
-        label.color = cc.color(230, 100, 100, 255);
+        label = cc.LabelBMFont.create(action.toString().toLowerCase(), res.littera02_fnt, 12);
         label.setPosition(cc.p(100, 410 - 30 * i));
-        label.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
         this.addChild(label, 2);
       }
-      this.arrow = cc.LabelTTF.create('<-', 'Consolas', 15);
-      this.arrow.color = cc.color(255, 20, 255, 255);
+      this.arrow = cc.Sprite.create(res.leftarrow_png);
+      this.arrow.setScale(0.3);
       this.arrow.setPosition(cc.p(230, 410));
-      this.arrow.setHorizontalAlignment(cc.TEXT_ALIGNMENT_LEFT);
       this.addChild(this.arrow, 2);
       fadeIn = cc.FadeIn.create(0.5);
       fadeOut = cc.FadeOut.create(0.5);
       fadeSeq = cc.Sequence.create(fadeIn, fadeOut);
       forever = cc.RepeatForever.create(fadeSeq);
-      this.arrow.runAction(forever);
       this.scheduleUpdate();
       if ('keyboard' in cc.sys.capabilities) {
         param = {

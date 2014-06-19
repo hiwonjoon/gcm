@@ -60,7 +60,7 @@ class Battle
       isFirst: true
 
     @char1.socket?.emit 'sBattleStatus',
-      msg: 'Your Turn'
+      msg: 'YourTurn'
       turn: true
 
     @char2.socket?.emit 'sStartBattle',
@@ -117,7 +117,7 @@ class Battle
   changeTurn: ->
     nextAttacker = @getOpponent @attacker
     nextAttacker.socket?.emit 'sBattleStatus',
-      msg: 'Your Turn'
+      msg: 'YourTurn'
       turn: true
 
     @attacker.socket?.emit 'sBattleStatus',
@@ -196,6 +196,7 @@ class World
   index: 0
 
   battleList: []
+  npcNames: ['Alfie', 'Annie', 'Clarabel', 'Arthur', 'Bash', 'Dash', 'Belle', 'Bertie', 'Bill', 'Ben', 'Billy', 'BoCo', 'Bulgy', 'Bulstrode', 'Buster', 'Butch', 'Byron', 'Caroline', 'Captain', 'Charlie', 'Colin', 'Cranky', 'Daisy', 'Dennis', 'Derek', 'Dodge', 'Donald', 'Douglas', 'Duck', 'Duke', 'Duncan', 'Edward', 'Emily', 'Elizabeth', 'Ferdinand', 'Fergus', 'Flora', 'Gordon', 'Hank', 'Harold', 'Harvey', 'Hector', 'Henrietta', 'Henry', 'Hiro', 'Jack', 'James', 'Jeremy', 'Kelly', 'Kevin', 'Madge', 'Mavis', 'Molly', 'Murdoch', 'Nelson', 'Neville', 'Oliver', 'Patrick', 'Percy', 'Rheneas', 'Rocky', 'Rosie', 'Rusty', 'Salty', 'Skarloey', 'Smudger', 'Spencer', 'Stanley', 'Stepney', 'Thomas', 'Toad', 'Toby', 'Victor', 'Whiff']
 
   processLogin: (socket) ->
     player = @playerIdTable[socket.id]
@@ -290,7 +291,14 @@ class World
 
   spawnNpc: ->
     rand = Math.floor(Math.random() * @npcSpriteList.length)
-    npc = new Npc @, "#{@index}_test", @npcSpriteList[rand]
+    oriName = @npcNames[@index % @npcNames.length]
+    suffix = 0
+    newName = oriName
+    while newName of @npcTable
+      newName = oriName + suffix
+      suffix++
+
+    npc = new Npc @, newName, @npcSpriteList[rand]
     npc.x = Math.floor(Math.random() * @mapWidth)
     npc.y = Math.floor(Math.random() * @mapHeight)
     @npcTable[npc.name] = npc
@@ -371,7 +379,13 @@ class World
     , 100
 
   createPlayer: (socket, name, sprite) ->
-    player = new Player @, socket, name, sprite
+    suffix = 0
+    newName = name
+    while newName of @playerNameTable
+      newName = name + suffix
+      suffix++
+
+    player = new Player @, socket, newName, sprite
     @playerIdTable[socket.id] = player
     @playerNameTable[player.name] = player
     @processLogin socket

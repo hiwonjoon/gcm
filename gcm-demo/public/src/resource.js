@@ -38,6 +38,15 @@ var res = {
 
     battle_png: "res/pokemon_x_y_battle_scene_by_jenske05-d5ynr9c.png",
 
+    littera01_png: "res/font/littera01.png",
+    littera01_fnt: "res/font/littera01.fnt",
+    littera02_png: "res/font/littera02.png",
+    littera02_fnt: "res/font/littera02.fnt",
+    littera03_png: "res/font/littera03.png",
+    littera03_fnt: "res/font/littera03.fnt",
+
+    leftarrow_png: "res/leftarrow.png",
+
     ui_json: "res/NewUI_1/NewUi_1.json",
     ui_button: "res/NewUI_1/GUI/button.png",
     ui_image: "res/NewUI_1/GUI/image.png",
@@ -92,6 +101,15 @@ var g_resources = [
 
     //fnt
 
+    res.littera01_fnt,
+    res.littera01_png,
+    res.littera02_fnt,
+    res.littera02_png,
+    res.littera03_fnt,
+    res.littera03_png,
+
+    res.leftarrow_png,
+
     //tmx
     res.test_tmx,
     res.test_tmx_include,
@@ -99,6 +117,8 @@ var g_resources = [
     //bgm
 
     //effect
+
+
 
     // ui
     res.ui_json,

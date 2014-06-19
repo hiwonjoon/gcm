@@ -71,8 +71,9 @@ root.BattleLayer = cc.Layer.extend
   statusLabel: null
   setStatusText: (status) ->
     @removeChild @statusLabel if @statusLabel
-    @statusLabel = cc.LabelTTF.create status, 'Consolas', 30
-    @statusLabel.color = cc.color 20, 200, 200, 255
+    @statusLabel =  cc.LabelBMFont.create status, res.littera01_fnt, 50
+    @statusLabel.setScale 1.5
+    #@statusLabel.color = cc.color 20, 200, 200, 255
     @statusLabel.setPosition cc.p 500, 400
     @addChild @statusLabel, 2
 
@@ -101,7 +102,7 @@ root.BattleLayer = cc.Layer.extend
         new Player 'luigi', '17sprite'
 
     if g.firstAttack
-      @setStatusText 'Player turn'
+      @setStatusText 'PlayerTurn'
       @status = BattleStatus.playerTurn
     else
       @setStatusText 'Waiting...'
@@ -131,23 +132,20 @@ root.BattleLayer = cc.Layer.extend
     #@addChild drawShadow
 
     for action, i of Actions
-      label = cc.LabelTTF.create action.toString().toUpperCase(), 'Consolas', 15
-      label.color = cc.color 230, 100, 100, 255
+      label = cc.LabelBMFont.create action.toString().toLowerCase(), res.littera02_fnt, 12
       label.setPosition cc.p 100, 410 - 30 * i
-      label.setHorizontalAlignment cc.TEXT_ALIGNMENT_LEFT
       @addChild label, 2
 
-    @arrow = cc.LabelTTF.create '<-', 'Consolas', 15
-    @arrow.color = cc.color 255, 20, 255, 255
+    @arrow = cc.Sprite.create res.leftarrow_png
+    @arrow.setScale 0.3
     @arrow.setPosition cc.p 230, 410
-    @arrow.setHorizontalAlignment cc.TEXT_ALIGNMENT_LEFT
     @addChild @arrow, 2
 
     fadeIn = cc.FadeIn.create 0.5
     fadeOut = cc.FadeOut.create 0.5
     fadeSeq = cc.Sequence.create fadeIn, fadeOut
     forever = cc.RepeatForever.create fadeSeq
-    @arrow.runAction forever
+    #@arrow.runAction forever
 
     @scheduleUpdate()
     if 'keyboard' of cc.sys.capabilities
